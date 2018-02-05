@@ -25,7 +25,9 @@ def detect_data():
 	illegal_type = int(request.args.get('illegal_type',''))
 	entity_type = int(request.args.get('entity_type',''))
 	warn_distribute = request.args.get('warn_distribute','')
-	result = getDetectData(date,TABLE_ENTITY_LIST,TABLE_MONITOR,TABLE_GONGSHANG,field,RISK_LEVEL,operation_mode,illegal_type,entity_type,warn_distribute)
+	page_number = int(request.args.get('page_number',''))
+	page_size = int(request.args.get('page_size',''))
+	result = getDetectData(date,TABLE_ENTITY_LIST,TABLE_MONITOR,TABLE_GONGSHANG,field,RISK_LEVEL,operation_mode,illegal_type,entity_type,warn_distribute,page_number,page_size)
 	return json.dumps(result,ensure_ascii=False)
 
 @detection.route('/detectRank/')
