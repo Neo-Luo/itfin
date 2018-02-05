@@ -19,6 +19,8 @@ TABLE_MONITOR = 'monitor_daily'
 TABLE_OPERATION_LIST = 'operation_list'
 TABLE_ILLEGAL_LIST = 'illegal_list'
 TABLE_LOG = 'logs'
+TABLE_CITY_RANK = 'city_rank_daily'
+TABLE_PROVINCE_RANK = 'province_rank_daily'
 
 #es
 ES_HOST = '219.224.134.214'
