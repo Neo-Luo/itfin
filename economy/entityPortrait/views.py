@@ -26,6 +26,32 @@ def portrait():
 	if result['status'] == 1:
 		return json.dumps(result['data'],ensure_ascii=False)
 
+@entityPortrait.route('/entityCount/',methods=['POST','GET'])
+def entity_count():
+	operation_mode = int(request.args.get('operation_mode',''))
+	illegal_type = int(request.args.get('illegal_type',''))
+	entity_type = int(request.args.get('entity_type',''))
+	warn_distribute = request.args.get('warn_distribute','')
+	result = entityCount(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_COMPANY_DETAIL,TABLE_PROJECT_DETAIL,TABLE_GONGSHANG,field,operation_mode,illegal_type,entity_type,warn_distribute)
+	return json.dumps(result,ensure_ascii=False)
+
+@entityPortrait.route('/diviPage/',methods=['POST','GET'])
+def divi_page():
+	operation_mode = int(request.args.get('operation_mode',''))
+	illegal_type = int(request.args.get('illegal_type',''))
+	entity_type = int(request.args.get('entity_type',''))
+	warn_distribute = request.args.get('warn_distribute','')
+	page_number = int(request.args.get('page_number',''))
+	page_size = int(request.args.get('page_size',''))
+	platCount = int(request.args.get("platCount",""))
+	comCount = int(request.args.get("comCount",""))
+	proCount = int(request.args.get("proCount",""))
+	resultsCount = int(request.args.get("resultsCount",""))
+	result = diviPage(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_COMPANY_DETAIL,TABLE_PROJECT_DETAIL,TABLE_GONGSHANG,field,operation_mode,\
+						illegal_type,entity_type,warn_distribute,page_number,page_size,platCount,comCount,proCount,resultsCount)
+	return json.dumps(result,ensure_ascii=False)
+
+
 @entityPortrait.route('/platform/',methods=['POST','GET'])
 def platform():
 	result = get_platform(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,plat_field)
