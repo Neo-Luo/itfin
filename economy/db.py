@@ -270,6 +270,19 @@ def get_ad(table,id,field):
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
+	k_list = []
+	except_list = ['id', 'entity_id', 'entity_name', 'date']
+	for d in data:
+	    for k in d.keys():
+			if not k in except_list:
+				if not k in k_list:
+					k_list.append(k)
+	number = 0
+	for dict in data:
+		for key in k_list:
+			number += dict[key]
+	if number == 0:
+		data = []
 	cur.close()
 	return data
 
