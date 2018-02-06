@@ -41,6 +41,14 @@ def company():
     pid = request.args.get('pid','')
     return render_template('index/company.html',name=name,flag=flag,pid=pid)
 
+# 画像页复制本
+@index.route('/company_monitor/')
+def company_monitor():
+    name = request.args.get('name','')
+    flag = request.args.get('flag','')
+    pid = request.args.get('pid','')
+    return render_template('index/company_monitor.html',name=name,flag=flag,pid=pid)
+
 @index.route('/project/')
 def project():
     name = request.args.get('name','')

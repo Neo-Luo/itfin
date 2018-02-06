@@ -159,7 +159,6 @@ def diviPage(table1,table2,table3,table4,table5,field,operation_mode,illegal_typ
 	# 	return data
 
 
-
 def get_platform(table0,table,field):
 	cur = defaultDatabase()
 	sql = "select pd.id,pd.entity_name,pd.illegal_type,el.entity_type from %s as el inner join %s as pd on el.id=pd.entity_id where pd.illegal_type>0 and el.entity_type=1 and pd.date=(select max(date) from %s)" % (table0, table, table)
