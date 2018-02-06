@@ -118,6 +118,40 @@
             font-size: 20px;
             cursor:pointer;
         }
+        /* 批量添加模态框 */
+        .example-table th,.example-table td{
+            font-weight:400;
+            text-align:center;
+            vertical-align:middle;
+        }
+        #importf_info .modal-footer #checkfiled{
+            color:#fff;
+            background-color:#337AB8;
+            border-color:#2e6da4;
+        }
+        /* 去掉推荐理由后 */
+        #container .secondScreen #addClub thead th {
+            width:17%;
+        }
+        #container .secondScreen .newAdd input, #container .secondScreen .newAdd .add-3{
+            width:16%;
+        }
+        #someAdd-1 {
+            margin-left:20px;
+            vertical-align: middle;
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+        }
+        #someAdd-1 input {
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            opacity: 0;
+            -ms-filter: alpha(opacity=0);
+            font-size: 20px;
+            cursor:pointer;
+        }
 
     </style>
 {% endblock %}
@@ -182,7 +216,7 @@
             <input type="text" class="add-4" placeholder="注册公司">
             <input type="text" class="add-5" placeholder="相关人物">
             <input type="text" class="add-6" placeholder="其他关键词">
-            <input type="text" class="add-2" placeholder="推荐理由">
+            <!-- <input type="text" class="add-2" placeholder="推荐理由"> -->
             <span id="add" class="newRow btn btn-primary" title="请输入内容在添加"
                   style="vertical-align: bottom;">新增一行</span>
         </div>
@@ -309,23 +343,23 @@
 
 <!-- 批量添加 提示信息 -->
 <div class="modal fade" id="importf_info" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document" style="width:30%;font-size:16px;">
+    <div class="modal-dialog" role="document" style="width:60%;font-size:16px;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" >提示信息：</h4>
             </div>
             <div class="modal-body">
-                <h5 style="margin-bottom:10px;">请添加下列格式的excel文件</h5>
-                <table class="table table-bordered">
+                <h5 style="margin-bottom:10px;">请添加下列格式的<i style="color:#ff9645;margin:0 5px;">excel</i>文件</h5>
+                <table class="example-table table table-bordered">
                     <thead>
                         <tr>
-                            <th>实体名称</th>
-                            <th>实体类别</th>
-                            <th>注册公司</th>
-                            <th>相关人物</th>
-                            <th>其他关键词</th>
-                            <th>推荐理由</th>
+                            <th>实体名称(必填)</th>
+                            <th>实体类别(必填)</th>
+                            <th>注册公司(选填)</th>
+                            <th>相关人物(选填)</th>
+                            <th>其他关键词(选填)</th>
+                            <!-- <th>推荐理由(选填)</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -335,7 +369,7 @@
                             <td>蓝翔</td>
                             <td>七七</td>
                             <td>烹饪</td>
-                            <td>9088</td>
+                            <!-- <td>9088</td> -->
                         </tr>
                         <tr>
                             <td>新建-2</td>
@@ -343,16 +377,26 @@
                             <td>新东方</td>
                             <td>王动</td>
                             <td>武侠</td>
-                            <td>9077</td>
+                            <!-- <td>9077</td> -->
+                        </tr>
+                        <tr>
+                            <td>...</td>
+                            <td>公司/平台/项目</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <!-- <td>...</td> -->
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="modal-footer">
-                <!-- <button type="button" class="btn btn-default" data-dismiss="modal" id="">取消</button> -->
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="">确定</button>
-                <!-- <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> -->
+            <div class="modal-footer" style="border-top:none;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="">取消</button>
+                <span id="someAdd-1">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="checkfiled" title="导入文件">选择文件</button>
+                    <input type="file" title="导入文件" onchange="importf(this)">
+                </span>
             </div>
         </div>
     </div>
