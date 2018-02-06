@@ -726,14 +726,17 @@ def h_getWarnCount(table, field, risk_level):
 	end_time = cur.fetchall()[0][0]
 	start_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=7)
 	start_time = start_time.strftime("%Y-%m-%d")
-	sql = 'select count(*) from %s where illegal_type>0 and risk_level>%d and date>"%s" and date<="%s" group by entity_type'%(table,risk_level,start_time,end_time)
+	sql = 'select entity_type,count(*) from %s where illegal_type>0 and risk_level>%d and date>"%s" and date<="%s" group by entity_type'%(table,risk_level,start_time,end_time)
 	cur.execute(sql)
-	'''没数据报错
 	res = cur.fetchall()
-	data = [{k:row[i] for i,k in enumerate(field)} for row in res][0]
-	'''
-	res = cur.fetchall()[0][0]
-	data = [{'plat':res,'com':0,'pro':0}][0]
+	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
+	typeList = [1,2,3]
+	result_type = []
+	for each in data:
+		result_type.append(each['entity_type'])
+	for t in typeList:
+		if not t in result_type:
+			data.append({'entity_type':t, 'count':0})
 	cur.close()
 	return data
 
@@ -955,7 +958,7 @@ def InStorage(table, list):
 	date = time.localtime(int(time.time()))
 	date = time.strftime("%Y-%m-%d",date)
 	for each in list:
-		sql = 'insert into %s(entity_type,entity_name,date,company,related_person,key_words,rec_type,status,in_type) values(%d,"%s","%s","%s","%s","%s",%d,%d,%d)'%(table,each["entity_type"],each["entity_name"],date,each["company"],each["related_person"],each["key_words"],each["rec_type"],1,1)
+		sql = 'insert into %s(entity_type,entity_name,date,company,related_person,key_words,rec_type,status,in_type) values(%d,"%s","%s","%s","%s","%s",2,%d,%d)'%(table,each["entity_type"],each["entity_name"],date,each["company"],each["related_person"],each["key_words"],1,1)
 		if "null" in [d for d in each.values()]:
 			sql = sql.replace('"null"','null')
 		cur.execute(sql)
