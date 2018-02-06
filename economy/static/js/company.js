@@ -81,9 +81,18 @@ var monitor_status_1;
         $('.isPlatformName').text(company);//工商注册公司名称：
 
         //风险评价
-        if (item.illegal_type==1){//是否疑似非法集资
+        if (item.illegal_type > 0){//是否疑似非法集资
             t3='是';
-        }else{
+        }else if(item.illegal_type < 0){
+            t3='数据缺失';
+            //隐藏下面的内容和右边表格
+            $('.val-2').parents('p').css('display','none');
+            $('.val-3').parents('p').css('display','none');
+            $('.val-4').parents('p').css('display','none');
+            $('.val-5').parents('p').css('display','none');
+            $('.riskRight').css('display','none');
+        }else {
+            t3 = '否';
             //隐藏下面的内容和右边表格
             $('.val-2').parents('p').css('display','none');
             $('.val-3').parents('p').css('display','none');
@@ -942,6 +951,25 @@ var monitor_status_1;
         var comp = data[0].replace(reg, "");
         // 一级子公司
         if(data[1][comp].length != 0){
+            if(data[1][comp].length >6){
+                $('#table-1').css('height','900px');
+                var myChart = echarts.init(document.getElementById('table-1'));
+                myChart.showLoading(
+                    {
+                        type:'default',
+                        opts: {
+                          text: '正在加载中...',
+                          color: '#c23531',
+                          textColor: '#000',
+                          maskColor: 'rgba(255, 255, 255, 0.8)',
+                          zlevel: 0
+                        }
+                    }
+                );//自定义设置未作用
+            }else{
+                var myChart = echarts.init(document.getElementById('table-1'));
+                myChart.showLoading();
+            }
             for(var i=0;i<data[1][comp].length;i++){
                 // option.series[0].data[0].children[i].name = data[1][comp][i];
                 option.series[0].data[0].children[1].children.push(
@@ -1168,6 +1196,7 @@ var monitor_status_1;
     var data_billing_diagram ;//广告趋势图数据
     function publicityTable(data){
         if(data.length !=0){
+            $('#publicityTable').css('height','300px');
             data_billing_diagram = data;
             // console.log(data);
             var item = data[0];
@@ -1999,6 +2028,7 @@ var monitor_status_1;
     function billing_diagram (data){
         // console.log(data)
         if(data.length!=0){
+            $('#billing_diagram').css('height','300px');
             var ad1_data = [],inf1_data = [],inf2_data = [],inf3_data = [];
             // 时间
             var date = [];

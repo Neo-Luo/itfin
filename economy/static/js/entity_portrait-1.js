@@ -49,6 +49,7 @@ function monitorCount(data){
     public_ajax.call_request('get',peoPicture_url,peoPicture);
 
     function peoPicture(data) {
+        $('#contentTable p.load').show();
         // console.log(data);
         $('#contentTable').bootstrapTable('load', data);
         $('#contentTable').bootstrapTable({
@@ -140,6 +141,8 @@ function monitorCount(data){
                         }else if(row.illegal_type == 3){
                             return '指标预警';
                         }else if (row.illegal_type==''||row.illegal_type=='null'||row.illegal_type=='unknown'||!row.illegal_type){
+                            return '暂无';
+                        }else {
                             return '暂无';
                         }
 
