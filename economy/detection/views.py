@@ -56,7 +56,8 @@ def detection_result_check():
 	entity_id = int(request.args.get('entity_id',''))
 	date = request.args.get('date','')
 	type = int(request.args.get('type',''))
-	result = detectionResultCheck(TABLE_MONITOR,entity_id,date,type)
+	illegal_type = int(request.args.get('illegal_type',''))
+	result = detectionResultCheck(TABLE_MONITOR,entity_id,date,type,illegal_type)
 	return json.dumps(result,ensure_ascii=False)
 
 @detection.route('/detectRank/')
