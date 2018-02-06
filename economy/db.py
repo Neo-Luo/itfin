@@ -413,6 +413,31 @@ def MonitorStatus(table1, table, entity_name, log_type, remark):
 
 
 #监测预警
+def totalDetectData(date,table1,table2,table3,field,risk_level,operation_mode,illegal_type,entity_type,warn_distribute):
+	cur = defaultDatabase()
+	sql = "select max(date) from %s"%table2
+	cur.execute(sql)
+	end_time = cur.fetchall()[0][0]
+	start_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=int(date))
+	start_time = start_time.strftime("%Y-%m-%d")
+	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.illegal_type,pd.date from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc" % (table1, table2, table3, start_time, end_time, risk_level, operation_mode, illegal_type, entity_type, warn_distribute)
+
+	if operation_mode == 0:
+		sql1 = sql1.replace(' and pd.operation_mode=0','')
+	if illegal_type == 0:
+		sql1 = sql1.replace(' and pd.illegal_type=0','')
+	if entity_type == 0:
+		sql1 = sql1.replace(' and pd.entity_type=0','')
+	if warn_distribute == 'all':
+		sql1 = sql1.replace(" and gs.province='all'","")
+
+	cur.execute(sql1)
+	res = cur.fetchall()
+	result = [{k:row[i] for i,k in enumerate(field)} for row in res]
+	cur.close()
+	return result
+
+
 def getDetectData(date,table1,table2,table3,field,risk_level,operation_mode,illegal_type,entity_type,warn_distribute,page_number,page_size,detectionCount):
 	cur = defaultDatabase()
 	begin = (page_number - 1) * page_size
