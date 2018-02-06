@@ -51,10 +51,8 @@ def get(table1,table2,table3,table4,table5,field,operation_mode,illegal_type,ent
 	res1 = cur.fetchall()
 	cur.execute(sql2)
 	res2 = cur.fetchall()
-	print(res2)
 	cur.execute(sql3)
 	res3 = cur.fetchall()
-	print(res3)
 
 	res = res1 + res2 + res3
 	if res:
@@ -237,7 +235,7 @@ def get_portrait(table1,table2,table3,table4,table5,field,letter):
 #实体详情页
 def platform_detail(table1,table2,table3,id,field):
 	cur = defaultDatabase()
-	sql = "select * from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where el.id=%d and pd.date=(select max(date) from %s as a) and gs.date=(select max(date) from %s)" % (table1,table2,table3,id,table2,table3)
+	sql = "select * from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where el.id=%d and gs.date=(select max(date) from %s) order by pd.date desc limit 1" % (table1,table2,table3,id,table3)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:str(row[i]).replace('(','').replace(')','').replace('人民币','').replace('万','').replace('元','') for i,k in enumerate(field)} for row in res]
@@ -246,7 +244,7 @@ def platform_detail(table1,table2,table3,id,field):
 
 def company_detail(table1,table2,table3,id,field):
 	cur = defaultDatabase()
-	sql = "select * from %s as el inner join %s as cd on el.id=cd.entity_id inner join %s as gs on el.id=gs.entity_id where el.id=%d and cd.date=(select max(date) from %s as a) and gs.date=(select max(date) from %s)" % (table1,table2,table3,id,table2,table3)
+	sql = "select * from %s as el inner join %s as cd on el.id=cd.entity_id inner join %s as gs on el.id=gs.entity_id where el.id=%d and gs.date=(select max(date) from %s) order by cd.date desc limit 1" % (table1,table2,table3,id,table3)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:str(row[i]).replace('(','').replace(')','').replace('人民币','').replace('万','').replace('元','') for i,k in enumerate(field)} for row in res]
@@ -255,7 +253,7 @@ def company_detail(table1,table2,table3,id,field):
 
 def project_detail(table1,table2,table3,id,field):
 	cur = defaultDatabase()
-	sql = "select * from %s as el inner join %s as p on el.id=p.entity_id inner join %s as gs on el.id=gs.entity_id where el.id=%d and p.date=(select max(date) from %s as a) and gs.date=(select max(date) from %s)" % (table1,table2,table3,id,table2,table3)
+	sql = "select * from %s as el inner join %s as p on el.id=p.entity_id inner join %s as gs on el.id=gs.entity_id where el.id=%d and gs.date=(select max(date) from %s) order by p.date desc limit 1" % (table1,table2,table3,id,table3)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:str(row[i]).replace('(','').replace(')','').replace('人民币','').replace('万','').replace('元','') for i,k in enumerate(field)} for row in res]
@@ -351,7 +349,7 @@ def get_risk_comment_table(table1,table2,table3,entity_id,type,field):
 
 
 def EditDetail(table1, table2, dict):
-	cur = testDatabase()
+	cur = defaultDatabase()
 	sql = 'update %s as a inner join %s as b on a.entity_id=b.entity_id set a.operation_mode=%d,b.regist_address="%s",b.set_time="%s",b.legal_person="%s",b.capital="%s",a.company="%s" where a.entity_id=%d and a.date="%s" and b.date="%s"'%(table1,table2,dict['operation_mode'],dict['regist_address'],dict['set_time'],dict['legal_person'],dict['capital'],dict['company'],dict['entity_id'],dict['date'],dict['gs_date'])
 	if "null" in [each for each in dict.values()]:
 		sql = sql.replace('"null"','null')
@@ -362,7 +360,7 @@ def EditDetail(table1, table2, dict):
 
 
 def EditReturnRate(table,return_rate,entity_id):
-	cur = testDatabase()
+	cur = defaultDatabase()
 	rate = float(return_rate/100.0)
 	sql = 'update %s set return_rate=%.4f,status=1 where entity_id=%d'%(table,rate,entity_id)
 	cur.execute(sql)
@@ -372,7 +370,7 @@ def EditReturnRate(table,return_rate,entity_id):
 
 
 def EditRelatedPlat(table,entity_id,related_plat,date):
-	cur = testDatabase()
+	cur = defaultDatabase()
 	related_plat = related_plat.replace('，','')
 	sql = 'update %s set related_plat="%s" where entity_id=%d and date="%s"'%(table,related_plat,entity_id,date)
 	cur.execute(sql)
@@ -382,7 +380,7 @@ def EditRelatedPlat(table,entity_id,related_plat,date):
 
 
 def EditRelatedCompany(table,entity_id,related_company,date):
-	cur = testDatabase()
+	cur = defaultDatabase()
 	related_company = related_company.replace('，','')
 	sql = 'update %s set related_company="%s" where entity_id=%d and date="%s"'%(table,related_company,entity_id,date)
 	cur.execute(sql)
@@ -392,7 +390,7 @@ def EditRelatedCompany(table,entity_id,related_company,date):
 
 
 def MonitorStatus(table1, table, entity_name, log_type, remark):
-	cur = testDatabase()
+	cur = defaultDatabase()
 	datetime = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(int(time.time())))
 	if log_type == 1:
 		log_detail = "停止检测：" + entity_name
@@ -413,6 +411,31 @@ def MonitorStatus(table1, table, entity_name, log_type, remark):
 
 
 #监测预警
+def totalDetectData(date,table1,table2,table3,field,risk_level,operation_mode,illegal_type,entity_type,warn_distribute):
+	cur = defaultDatabase()
+	sql = "select max(date) from %s"%table2
+	cur.execute(sql)
+	end_time = cur.fetchall()[0][0]
+	start_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=int(date))
+	start_time = start_time.strftime("%Y-%m-%d")
+	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.illegal_type,pd.date from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc" % (table1, table2, table3, start_time, end_time, risk_level, operation_mode, illegal_type, entity_type, warn_distribute)
+
+	if operation_mode == 0:
+		sql1 = sql1.replace(' and pd.operation_mode=0','')
+	if illegal_type == 0:
+		sql1 = sql1.replace(' and pd.illegal_type=0','')
+	if entity_type == 0:
+		sql1 = sql1.replace(' and pd.entity_type=0','')
+	if warn_distribute == 'all':
+		sql1 = sql1.replace(" and gs.province='all'","")
+
+	cur.execute(sql1)
+	res = cur.fetchall()
+	result = [{k:row[i] for i,k in enumerate(field)} for row in res]
+	cur.close()
+	return result
+
+
 def getDetectData(date,table1,table2,table3,field,risk_level,operation_mode,illegal_type,entity_type,warn_distribute,page_number,page_size,detectionCount):
 	cur = defaultDatabase()
 	begin = (page_number - 1) * page_size
@@ -521,7 +544,6 @@ def getDetectDistribute(date,table,table4,field,risk_level):
 				[b.add(p['city'])]
 				province_list.append({'province':p['province'],'city':p['city']})
 	for d in province_list:
-		#print(d['city'])
 		pro_dict = {"province":d['province'],"city":d['city']}
 		for dict in result:
 			if dict['city'] == d['city']:
@@ -531,7 +553,6 @@ def getDetectDistribute(date,table,table4,field,risk_level):
 					pro_dict.update({'count2':dict['count']})
 				elif dict['illegal_type'] == 3:
 					pro_dict.update({'count3':dict['count']})
-		print(pro_dict)
 		try:
 			count1 = pro_dict['count1']
 		except:
@@ -705,7 +726,6 @@ def get_prepared_city_rank(province):           #读取预先存好的地图数�
         cur.execute(executer)
         result = cur.fetchall()
         result = [{k: row[i] for i, k in enumerate(field_province)} for row in result]
-    # print result
     return result
 
 def get_city_rank(table,table4,field,province_name,risk_level):
@@ -785,7 +805,6 @@ def get_province_rank(table,table4,field,risk_level):
 	b = ScalableBloomFilter(1000000,0.001)
 	for p in result:
 		if not p['province'] in b:
-			print(p['province'])
 			[b.add(p['province'])]
 			province_list.append(p['province'])
 	for d in province_list:

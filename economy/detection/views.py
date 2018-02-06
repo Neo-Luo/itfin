@@ -31,6 +31,16 @@ def detect_data():
 	result = getDetectData(date,TABLE_ENTITY_LIST,TABLE_MONITOR,TABLE_GONGSHANG,field,RISK_LEVEL,operation_mode,illegal_type,entity_type,warn_distribute,page_number,page_size,detectionCount)
 	return json.dumps(result,ensure_ascii=False)
 
+@detection.route('/totalDetectData/',methods=['POST','GET'])
+def total_detect_data():
+	date = int(request.args.get('date',''))
+	operation_mode = int(request.args.get('operation_mode',''))
+	illegal_type = int(request.args.get('illegal_type',''))
+	entity_type = int(request.args.get('entity_type',''))
+	warn_distribute = request.args.get('warn_distribute','')
+	result = totalDetectData(date,TABLE_ENTITY_LIST,TABLE_MONITOR,TABLE_GONGSHANG,field,RISK_LEVEL,operation_mode,illegal_type,entity_type,warn_distribute)
+	return json.dumps(result,ensure_ascii=False)
+
 @detection.route('/detectionCount/',methods=['POST','GET'])
 def detection_count():
 	date = int(request.args.get('date',''))
