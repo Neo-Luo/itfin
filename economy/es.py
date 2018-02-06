@@ -220,7 +220,7 @@ def getHotSpot(entity_list):
 							"must": [
 								{
 								"match": {
-									"content": dict['name']
+									"query_name": dict['name']
 									}
 								},
 									{
@@ -246,7 +246,8 @@ def getHotSpot(entity_list):
 								results.append({'id':id,'name':entity_name,'content':content,'entity_type':entity_type})
 								[indexB.add(index_name)]
 								number += 1
-		if not number < 10:
-			break
+							else:
+								return results
+	
 	return results
 
