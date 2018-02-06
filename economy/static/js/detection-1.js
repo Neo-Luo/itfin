@@ -215,8 +215,8 @@
                     align: "center",//水平
                     valign: "middle",//垂直
                     formatter: function (value, row, index) {
-                        var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',1)" title="赞成预警"><i class="icon icon-thumbs-up"></i>('+row.support_num+')</span>'+
-                            '<span style="cursor:pointer;color:white;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',0)" title="反对预警"><i class="icon icon-thumbs-down"></i>('+row.against_num+')</span>';
+                        var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',1,\''+row.illegal_type+'\')" title="赞成预警"><i class="icon icon-thumbs-up"></i>('+row.support_num+')</span>'+
+                            '<span style="cursor:pointer;color:white;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',0,\''+row.illegal_type+'\')" title="反对预警"><i class="icon icon-thumbs-down"></i>('+row.against_num+')</span>';
                         return str;
                     }
                 },
@@ -577,13 +577,13 @@
 
     }
     // 预警结果审核
-        function resultCheck(date,id,type){
-            console.log(type);
-            var detectionResultCheck_url = '/detection/detectionResultCheck/?date='+date+'&entity_id='+id+'&type='+type;
+        function resultCheck(date,id,type,illegal_type){
+            // console.log(type);
+            var detectionResultCheck_url = '/detection/detectionResultCheck/?date='+date+'&entity_id='+id+'&type='+type+'&illegal_type='+illegal_type;
             public_ajax.call_request('get',detectionResultCheck_url,resultCheck_result);
         }
         function resultCheck_result(data){
-            console.log(data);
+            // console.log(data);
             if(data.status == 'ok'){
                 $('#Success .modal-body').empty().append('<center>审核成功</center>');
                 $('#Success').modal('show');
