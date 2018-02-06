@@ -15,10 +15,19 @@
     var h_warnCount_url='/homepage/warnCount/';
     public_ajax.call_request('get',h_warnCount_url,h_warnCount);
     function h_warnCount(data){
-        if(data){
-            $('#picChart-3 .company-1').text(data.com);//公司
-            $('#picChart-3 .company-2').text(data.plat);//平台
-            $('#picChart-3 .company-3').text(data.pro);//项目
+        // if(data){
+        //     $('#picChart-3 .company-1').text(data.com);//公司
+        //     $('#picChart-3 .company-2').text(data.plat);//平台
+        //     $('#picChart-3 .company-3').text(data.pro);//项目
+        // }
+        for(var i=0;i<data.length;i++){
+            if(data[i].entity_type == 1){//平台
+                $('#picChart-3 .company-2').text(data[i].count);//平台
+            }else if(data[i].entity_type == 2){
+                $('#picChart-3 .company-1').text(data[i].count);//公司
+            }else if(data[i].entity_type == 3){
+                $('#picChart-3 .company-3').text(data[i].count);//项目
+            }
         }
     }
 
