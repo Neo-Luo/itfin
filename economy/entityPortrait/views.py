@@ -9,8 +9,6 @@ import json
 
 field = ['id','entity_name','entity_type','operation_mode','province','city','district','date','illegal_type']
 plat_field = ['id','entity_name','illegal_type','entity_type']
-company_field = ['id','entity_name','illegal_type','entity_type']
-project_field = ['id','entity_name','illegal_type','entity_type']
 
 @entityPortrait.route('/entityPortrait/')
 def entityportrait():
@@ -44,10 +42,6 @@ def divi_page():
 	warn_distribute = request.args.get('warn_distribute','')
 	page_number = int(request.args.get('page_number',''))
 	page_size = int(request.args.get('page_size',''))
-	#platCount = int(request.args.get("platCount",""))
-	#comCount = int(request.args.get("comCount",""))
-	#proCount = int(request.args.get("proCount",""))
-	#resultsCount = int(request.args.get("resultsCount",""))
 	result = diviPage(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_GONGSHANG,field,operation_mode,\
 						illegal_type,entity_type,warn_distribute,page_number,page_size)
 	return json.dumps(result,ensure_ascii=False)
@@ -55,17 +49,17 @@ def divi_page():
 
 @entityPortrait.route('/platform/',methods=['POST','GET'])
 def platform():
-	result = get_platform(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,plat_field)
+	result = get_platform(TABLE_MONITOR,plat_field)
 	return json.dumps(result,ensure_ascii=False)
 
 @entityPortrait.route('/company/',methods=['POST','GET'])
 def company():
-	result = get_company(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,company_field)
+	result = get_company(TABLE_MONITOR,plat_field)
 	return json.dumps(result,ensure_ascii=False)
 
 @entityPortrait.route('/project/',methods=['POST','GET'])
 def project():
-	result = get_project(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,project_field)
+	result = get_project(TABLE_MONITOR,plat_field)
 	return json.dumps(result,ensure_ascii=False)
 
 
