@@ -58,13 +58,6 @@
     }
 
 //====预警记录====
-    var earlyWarningdata=[{'a':'湖北嘟嘟','b':'北京','c':'2016-11-24','d':'指标预警','e':'集资','f':'heiha'},{'a':'优易网','b':'北京','c':'2016-11-24','d':'指标预警','e':'集资','f':'heiha'},
-        {'a':'青云门','b':'北京','c':'2016-11-24','d':'模型预警','e':'集资','f':'heiha'},{'a':'湖北嘟嘟','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},{'a':'优易网','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},
-        {'a':'青云门','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},{'a':'湖北嘟嘟','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},{'a':'优易网','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},
-        {'a':'青云门','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},{'a':'湖北嘟嘟','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},{'a':'优易网','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},
-        {'a':'青云门','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},{'a':'湖北嘟嘟','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},{'a':'优易网','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},
-        {'a':'青云门','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},{'a':'湖北嘟嘟','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},{'a':'优易网','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'},
-        {'a':'青云门','b':'北京','c':'2016-11-24','d':'ALIBABA','e':'集资','f':'heiha'}]
     var earlyWarning_url='/detection/detectData/?date=7&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all';
     // public_ajax.call_request('get',earlyWarning_url,earlyWarning);
     function earlyWarning(data) {
@@ -205,8 +198,9 @@
         $('#recordingTable p.load').hide();
         $('.recordingTable .fixed-table-toolbar .search input').attr('placeholder','请输入查询内容');
     };
-    // earlyWarning(earlyWarningdata);
 
+    var detectionCount_url='/detection/detectionCount/?date=7&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all';
+    // public_ajax.call_request('get',detectionCount_url,detectionCount);
     // 后端分页
     function earlyWarning_ser() {
         // $('#recordingTable').bootstrapTable('load', data);
@@ -214,7 +208,7 @@
             method:'get',
             striped: false,  //是否显示行间隔色
             cache: false,    //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
-            dataField: "data",//这是返回的json数组的key.默认好像是"rows".这里只有前后端约定好就行
+            dataField: "rows",//这是返回的json数组的key.默认好像是"rows".这里只有前后端约定好就行
             // data:data,
             search: true,//是否搜索
             pagination: true,//是否分页
@@ -238,13 +232,13 @@
                 // var subcompany = $('#subcompany option:selected').val();
                 // var name = $('#name').val();
                 return {
-                      page_number: params.offset+1,//如果设置了分页，页面数据条数
+                      page_number: (params.offset)/params.limit+1,//如果设置了分页，页面数据条数
                       page_size: params.limit, //如果设置了分页，设置可供选择的页面数据条数。设置为 All 或者 Unlimited，则显示所有记录。
                       // companyId:subcompany,
                       // name:name
                     };
             },
-            responseHandler:responseHandler,//请求数据成功后，渲染表格前的方法
+            // responseHandler:responseHandler,//请求数据成功后，渲染表格前的方法
             columns: [
                 {
                     title: "监测对象",//标题
@@ -254,7 +248,6 @@
                     align: "center",//水平
                     valign: "middle",//垂直
                     formatter: function (value, row, index) {
-                        console.log(row);
                         if (row.entity_name==''||row.entity_name=='null'||row.entity_name=='unknown'||!row.entity_name){
                             return '未知';
                         }else {
@@ -367,8 +360,14 @@
     };
     earlyWarning_ser()
     //请求成功方法
+    var total;
+    public_ajax.call_request('get',detectionCount_url,function(data){
+            total = data
+        });
     function responseHandler(result){
-        console.log(result);
+        // var json = {};
+        // json.rows = result;
+        // console.log(result);
         // var errcode = result.errcode;//在此做了错误代码的判断
         // if(errcode != 0){
         //     alert("错误代码" + errcode);
@@ -379,6 +378,13 @@
         //     total : result.dataLength, //总页数,前面的key必须为"total"
         //     data : result.rowDatas //行数据，前面的key要与之前设置的dataField的值一致.
         // };
+
+        // console.log(json);
+        return {
+            total:total,
+            rows:result
+        };
+        // $('#recordingTable').bootstrapTable('load', result);
     };
 
     // 更新下拉框
