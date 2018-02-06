@@ -60,6 +60,7 @@ var monitor_status_1;
         var legalPerson = '未知';
         var capital = '未知';
         var company = '未知';
+        var risk_level = '未知';
         if (item.entity_type==1){t1='平台';}else if (item.entity_type==2){t1='公司';}else if (item.entity_type==1){t1='项目';}else {t1='未知'}
         if (item.set_time){t2=item.set_time;}//成立时间
         $('.location').text(item.regist_address||''); //注册地
@@ -77,7 +78,7 @@ var monitor_status_1;
         $('.type-3').text(t2);//成立时间
         $('.type-4').text(legalPerson);//法人代表
         $('.type-5').text(capital);//注册资本
-        $('.isPlatformName').text(item.company || '');//工商注册公司名称：
+        $('.isPlatformName').text(company);//工商注册公司名称：
 
         //风险评价
         if (item.illegal_type==1){//是否疑似非法集资
@@ -92,11 +93,30 @@ var monitor_status_1;
         }
         $('.val-1').text(t3);
 
-        if (item.risk_level!=''&&item.risk_level!='null'&&item.risk_level!='unknown'&&!!item.risk_level&&item.risk_level!='None'){
-            t4=item.risk_level;
+        var illegal_type_1 = parseInt(item.illegal_type);
+        var risk_level_1 = parseInt(item.risk_level);
+        if(illegal_type_1 == 1){
+            if(risk_level_1 >= 99){
+                risk_level = '重大';
+            }else if(risk_level_1 <= 98 && risk_level_1 >=95){
+                risk_level = '大';
+            }else if(risk_level_1 < 95){
+                risk_level = '一般';
+            }else {
+                risk_level = risk_level_1;
+            }
+        }else if(illegal_type_1 == 2){
+            if(risk_level_1 >= 100){
+                risk_level = '重大';
+            }else if(risk_level_1 <= 99 && risk_level_1 >= 85){
+                risk_level = '大';
+            }else if(risk_level_1 < 85){
+                risk_level = '一般';
+            }else {
+                risk_level = risk_level_1;
+            }
         }
-        $('.val-2').text(item.risk_level);//风险等级
-        // $('.val-2').text(t4);//风险等级
+        $('.val-2').text(risk_level);//风险等级
 
         // if (item.impact_level!=''&&item.impact_level!='null'&&item.impact_level!='unknown'&&!!item.impact_level){
         //     t5=item.impact_level;
@@ -121,7 +141,8 @@ var monitor_status_1;
             }
             $('.mid-3').html(str);
         }else {
-            $('.mid-3').text('暂无记录');
+            var str = '<center>暂无记录</center>'
+            $('.mid-3').html(str);
         }
 
         // 取出entity_name
@@ -201,17 +222,6 @@ var monitor_status_1;
 
         public_ajax.call_request('get',commentinforContent_url,commentinforContent_1);
     }
-    // // 编辑功能
-    // $('#card-edit').on('click',function(){
-    //     if($('#card .infor .inforLine b').attr('contenteditable') == true){
-    //         $('#card .infor .inforLine b').attr('contenteditable','false');
-    //         console.log('已退出编辑模式=======');
-    //     }else if($('#card .infor .inforLine b').attr('contenteditable') == false){
-    //         $('#card .infor .inforLine b').attr('contenteditable','true');
-    //         console.log("=========编辑模式中");
-    //     }
-
-    // })
 
 // 编辑基本信息
     // 值 渲染到input
@@ -384,9 +394,6 @@ var monitor_status_1;
 
     var risk_url='/index/riskCommentTable/?entity_id='+pid+'&type='+type;
     public_ajax.call_request('get',risk_url,riskValue);
-    var objData=[{'a':'2017-09-11','b':'指标','c':''},{'a':'2017-09-11','b':'指标','c':''},{'a':'2017-09-11','b':'指标','c':''},
-        {'a':'2017-09-11','b':'指标','c':''},{'a':'2017-09-11','b':'指标','c':''},{'a':'2017-09-11','b':'指标','c':''},{'a':'2017-09-11','b':'指标','c':''},
-        {'a':'2017-09-11','b':'指标','c':''},{'a':'2017-09-11','b':'指标','c':''},{'a':'2017-09-11','b':'指标','c':''}]
     function riskValue(data) {
         // console.log(data);
         for(var item in data){
@@ -467,15 +474,16 @@ var monitor_status_1;
         }
 
     };
-    // riskValue(objData)
+
     // =========监测详情===========
     function jumpFrame_2(name,type,id,illegal_type) {
         // window.localStorage.setItem('monitorFlag',monitorFlag);
         // window.location.href='../templates/monitorDetails.html';
         var html = '';
         name=escape(name);
-        if(illegal_type == 1){//模型预警 ----> 进入画像页
-            html='/index/company/?name='+name+'&flag='+type+'&pid='+id;
+        if(illegal_type == 1){//模型预警 ----> 进入画像页(复制本)预警报告
+            // html='/index/company/?name='+name+'&flag='+type+'&pid='+id;
+            html='/index/company_monitor/?name='+name+'&flag='+type+'&pid='+id;
         }else if(illegal_type == 2){//舆情预警 ----> 进入监测详情页
             html='/index/monitor/?name='+name+'&flag='+type+'&pid='+id;
         }else {
@@ -1124,7 +1132,6 @@ var monitor_status_1;
     }
     // table_1();
 
-
 //====宣传行为====
     var publicityTable_url='/index/ad/?id='+pid;
     public_ajax.call_request('get',publicityTable_url,publicityTable);
@@ -1642,9 +1649,12 @@ var monitor_status_1;
         $('#editIncome').modal('show');
         // 宣传收益率
         var show_return_rate = $('#show_return_rate').text();
-        show_return_rate = show_return_rate.substr(0, show_return_rate.length - 1);
-        $('#editIncome .user-1 input').val(show_return_rate);
-
+        if(show_return_rate == '未知'){
+            $('#editIncome .user-1 input').val(show_return_rate);
+        }else{
+            show_return_rate = show_return_rate.substr(0, show_return_rate.length - 1);
+            $('#editIncome .user-1 input').val(show_return_rate);
+        }
         $('#sure_1').on('click',function(){
             var return_rate_val = $('#editIncome .user-1 input').val();
 

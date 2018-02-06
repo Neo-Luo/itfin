@@ -960,7 +960,15 @@
     var rABS = false; //是否将文件读取为二进制字符串
     var somAddData = [];
 
+    // $('#someAdd').on('click',function(){
+    //     console.log("1111111");
+    //     $('#importf_info').modal('show');
+    //     $('.modal-backdrop').css({position:'static'});
+    // })
+
     function importf(obj) {//导入
+
+
         if(!obj.files) {
             return;
         }
