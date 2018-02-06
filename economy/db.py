@@ -159,27 +159,27 @@ def diviPage(table1,table2,table3,table4,table5,field,operation_mode,illegal_typ
 	# 	return data
 
 
-def get_platform(table0,table,field):
+def get_platform(table,field):
 	cur = defaultDatabase()
-	sql = "select pd.id,pd.entity_name,pd.illegal_type,el.entity_type from %s as el inner join %s as pd on el.id=pd.entity_id where pd.illegal_type>0 and el.entity_type=1 and pd.date=(select max(date) from %s)" % (table0, table, table)
+	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=1"%(table)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
 	cur.close()
 	return data
 
-def get_company(table0,table,field):
+def get_company(table,field):
 	cur = defaultDatabase()
-	sql = "select cd.id,cd.entity_name,cd.illegal_type,el.entity_type from %s as el inner join %s as cd on el.id=cd.entity_id where cd.illegal_type>0 and el.entity_type=2 and cd.date=(select max(date) from %s)" % (table0, table, table)
+	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=2"%(table)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
 	cur.close()
 	return data
 
-def get_project(table0,table,field):
+def get_project(table,field):
 	cur = defaultDatabase()
-	sql = "select p.id,p.entity_name,p.illegal_type,el.entity_type from %s as el inner join %s as p on el.id=p.entity_id where p.illegal_type>0 and el.entity_type=3 and p.date=(select max(date) from %s)" % (table0, table, table)
+	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=3"%(table)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
