@@ -11,7 +11,8 @@ from economy.es import *
 
 field = ['illegal_type','province','city','count']
 province_field = ['province','count']
-warn_field = ['plat','com','pro']
+#warn_field = ['plat','com','pro']
+warn_field = ['entity_type','count']
 portrait_field = ['id','entity_name','entity_type','operation_mode','province','city','district','date','illegal_type']
 
 @homePage.route('/')
