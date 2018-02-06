@@ -331,47 +331,121 @@ function monitorCount(data){
 
 
 //第二屏---滚动
-// var allMonitor_url='/system_manage/show_users_account/';
+//公司
+var allcompany_url='/portraite/company/';
+public_ajax.call_request('get',allcompany_url,allcompany);
+var phonehtml_1=[];
+function allcompany(data) {
+    if(data.length != 0){
+        var line=data;
+        var illegalType;
+        for (var i=0;i<line.length;i++){
+            if(data[i].illegal_type == 1){
+                illegalType = '模型预警';
+            }else if(data[i].illegal_type == 2){
+                illegalType = '舆情预警';
+            }else if(data[i].illegal_type == 3){
+                illegalType = '指标预警';
+            }
+            phonehtml_1.push(
+                '<p class="phone" type="button" data-toggle="modal" ' +
+                'onclick="show(\''+line[i].entity_name+'\',\''+line[i].entity_type+'\',\''+line[i].id+'\')" onmousemove="chgecol(this)" onmouseout="back(this)">'+
+                '<span class="iphone zjnum">'+line[i].entity_name+'</span>'+
+                // '<span class="iphone bjnum">'+line[i]+'</span>'+
+                '<span class="iphone bjnum">'+illegalType+'</span>'+
+                '</p>'
+            );
+        };
+        // $('.scroll-box').append(phonehtml.splice(0,5));
+        $('.scroll-1').empty().append(phonehtml_1);
+    }else {
+        $('.scroll-1').children('center.load').text('暂无记录')
+    }
+}
+
+// 平台
 var allMonitor_url='/portraite/platform/';
 public_ajax.call_request('get',allMonitor_url,allMonitor);
-var phonehtml=[];
+var phonehtml_2=[];
 function allMonitor(data) {
     // console.log(data)
-    // var line=data.airlines;
-    var line=data;
-    var illegalType;
-    for (var i=0;i<line.length;i++){
-        if(data[i].illegal_type == 1){
-            illegalType = '模型预警';
-        }else if(data[i].illegal_type == 2){
-            illegalType = '舆情预警';
-        }else if(data[i].illegal_type == 3){
-            illegalType = '指标预警';
-        }
+    if(data.length != 0){
+        var line=data;
+        var illegalType;
+        for (var i=0;i<line.length;i++){
+            if(data[i].illegal_type == 1){
+                illegalType = '模型预警';
+            }else if(data[i].illegal_type == 2){
+                illegalType = '舆情预警';
+            }else if(data[i].illegal_type == 3){
+                illegalType = '指标预警';
+            }
 
-        phonehtml.push(
-            '<p class="phone" type="button" data-toggle="modal" ' +
-            'onclick="show(\''+line[i].entity_name+'\',\''+line[i].entity_type+'\',\''+line[i].id+'\')" onmousemove="chgecol(this)" onmouseout="back(this)">'+
-            '<span class="iphone zjnum">'+line[i].entity_name+'</span>'+
-            // '<span class="iphone bjnum">'+line[i]+'</span>'+
-            '<span class="iphone bjnum">'+illegalType+'</span>'+
-            '</p>'
-        );
-    };
-    // $('.scroll-box').append(phonehtml.splice(0,5));
-    $('.scroll-2').empty().append(phonehtml);
+            phonehtml_2.push(
+                '<p class="phone" type="button" data-toggle="modal" ' +
+                'onclick="show(\''+line[i].entity_name+'\',\''+line[i].entity_type+'\',\''+line[i].id+'\')" onmousemove="chgecol(this)" onmouseout="back(this)">'+
+                '<span class="iphone zjnum">'+line[i].entity_name+'</span>'+
+                // '<span class="iphone bjnum">'+line[i]+'</span>'+
+                '<span class="iphone bjnum">'+illegalType+'</span>'+
+                '</p>'
+            );
+        };
+        // $('.scroll-box').append(phonehtml.splice(0,5));
+        $('.scroll-2').empty().append(phonehtml_2);
+    }else {
+        $('.scroll-2').children('center.load').text('暂无记录')
+    }
 }
-var $uList = $("#container .secondScreen .scroll-1");
+
+// 项目
+var allproject_url='/portraite/project/';
+public_ajax.call_request('get',allproject_url,allproject);
+var phonehtml_3=[];
+function allproject(data) {
+    // console.log(data)
+    if(data.length != 0){
+        var line=data;
+        var illegalType;
+        for (var i=0;i<line.length;i++){
+            if(data[i].illegal_type == 1){
+                illegalType = '模型预警';
+            }else if(data[i].illegal_type == 2){
+                illegalType = '舆情预警';
+            }else if(data[i].illegal_type == 3){
+                illegalType = '指标预警';
+            }
+
+            phonehtml_3.push(
+                '<p class="phone" type="button" data-toggle="modal" ' +
+                'onclick="show(\''+line[i].entity_name+'\',\''+line[i].entity_type+'\',\''+line[i].id+'\')" onmousemove="chgecol(this)" onmouseout="back(this)">'+
+                '<span class="iphone zjnum">'+line[i].entity_name+'</span>'+
+                // '<span class="iphone bjnum">'+line[i]+'</span>'+
+                '<span class="iphone bjnum">'+illegalType+'</span>'+
+                '</p>'
+            );
+        };
+        // $('.scroll-box').append(phonehtml.splice(0,5));
+        $('.scroll-3').empty().append(phonehtml_3);
+    }else{
+        $('.scroll-3').children('center.load').text('暂无记录')
+    }
+
+}
+
+
+var $uList1 = $("#container .secondScreen .scroll-1");
 var $uList2 = $("#container .secondScreen .scroll-2");
+var $uList3 = $("#container .secondScreen .scroll-3");
 var timer = null;
 var timer2 = null;
+var timer3 = null;
 //触摸清空定时器
-$uList.hover(function() {
+$uList1.hover(function() {
         clearInterval(timer);
     },
     function() { //离开启动定时器
         timer = setInterval(function() {
-                scrollList($uList);
+                scrollList_1($uList1);
             },
             // 1000);
             2500);
@@ -382,32 +456,75 @@ $uList2.hover(function() {
     },
     function() { //离开启动定时器
         timer2 = setInterval(function() {
-                scrollList($uList2);
+                scrollList_2($uList2);
+            },
+            // 1000);
+            2500);
+    }).trigger("mouseleave"); //自动触发触摸事件
+//触摸清空定时器
+$uList3.hover(function() {
+        clearInterval(timer3);
+    },
+    function() { //离开启动定时器
+        timer3 = setInterval(function() {
+                scrollList_3($uList3);
             },
             // 1000);
             2500);
     }).trigger("mouseleave"); //自动触发触摸事件
 //滚动动画
-function scrollList(obj) {
+function scrollList_1(obj) {
     //获得当前<li>的高度
-    var scrollHeight = $(".scroll-box p:first").height();
+    var scrollHeight = $(".scroll-1 p:first").height();
     //滚动出一个<li>的高度
     // $uList.stop().animate({
-    obj.stop().animate({
+    $uList1.stop().animate({
             marginTop: -scrollHeight
         },
         600,
         function() {
             //动画结束后，将当前<ul>marginTop置为初始值0状态，再将第一个<li>拼接到末尾。
                    // $uList.css({
-                   obj.css({
+                   $uList1.css({
                        marginTop: 0
                    // }).find("p:first").appendTo($uList);
-                   }).find("p:first").appendTo(obj);
+                   }).find("p:first").appendTo($uList1);
             // $uList.css({
             //     marginTop: 0
             // }).find("p:first").remove();
             // $('.scroll-box .box').append(phonehtml.shift());
+        });
+};
+function scrollList_2(obj) {
+    //获得当前<li>的高度
+    var scrollHeight = $(".scroll-2 p:first").height();
+    //滚动出一个<li>的高度
+    // $uList.stop().animate({
+    $uList2.stop().animate({
+            marginTop: -scrollHeight
+        },
+        600,
+        function() {
+            //动画结束后，将当前<ul>marginTop置为初始值0状态，再将第一个<li>拼接到末尾。
+               $uList2.css({
+                   marginTop: 0
+               }).find("p:first").appendTo($uList2);
+        });
+};
+function scrollList_3(obj) {
+    //获得当前<li>的高度
+    var scrollHeight = $(".scroll-3 p:first").height();
+    //滚动出一个<li>的高度
+    // $uList.stop().animate({
+    $uList3.stop().animate({
+            marginTop: -scrollHeight
+        },
+        600,
+        function() {
+            //动画结束后，将当前<ul>marginTop置为初始值0状态，再将第一个<li>拼接到末尾。
+               $uList3.css({
+                   marginTop: 0
+               }).find("p:first").appendTo($uList3);
         });
 };
 
