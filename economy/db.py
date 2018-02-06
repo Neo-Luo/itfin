@@ -134,7 +134,7 @@ def diviPage(table1,table2,table3,table4,table5,field,operation_mode,illegal_typ
 		return data
 
 	elif begin >= platCount and begin < platCount + comCount:
-		begin -= platCount 
+		begin -= platCount
 		cur.execute(sql2)
 		res2 = cur.fetchall()
 		data = [{k:row[i] for i,k in enumerate(field)} for row in res2]

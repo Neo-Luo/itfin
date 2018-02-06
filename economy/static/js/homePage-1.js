@@ -616,7 +616,7 @@
                             {name: '五指山市',value: Math.round(Math.random()*1000)}
                         ],
                         */
-                        // 标注
+                        // 标注// ===========先去掉标注===============
                         markPoint : {
                             symbol:'pin',
                             symbolSize : function (v){
@@ -1903,13 +1903,19 @@
                             // // {start: 150, end: 300, label: '50 到 100（自定义特殊颜色）'},
                             // {end: 150},
 
-                            {start: 100},
-                            // {start: 700, end: 999},
+                            // {start: 100},
+                            // // {start: 700, end: 999},
+                            // {start: 50, end: 100},
+                            // {start: 20, end: 50},
+                            // {start: 10, end: 20},
+                            // // {start: 150, end: 300, label: '50 到 100（自定义特殊颜色）'},
+                            // {end: 10},
+
+                            {start: 500},
+                            {start: 100, end: 500},
                             {start: 50, end: 100},
                             {start: 20, end: 50},
-                            {start: 10, end: 20},
-                            // {start: 150, end: 300, label: '50 到 100（自定义特殊颜色）'},
-                            {end: 10},
+                            {end: 20},
                         ],
                         textStyle:{
                             color:'white'
@@ -2015,52 +2021,6 @@
                             height:'85%'
                         }
                     }
-                    /*
-                        if ((screen.width == 1920) && (screen.height == 1080)){
-                            option.series[0].mapLocation = {
-                                x:'center',
-                                y:'100px',
-                                width:'85%',
-                                height:'85%'
-                            }
-                        }
-                        if ((screen.width == 1440) && (screen.height == 900)){
-                            option.series[0].mapLocation = {
-                                x:'center',
-                                y:'100px',
-                                width:'100%',
-                                height:'80%'
-                            }
-                        }
-                        if ((screen.width == 1366) && (screen.height == 768)){
-                            option.series[0].mapLocation = {
-                                x:'center',
-                                y:'100px',
-                                width:'100%',
-                                height:'80%'
-                            }
-                        }
-                     */
-                    /*
-                        // ====请求全国数据====用已保存的
-                        var cityRank_url_1='/homepage/cityRank/';
-                        public_ajax.call_request('get',cityRank_url_1,cityRank_1);
-                        var cityRankData_1 = [];
-                        function cityRank_1(data){
-                            if(data){
-                                // console.log(data);
-                                for(var i=0;i<data.length;i++){
-                                    cityRankData_1.push({name:data[i].province,value:data[i].count})
-                                }
-                                cityRankData_1.push({name:'青海',value:0});
-                                cityRankData_1.push({name:'甘肃',value:0});
-                                // console.log(cityRankData_1);
-                                option.series[0].data = cityRankData_1;
-                                myChart.setOption(option);
-                            }
-                        }
-                        myChart.setOption(option);
-                     */
                 }
                 option.series[0].mapType = mt;
                 option.title.subtext = mt + ' （点击切换）';
@@ -2097,13 +2057,19 @@
                         // // {start: 150, end: 300, label: '50 到 100（自定义特殊颜色）'},
                         // {end: 150},
 
-                        {start: 100},
-                        // {start: 700, end: 999},
+                        // {start: 100},
+                        // // {start: 700, end: 999},
+                        // {start: 50, end: 100},
+                        // {start: 20, end: 50},
+                        // {start: 10, end: 20},
+                        // // {start: 150, end: 300, label: '50 到 100（自定义特殊颜色）'},
+                        // {end: 10},
+
+                        {start: 500},
+                        {start: 100, end: 500},
                         {start: 50, end: 100},
                         {start: 20, end: 50},
-                        {start: 10, end: 20},
-                        // {start: 150, end: 300, label: '50 到 100（自定义特殊颜色）'},
-                        {end: 10},
+                        {end: 20},
                     ],
                     textStyle:{
                         color:'white'
@@ -2128,14 +2094,6 @@
                         hoverable: true,
                         mapType: 'china',
                         selectedMode : 'single',
-                        // 地图位置设置，默认只适应上下左右居中可配x，y，width，height，任意参数为空都将根据其他参数自适应
-                        // 默认1920*1080分辨率
-                        // mapLocation:{
-                        //     x:'20%',
-                        //     y:'80px',
-                        //     width:'85%',
-                        //     height:'85%'
-                        // },
                         itemStyle: {
                             normal: {
                                 borderWidth:2,
@@ -2253,7 +2211,7 @@
                 // 右下角热点舆情
                 public_ajax.call_request('get',hotSpot_url,comment);
             }
-            myChart.setOption(option);
+            // myChart.setOption(option);
         }
     );
 
