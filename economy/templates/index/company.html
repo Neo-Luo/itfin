@@ -25,229 +25,6 @@
 	}
 	.page-list {display: none;}
 	<!---->
-	.riskValueTable .fixed-table-toolbar .search,.publicityTable .fixed-table-toolbar .search {
-		display: none;
-	}
-	.riskValueTable .bootstrap-table .table thead>tr>th,.publicityTable .bootstrap-table .table thead>tr>th{
-		width: 5%;
-	}
-	#commentinforContent tbody,#commentinforContent tr,#commentinforContent td {
-		display:block;
-		width:100%;
-	}
-	/* 宣传行为 */
-	#pubTable {
-		border-collapse:collapse;
-		width:100%;
-		border: 1px solid #ddd;
-		border-radius:1px;
-		padding:8px;
-	}
-	.publicityTable table>thead>tr>th{
-		border-bottom:1px solid #ddd;
-	}
-
-
-	/* ====lvlei====*/
-	/* 模态框 */
-	#moreInfo, #editCard, #editIncome,
-	#EditRelatedPlat-box ,#EditRelatedCompany-box,
-	#saveSuccess ,#MonitorStatus_off{
-		top:100px;
-	}
-	/* #moreInfo .modal-title, #editCard .modal-title ,#editIncome .modal-title,
-	#EditRelatedPlat-box .modal-title ,#EditRelatedCompany-box .modal-title,
-	#saveSuccess .modal-title {
-		text-align: center;
-	} */
-	#moreInfo .modal-title {
-		text-align: center;
-	}
-	#moreInfo .modal-body{
-		max-height:500px;
-		overflow:auto;
-	}
-	#moreInfo .modal-body span.titleName {
-		font-weight:700;
-	}
-	#moreInfo .modal-body #words {
-		text-indent:2em;
-	}
-	@media (min-width: 768px) {
-		.modal-dialog {
-			width: 800px;
-			margin: 30px auto;
-		}
-	}
-	/* 广告内容 */
-	.billing span {
-		/* font-weight:700; */
-	}
-	.billing .inforContent .main p.context {
-		max-height:300px;
-		overflow:auto;
-	}
-	/* 评论内容 */
-	.commentinforContent span {
-		font-weight:700;
-	}
-	.commentinforContent span.pagination-info {
-		font-weight:400;
-	}
-    .commentinforContent .inforContent .main p.context {
-        max-height:300px;
-        overflow:auto;
-        word-wrap:break-word;
-        word-break:break-all;
-    }
-	/* 加载提示信息 */
-	.load {
-		text-align:center;
-		margin-top:10px;
-	}
-	/* 去掉顶边框 */
-	#inforChange thead th,#lawsuit thead th {
-		border-top:none;
-	}
-	/*信息变更  诉讼记录 */
-	#container .register h3,#container .litigation h3 {
-		margin-bottom:15px;
-	}
-	#container .riskValue b {
-		font-size:18px;
-	}
-	/* 子公司分公司图表 */
-	#table-1 {
-		margin:0 auto;
-	}
-	/* 股东信息 */
-	#table-3,#table-4 {
-		text-align:left;
-	}
-	#table-3 p,#table-4 p {
-	    /* font-size: 16px; */
-	    margin:20px 0 0 40px;
-	    max-width:100%;
-	    white-space: nowrap;
-	    overflow: hidden;
-	    text-overflow: ellipsis;
-	    /* font-weight: 700; */
-	}
-	/* 去掉分页选项 - 信息变更  诉讼记录  广告内容*/
-	.inforChange .page-list,.litigation .page-list,.advertising .page-list{
-        display: none;
-    }
-    /* 宣传行为 */
-    #publicityTable {
-		width:100%;
-		height:300px;
-    }
-    /* 收益率分布 */
-    #container .inforContent_2 .main {
-    	text-align: left;
-	    position: relative;
-	    padding: 5px 5px 5px 30px;
-	    background: rgba(88, 88, 88, 0.1);
-	    margin: 20px auto 0;
-	    width:96%;
-    }
-    #container .inforContent_2 .main .textFlag{
-    	position: absolute;
-	    left:8px;
-    }
-    /* 经营异常标题信息 信息变更  诉讼记录*/
-    .business_title,.inforChange_title,.lawsuit_title {
-    	margin:20px 0;
-    }
-    .business_title span,.inforChange_title span,.lawsuit_title span {
-		display:inline-block;
-		width: 24%;
-    }
-    .business_title span b,.inforChange_title span b,.lawsuit_title span b{
-    	color:#ff6d70;
-    	font-size:18px;
-    }
-    /* 广告内容图表 */
-    #billing_diagram {
-    	width:100%;
-    	height:300px;
-    }
-    /* 对外投资数量 */
-    #table-2New{
-        text-align:left;
-    }
-    #table-2New p {
-        margin:10px 0 20px 40px;
-    }
-     #table-2New p span,#table-3 p span  {/* 股东数量*/
-        float:right;
-        margin-right:80%;
-    }
-    /* 二级标题 */
-    .twoLevel_headlines {
-        padding-left:30px;
-		font-size: 16px;
-    }
-	/* ===12 22 === */
-	.smallTit p {
-		margin:10px 0 0 10px;
-		display: inline-block;
-	}
-	.smallTit span {
-		display: inline-block;
-		margin: 0 15px;
-	}
-	.smallTit span:nth-of-type(1) {
-		width: 100px;
-		text-align: right;
-	}
-	/* 编辑功能 */
-	.edit {
-		contenteditable:true;
-	}
-	#editCard .example ,#editIncome .example,
-	#EditRelatedPlat-box .example,#EditRelatedCompany-box .example {
-	    margin-top: 20px;
-	    /* text-align: center; */
-	    text-align: left;
-	    padding-left:5%;
-	}
-	#editCard .example span, #editIncome .example span,
-	#EditRelatedPlat-box .example span,
-	#EditRelatedCompany-box .example span{
-	    display: inline-block;
-	    /* width: 100px; */
-	    width: 25%;
-	    text-align: center;
-	}
-	#editCard .example input, #editCard .example select ,#editIncome .example input,
-	#EditRelatedPlat-box .example input,
-	#EditRelatedCompany-box .example input {
-	    /* width: 250px; */
-	    width: 50%;
-	    background: transparent;
-	    border: 1px solid silver;
-	    border-radius: 5px;
-	    padding: 3px 7px;
-	    /* color: white; */
-	    text-align: center;
-	}
-	/* 停止恢复监测 */
-	#MonitorStatus_off .modal-body textarea{
-	    max-width: 100%;
-	    min-width:100%;
-	    background: transparent;
-	    border: 1px solid silver;
-	    border-radius: 5px;
-	    padding: 3px 7px;
-	    /* color: white; */
-	    text-align: left;
-	    min-height:80px;
-	}
-	/* 收益率分布底部pageinfo */
-	.income .pagination-detail{
-		display:none;
-	}
 
 </style>
 {% endblock %}
@@ -271,7 +48,7 @@
 				<span class="status-1 status btn-primary"><i class="icon icon-retweet"></i>&nbsp;停止监测</span>
 				<span class="status-2 status btn-primary"><i class="icon icon-sitemap"></i>&nbsp;查看网络图</span>
 			</h3>
-			<p class="isPlatform inforLine" style="display: none;min-width:48%;">
+			<p class="isPlatform inforLine" style="display: none;min-width:56%;">
 				<span>工商注册公司名称：</span>&nbsp;<b class="isPlatformName"></b>
 			</p>
 			<p class="infor-3 inforLine">
@@ -282,7 +59,7 @@
 				<span>运营模式：</span>&nbsp;<b class="type-1"></b>
 			</p>
 
-			<p class="infor-4 inforLine" style="min-width:48%;">
+			<p class="infor-4 inforLine" style="min-width:56%;">
 				<span>成立时间：</span>&nbsp;<b class="type-3"></b>
 			</p>
 			<p class="infor-5 inforLine">
@@ -464,48 +241,14 @@
 				<center>暂无记录</center>
 			</div>
 		</div>
-		<div>
+		<div style="margin-top: 20px;">
             <!-- <h4><i class="icon icon-comment"></i>&nbsp;评论信息</h4> -->
 			<h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;舆情内容</h5>
 			<div class="commentinforContent">
 				<div id="commentinforContent">
 					<p class="load">正在拼命加载中....</p>
 				</div>
-				<!-- <div id="commentinforContent_0">
-					<span>微信</span>
-					<p class="load">正在拼命加载中....</p>
-				</div>
-				<div id="commentinforContent_1">
-					<span>知乎</span>
-					<p class="load">正在拼命加载中....</p>
-				</div>
-				<div id="commentinforContent_2">
-					<span>论坛</span>
-					<p class="load">正在拼命加载中....</p>
-				</div>
-				<div id="commentinforContent_3">
-					<span>微博</span>
-					<p class="load">正在拼命加载中....</p>
-				</div>
-				<div id="commentinforContent_4">
-					<span>贴吧</span>
-					<p class="load">正在拼命加载中....</p>
-				</div> -->
 			</div>
-			<!--<div class="inforContent" id="commentinforContent">-->
-			<!--<div class="main">-->
-			<!--<img src="/static/images/textIcon.png" class="textFlag" style="top:8px;">-->
-			<!--<p class="option">-->
-			<!--<span>评论倾向：<b style="color: #ff6d70">积极</b></span>-->
-			<!--<span>评论来源：<b style="color: #ff6d70">百度贴吧</b></span>-->
-			<!--<span>发布时间：<b style="color: #ff6d70">2017-12-11</b></span>-->
-			<!--<button class="originalbtn btn-primary btn-xs">查看全文</button>-->
-			<!--</p>-->
-			<!--<p class="context">-->
-			<!--评论内容：放款快，审核简单，赶快注册！-->
-			<!--</p>-->
-			<!--</div>-->
-			<!--</div>-->
 		</div>
 
 	</div>
