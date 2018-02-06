@@ -205,49 +205,94 @@ def get_perceive_content(index_name,type,text_id):
 	return list
 
 
+# #首页
+# def getHotSpot(entity_list):
+# 	type = 'type1'
+# 	results = []
+# 	number = 0
+# 	for dict in entity_list:
+# 		indexB = ScalableBloomFilter(1000,0.001)
+# 		for index_name in ['bbs','forum','webo']:
+# 			query_body = {
+# 					"sort":{"publish_time":{"order":"desc"}},
+# 					"query": {
+# 						"bool": {
+# 							"must": [
+# 								{
+# 								"match": {
+# 									"query_name": dict['name']
+# 									}
+# 								},
+# 									{
+# 								"match": {
+# 									"em1": 1
+# 									}
+# 								}
+# 							]
+# 						}
+# 					}
+# 				}
+# 			res = es.search(index=index_name, doc_type=type, body=query_body, request_timeout=100)
+# 			hits = res['hits']['hits']
+# 			if(len(hits)):
+# 				for item in hits:
+# 					if dict['name'] in item['_source']['content']:
+# 						if not index_name in indexB:
+# 							if number < 10:
+# 								id = dict['id']
+# 								entity_name = dict['name']
+# 								entity_type = dict['entity_type']
+# 								content = item['_source']['content']
+# 								results.append({'id':id,'name':entity_name,'content':content,'entity_type':entity_type})
+# 								[indexB.add(index_name)]
+# 								number += 1
+# 							else:
+# 								return results
+	
+# 	return results
+
+
 #首页
 def getHotSpot(entity_list):
-	type = 'type1'
-	results = []
-	number = 0
-	for dict in entity_list:
-		indexB = ScalableBloomFilter(1000,0.001)
-		for index_name in ['bbs','forum','webo']:
-			query_body = {
-					"sort":{"publish_time":{"order":"desc"}},
-					"query": {
-						"bool": {
-							"must": [
-								{
-								"match": {
-									"query_name": dict['name']
-									}
-								},
-									{
-								"match": {
-									"em1": 1
-									}
-								}
-							]
-						}
-					}
-				}
-			res = es.search(index=index_name, doc_type=type, body=query_body, request_timeout=100)
-			hits = res['hits']['hits']
-			if(len(hits)):
-				for item in hits:
-					if dict['name'] in item['_source']['content']:
-						if not index_name in indexB:
-							if number < 10:
-								id = dict['id']
-								entity_name = dict['name']
-								entity_type = dict['entity_type']
-								content = item['_source']['content']
-								results.append({'id':id,'name':entity_name,'content':content,'entity_type':entity_type})
-								[indexB.add(index_name)]
-								number += 1
-							else:
-								return results
-	
-	return results
+ exist_list = []
+ type = 'type1'
+ results = []
+ number = 0
+ flag = 0
+ for index_name in ['bbs','forum','webo']:
+  query_body = {
+     "size":1000,
+     "sort":{"publish_time":{"order":"desc"}},
+     "query": {
+      "bool": {
+       "must": [
+         {
+        "match": {
+         "em1": 1
+         }
+        }
+       ]
+      }
+     }
+  }
+  res = es.search(index=index_name, doc_type=type, body=query_body, request_timeout=400)
+  hits = res['hits']['hits']
 
+  if(len(hits)):
+   for item in hits:
+    entity_name = item['_source']['query_name']
+
+    if entity_name not in exist_list:
+     exist_list.append(entity_name)
+     # sql语句
+     # id = dict['id']
+     # entity_type = dict['entity_type']
+     content = item['_source']['content']
+     results.append({'id':1,'name':entity_name,'content':content,'entity_type':1})
+     if(len(exist_list)>=10):
+      break
+  if(len(exist_list)>=10):
+      break     
+
+ 
+ return results

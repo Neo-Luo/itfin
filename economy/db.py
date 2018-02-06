@@ -28,8 +28,12 @@ def testDatabase():
 #实体画像
 def get(table1,table2,table5,field,operation_mode,illegal_type,entity_type,warn_distribute):
 	cur = defaultDatabase()
-	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.date,pd.illegal_type from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s) and el.monitor_status>='1' and pd.date=(select max(date) from %s as a) and pd.operation_mode=%d and pd.illegal_type=%d and el.entity_type=%d and gs.province='%s'" % (table1,table2,table5,table5,table2,operation_mode,illegal_type,entity_type,warn_distribute)
-	#sql2 = "select el.id,el.entity_name,el.entity_type,cd.operation_mode,gs.province,gs.city,gs.district,cd.date,cd.illegal_type from %s as el inner join %s as cd on el.id=cd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s) and el.monitor_status>='1' and cd.date=(select max(date) from %s as a) and cd.operation_mode=%d and cd.illegal_type=%d and el.entity_type=%d and gs.province='%s'" % (table1,table3,table5,table5,table3,operation_mode,illegal_type,entity_type,warn_distribute)
+	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.date,pd.illegal_type from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s) and el.monitor_status>='1' and pd.operation_mode=%d and pd.illegal_type=%d and el.entity_type=%d and gs.province='%s' group by pd.entity_id" % (table1,table2,table5,table5,operation_mode,illegal_type,entity_type,warn_distribute)
+	# sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.date,pd.illegal_type\
+	#  from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date)\
+	#   from %s) and el.monitor_status>='1' and pd.operation_mode=%d and pd.illegal_type=%d and\
+	#    el.entity_type=%d and gs.province='%s' and pd.id in (select SUBSTRING_INDEX(group_concat(pd.id order by pd.date desc),',',1) from plat_detail_daily group by entity_id) order by pd.date desc " % (table1,table2,table5,table5,operation_mode,illegal_type,entity_type,warn_distribute)
+	# #sql2 = "select el.id,el.entity_name,el.entity_type,cd.operation_mode,gs.province,gs.city,gs.district,cd.date,cd.illegal_type from %s as el inner join %s as cd on el.id=cd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s) and el.monitor_status>='1' and cd.date=(select max(date) from %s as a) and cd.operation_mode=%d and cd.illegal_type=%d and el.entity_type=%d and gs.province='%s'" % (table1,table3,table5,table5,table3,operation_mode,illegal_type,entity_type,warn_distribute)
 	#sql3 = "select el.id,el.entity_name,el.entity_type,p.operation_mode,gs.province,gs.city,gs.district,p.date,p.illegal_type from %s as el inner join %s as p on el.id=p.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s) and el.monitor_status>='1' and p.date=(select max(date) from %s as a) and p.operation_mode=%d and p.illegal_type=%d and el.entity_type=%d and gs.province='%s'" % (table1,table4,table5,table5,table4,operation_mode,illegal_type,entity_type,warn_distribute)
 	if operation_mode == 0:
 		sql1 = sql1.replace(' and pd.operation_mode=0','')
@@ -47,6 +51,7 @@ def get(table1,table2,table5,field,operation_mode,illegal_type,entity_type,warn_
 		sql1 = sql1.replace(" and gs.province='all'","")
 		#sql2 = sql2.replace(" and gs.province='all'","")
 		#sql3 = sql3.replace(" and gs.province='all'","")
+	print(sql1)
 	cur.execute(sql1)
 	res1 = cur.fetchall()
 	#cur.execute(sql2)
@@ -161,7 +166,7 @@ def diviPage(table1,table2,table3,table4,table5,field,operation_mode,illegal_typ
 
 def get_platform(table,field):
 	cur = defaultDatabase()
-	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=1"%(table)
+	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=1 and date=(select max(date) from %s)"%(table,table)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
@@ -170,7 +175,7 @@ def get_platform(table,field):
 
 def get_company(table,field):
 	cur = defaultDatabase()
-	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=2"%(table)
+	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=2 and date=(select max(date) from %s)"%(table,table)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
@@ -179,7 +184,7 @@ def get_company(table,field):
 
 def get_project(table,field):
 	cur = defaultDatabase()
-	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=3"%(table)
+	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=3 and date=(select max(date) from %s)"%(table,table)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
@@ -271,7 +276,7 @@ def get_ad(table,id,field):
 	res = cur.fetchall()
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
 	k_list = []
-	except_list = ['id', 'entity_id', 'entity_name', 'date']
+	except_list = ['id', 'entity_id', 'entity_name', 'date', 'ad0_bbs', 'ad0_zhihu', 'ad0_forum', 'ad0_webo', 'ad0_wechat']
 	for d in data:
 	    for k in d.keys():
 			if not k in except_list:
@@ -434,7 +439,7 @@ def totalDetectData(date,table1,table2,table3,field,risk_level,operation_mode,il
 	end_time = cur.fetchall()[0][0]
 	start_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=int(date))
 	start_time = start_time.strftime("%Y-%m-%d")
-	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.illegal_type,pd.date,pd.support_num,pd.against_num from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc" % (table1, table2, table3, start_time, end_time, risk_level, operation_mode, illegal_type, entity_type, warn_distribute)
+	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.illegal_type,pd.date,pd.support_num,pd.against_num from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status>='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc" % (table1, table2, table3, start_time, end_time, risk_level, operation_mode, illegal_type, entity_type, warn_distribute)
 
 	if operation_mode == 0:
 		sql1 = sql1.replace(' and pd.operation_mode=0','')
@@ -514,16 +519,16 @@ def detectionCount(date,table1,table2,table3,field,risk_level,operation_mode,ill
 	return res
 
 
-def detectionResultCheck(table,entity_id,date,type):
+def detectionResultCheck(table,entity_id,date,type,illegal_type):
 	cur = defaultDatabase()
 	if type == 1:
-		sql = "update %s set support_num=support_num+1 where entity_id=%d and date='%s'"%(table,entity_id,date)
+		sql = "update %s set support_num=support_num+1 where entity_id=%d and date='%s' and illegal_type=%d"%(table,entity_id,date,illegal_type)
 		cur.execute(sql)
 		dict = {'status':'ok'}
 		cur.close()
 		return dict
 	elif type == 0:
-		sql = "update %s set against_num=against_num+1 where entity_id=%d and date='%s'"%(table,entity_id,date)
+		sql = "update %s set against_num=against_num+1 where entity_id=%d and date='%s' and illegal_type=%d"%(table,entity_id,date,illegal_type)
 		cur.execute(sql)
 		dict = {'status':'ok'}
 		cur.close()
