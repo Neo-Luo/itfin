@@ -22,7 +22,8 @@ def portrait():
 	illegal_type = int(request.args.get('illegal_type',''))
 	entity_type = int(request.args.get('entity_type',''))
 	warn_distribute = request.args.get('warn_distribute','')
-	result = get(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_COMPANY_DETAIL,TABLE_PROJECT_DETAIL,TABLE_GONGSHANG,field,operation_mode,illegal_type,entity_type,warn_distribute)
+	#result = get(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_COMPANY_DETAIL,TABLE_PROJECT_DETAIL,TABLE_GONGSHANG,field,operation_mode,illegal_type,entity_type,warn_distribute)
+	result = get(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_GONGSHANG,field,operation_mode,illegal_type,entity_type,warn_distribute)
 	if result['status'] == 1:
 		return json.dumps(result['data'],ensure_ascii=False)
 
@@ -32,7 +33,7 @@ def entity_count():
 	illegal_type = int(request.args.get('illegal_type',''))
 	entity_type = int(request.args.get('entity_type',''))
 	warn_distribute = request.args.get('warn_distribute','')
-	result = entityCount(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_COMPANY_DETAIL,TABLE_PROJECT_DETAIL,TABLE_GONGSHANG,field,operation_mode,illegal_type,entity_type,warn_distribute)
+	result = entityCount(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_GONGSHANG,field,operation_mode,illegal_type,entity_type,warn_distribute)
 	return json.dumps(result,ensure_ascii=False)
 
 @entityPortrait.route('/diviPage/',methods=['POST','GET'])
@@ -43,12 +44,12 @@ def divi_page():
 	warn_distribute = request.args.get('warn_distribute','')
 	page_number = int(request.args.get('page_number',''))
 	page_size = int(request.args.get('page_size',''))
-	platCount = int(request.args.get("platCount",""))
-	comCount = int(request.args.get("comCount",""))
-	proCount = int(request.args.get("proCount",""))
-	resultsCount = int(request.args.get("resultsCount",""))
-	result = diviPage(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_COMPANY_DETAIL,TABLE_PROJECT_DETAIL,TABLE_GONGSHANG,field,operation_mode,\
-						illegal_type,entity_type,warn_distribute,page_number,page_size,platCount,comCount,proCount,resultsCount)
+	#platCount = int(request.args.get("platCount",""))
+	#comCount = int(request.args.get("comCount",""))
+	#proCount = int(request.args.get("proCount",""))
+	#resultsCount = int(request.args.get("resultsCount",""))
+	result = diviPage(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_GONGSHANG,field,operation_mode,\
+						illegal_type,entity_type,warn_distribute,page_number,page_size)
 	return json.dumps(result,ensure_ascii=False)
 
 
@@ -59,19 +60,19 @@ def platform():
 
 @entityPortrait.route('/company/',methods=['POST','GET'])
 def company():
-	result = get_company(TABLE_ENTITY_LIST,TABLE_COMPANY_DETAIL,company_field)
+	result = get_company(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,company_field)
 	return json.dumps(result,ensure_ascii=False)
 
 @entityPortrait.route('/project/',methods=['POST','GET'])
 def project():
-	result = get_project(TABLE_ENTITY_LIST,TABLE_PROJECT_DETAIL,project_field)
+	result = get_project(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,project_field)
 	return json.dumps(result,ensure_ascii=False)
 
 
 @entityPortrait.route('/portrait_letter/',methods=['POST','GET'])
 def portraitLetter():
 	letter = request.args.get('letter','')
-	result = get_portrait(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_COMPANY_DETAIL,TABLE_PROJECT_DETAIL,TABLE_GONGSHANG,field,letter)
+	result = get_portrait(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_GONGSHANG,field,letter)
 	return json.dumps(result,ensure_ascii=False)
 
 @entityPortrait.route('/monitorCount/')

@@ -7,7 +7,7 @@ from . import detection
 import json
 from economy.config import *
 
-field = ['id','entity_name','entity_type','operation_mode','province','city','district','illegal_type','date']
+field = ['id','entity_name','entity_type','operation_mode','province','city','district','illegal_type','date','support_num','against_num']
 rank_field = ['entity_id','entity_name','count']
 dis_field = ['illegal_type','province','city','count']
 warn_type_field = ['illegal_type','count']
@@ -30,7 +30,7 @@ def detect_data():
 	detectionCount = int(request.args.get('detectionCount',''))
 	result = getDetectData(date,TABLE_ENTITY_LIST,TABLE_MONITOR,TABLE_GONGSHANG,field,RISK_LEVEL,operation_mode,illegal_type,entity_type,warn_distribute,page_number,page_size,detectionCount)
 	return json.dumps(result,ensure_ascii=False)
-
+ 
 @detection.route('/totalDetectData/',methods=['POST','GET'])
 def total_detect_data():
 	date = int(request.args.get('date',''))
@@ -49,6 +49,14 @@ def detection_count():
 	entity_type = int(request.args.get('entity_type',''))
 	warn_distribute = request.args.get('warn_distribute','')
 	result = detectionCount(date,TABLE_ENTITY_LIST,TABLE_MONITOR,TABLE_GONGSHANG,field,RISK_LEVEL,operation_mode,illegal_type,entity_type,warn_distribute)
+	return json.dumps(result,ensure_ascii=False)
+
+@detection.route('/detectionResultCheck/')
+def detection_result_check():
+	entity_id = int(request.args.get('entity_id',''))
+	date = request.args.get('date','')
+	type = int(request.args.get('type',''))
+	result = detectionResultCheck(TABLE_MONITOR,entity_id,date,type)
 	return json.dumps(result,ensure_ascii=False)
 
 @detection.route('/detectRank/')
