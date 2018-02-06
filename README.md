@@ -1,2 +1,2 @@
 # itfin
-System for Illegal Fund-raising Monitoring and Early-warning
+System for Monitoring and Early-warning of Illegal Fund-raising
