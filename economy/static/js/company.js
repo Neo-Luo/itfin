@@ -2323,103 +2323,114 @@ var monitor_status_1;
     public_ajax.call_request('get',trend_url,line_2);
     function line_2(data) {
         if(data && data.length!=0){
-            $('#opinion').css('height','300px');
             var day30Data_0 = [],day30Data_1 = [],day30Data_2 = [];
             // 时间
             var date = [];
+            var flag = false;
             for(var i=0;i<data.length;i++){
-                // 一般负面评论
-                day30Data_0.push(data[i].em0_text_webo+data[i].em0_text_bbs+data[i].em0_text_zhihu+data[i].em0_text_forum+data[i].em0_text_wechat);
-                // 严重负面评论
-                day30Data_1.push(data[i].em1_text_webo+data[i].em1_text_bbs+data[i].em1_text_zhihu+data[i].em1_text_forum+data[i].em1_text_wechat);
-                // // 积极评论
-                // day30Data_2.push(data[i].sent2_webo+data[i].sent2_bbs+data[i].sent2_zhihu+data[i].sent2_forum+data[i].sent2_wechat);
-                // 时间
-                date.push(data[i].date);
+                if(data[i].em0_text_webo == 0 && data[i].em0_text_bbs == 0 && data[i].em0_text_zhihu == 0 && data[i].em0_text_forum == 0 && data[i].em0_text_wechat == 0 && data[i].em1_text_webo == 0 && data[i].em1_text_bbs == 0 && data[i].em1_text_zhihu == 0 && data[i].em1_text_forum == 0 && data[i].em1_text_wechat == 0){
+                    flag = false;
+                    return false;
+                }else{
+                    // 一般负面评论
+                    day30Data_0.push(data[i].em0_text_webo+data[i].em0_text_bbs+data[i].em0_text_zhihu+data[i].em0_text_forum+data[i].em0_text_wechat);
+                    // 严重负面评论
+                    day30Data_1.push(data[i].em1_text_webo+data[i].em1_text_bbs+data[i].em1_text_zhihu+data[i].em1_text_forum+data[i].em1_text_wechat);
+                    // // 积极评论
+                    // day30Data_2.push(data[i].sent2_webo+data[i].sent2_bbs+data[i].sent2_zhihu+data[i].sent2_forum+data[i].sent2_wechat);
+                    // 时间
+                    date.push(data[i].date);
+                    flag = true;
+                }
             }
-            var myChart = echarts.init(document.getElementById('opinion'));
-            var option = {
-                title: {
-                    text: '',
-                    subtext: ''
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                    data:['一般负面评论','严重负面评论']
-                },
-                xAxis:  {
-                    type: 'category',
-                    boundaryGap: false,
-                    // data: day30
-                    data: date
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: {
-                        formatter: '{value}'
-                    }
-                },
-                series: [
-                    {
-                        name:'一般负面评论',
-                        type:'line',
-                        smooth:true,
-                        data:day30Data_0,
-                        itemStyle:{normal:{areaStyle:{type:'default'}}},
-                        // markPoint: {
-                        //     data: [
-                        //         {type: 'max', name: '最大值'},
-                        //         {type: 'min', name: '最小值'}
-                        //     ]
-                        // },
-                        markLine: {
-                            data: [
-                                {type: 'average', name: '平均值'}
-                            ]
+            // console.log(flag);
+            if(flag){
+                $('#opinion').css('height','300px');
+
+                var myChart = echarts.init(document.getElementById('opinion'));
+                var option = {
+                    title: {
+                        text: '',
+                        subtext: ''
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data:['一般负面评论','严重负面评论']
+                    },
+                    xAxis:  {
+                        type: 'category',
+                        boundaryGap: false,
+                        // data: day30
+                        data: date
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value}'
                         }
                     },
-                    {
-                        name:'严重负面评论',
-                        type:'line',
-                        smooth:true,
-                        data:day30Data_1,
-                        itemStyle:{normal:{areaStyle:{type:'default'}}},
-                        // markPoint: {
-                        //     data: [
-                        //         {type: 'max', name: '最大值'},
-                        //         {type: 'min', name: '最小值'}
-                        //     ]
+                    series: [
+                        {
+                            name:'一般负面评论',
+                            type:'line',
+                            smooth:true,
+                            data:day30Data_0,
+                            itemStyle:{normal:{areaStyle:{type:'default'}}},
+                            // markPoint: {
+                            //     data: [
+                            //         {type: 'max', name: '最大值'},
+                            //         {type: 'min', name: '最小值'}
+                            //     ]
+                            // },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ]
+                            }
+                        },
+                        {
+                            name:'严重负面评论',
+                            type:'line',
+                            smooth:true,
+                            data:day30Data_1,
+                            itemStyle:{normal:{areaStyle:{type:'default'}}},
+                            // markPoint: {
+                            //     data: [
+                            //         {type: 'max', name: '最大值'},
+                            //         {type: 'min', name: '最小值'}
+                            //     ]
+                            // },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ]
+                            }
+                        },
+                        // {
+                        //     name:'积极评论',
+                        //     type:'line',
+                        //     smooth:true,
+                        //     data:day30Data_2,
+                        //     itemStyle:{normal:{areaStyle:{type:'default'}}},
+                        //     markPoint: {
+                        //         data: [
+                        //             {type: 'max', name: '最大值'},
+                        //             {type: 'min', name: '最小值'}
+                        //         ]
+                        //     },
+                        //     markLine: {
+                        //         data: [
+                        //             {type: 'average', name: '平均值'}
+                        //         ]
+                        //     }
                         // },
-                        markLine: {
-                            data: [
-                                {type: 'average', name: '平均值'}
-                            ]
-                        }
-                    },
-                    // {
-                    //     name:'积极评论',
-                    //     type:'line',
-                    //     smooth:true,
-                    //     data:day30Data_2,
-                    //     itemStyle:{normal:{areaStyle:{type:'default'}}},
-                    //     markPoint: {
-                    //         data: [
-                    //             {type: 'max', name: '最大值'},
-                    //             {type: 'min', name: '最小值'}
-                    //         ]
-                    //     },
-                    //     markLine: {
-                    //         data: [
-                    //             {type: 'average', name: '平均值'}
-                    //         ]
-                    //     }
-                    // },
-                ]
-            };
-            myChart.setOption(option);
-            _myChart2 = myChart;
+                    ]
+                };
+                myChart.setOption(option);
+                _myChart2 = myChart;
+            }
         }
         // var item = data[0];
         // var day30Data_0 = [];
