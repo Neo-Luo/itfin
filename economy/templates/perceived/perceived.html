@@ -167,7 +167,7 @@
                   style="margin-left:20px;vertical-align: middle;">批量添加</span> -->
             <span id="someAdd">
                 <span class="oneAdd btn btn-primary" title="导入文件">批量添加</span>
-                <input type="file" title="导入文件" onchange="importf(this)">
+                <!-- <input type="file" title="导入文件" onchange="importf(this)"> -->
             </span>
         </h3>
         <div class="newAdd">
@@ -307,6 +307,57 @@
     </div>
 </div>
 
+<!-- 批量添加 提示信息 -->
+<div class="modal fade" id="importf_info" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width:30%;font-size:16px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >提示信息：</h4>
+            </div>
+            <div class="modal-body">
+                <h5 style="margin-bottom:10px;">请添加下列格式的excel文件</h5>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>实体名称</th>
+                            <th>实体类别</th>
+                            <th>注册公司</th>
+                            <th>相关人物</th>
+                            <th>其他关键词</th>
+                            <th>推荐理由</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>新建-1</td>
+                            <td>平台</td>
+                            <td>蓝翔</td>
+                            <td>七七</td>
+                            <td>烹饪</td>
+                            <td>9088</td>
+                        </tr>
+                        <tr>
+                            <td>新建-2</td>
+                            <td>公司</td>
+                            <td>新东方</td>
+                            <td>王动</td>
+                            <td>武侠</td>
+                            <td>9077</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-default" data-dismiss="modal" id="">取消</button> -->
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="">确定</button>
+                <!-- <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> -->
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block my_js %}
@@ -327,7 +378,7 @@
         'loopBottom':'true',
         'navigationPosition': 'right',
         'navigationTooltips': ['预警记录','预警态势'],
-        'fixedElements':'#nav,#Sure_2box,#delSuccess',// 不跟随滚动的元素
+        'fixedElements':'#nav,#Sure_2box,#delSuccess,#importf_info',// 不跟随滚动的元素
                                         //鼠标在此元素 不滚屏
         'normalScrollElements':'#perceiveContent .modal-dialog'
     });
