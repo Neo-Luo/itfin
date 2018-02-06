@@ -2248,124 +2248,6 @@
     */
 
 // ====疑似非法集资态势==== 左上角折线面积图
-    //一个月时间 -先画一张假图
-        // function get7DaysBefore(date,m){
-        //     var date = date || new Date(),
-        //         timestamp, newDate;
-        //     if(!(date instanceof Date)){
-        //         date = new Date(date);
-        //     }
-        //     timestamp = date.getTime();
-        //     newDate = new Date(timestamp - m * 24 * 3600 * 1000);
-        //     return [newDate.getFullYear(), newDate.getMonth() + 1, newDate.getDate()].join('-');
-        // };
-        // var day30=[];
-        // for (var a=0;a < 30;a++){
-        //     day30.push(get7DaysBefore(new Date(),a));
-        // }
-        // var day30Data=[];
-        // for (var b=0;b< 30;b++){
-        //     day30Data.push(Math.round(Math.random()*(20-5)+5));
-        // }
-        // var option_1 = {
-        //         tooltip: {
-        //             trigger: 'axis',
-        //             axisPointer: {
-        //                 lineStyle: {
-        //                     color: '#57617B'
-        //                 }
-        //             }
-        //         },
-        //         grid: {
-        //             left: '4%',
-        //             right: '7%',
-        //             bottom: '8%',
-        //             top:'4%',
-        //             containLabel: true
-        //         },
-        //         xAxis: [{
-        //             type: 'category',
-        //             boundaryGap: false,
-        //             axisLine: {
-        //                 lineStyle: {
-        //                     color: '#57617B'
-        //                 }
-        //             },
-        //             axisLabel: {
-        //                 textStyle: {
-        //                     color: '#fff',
-        //                 }
-        //             },
-        //             data: day30.reverse(),
-        //         }],
-        //         yAxis: [{
-        //             type: 'value',
-        //             axisTick: {
-        //                 show: false
-        //             },
-        //             axisLine: {
-        //                 lineStyle: {
-        //                     color: '#57c4d3'
-        //                 }
-        //             },
-        //             axisLabel: {
-        //                 show:false,
-        //                 margin: 10,
-        //                 textStyle: {
-        //                     fontSize: 14,
-        //                     color:'white',
-        //                 }
-        //             },
-        //             splitLine: {
-        //                 lineStyle: {
-        //                     color: '#57617B'
-        //                 }
-        //             }
-        //         }],
-        //         series: [
-        //             {
-        //                 name: '',
-        //                 type: 'line',
-        //                 smooth: true,
-        //                 symbol: 'circle',
-        //                 symbolSize: 5,
-        //                 showSymbol: false,
-        //                 lineStyle: {
-        //                     normal: {
-        //                         width: 1,
-        //                     }
-        //                 },
-        //                 areaStyle: {
-        //                     normal: {
-        //                         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-        //                             offset: 0,
-        //                             color: 'rgba(137, 189, 27, 0.8)'
-        //                         }, {
-        //                             offset: 1,
-        //                             color: 'rgba(137, 189, 27, 0)'
-        //                         }], false),
-        //                         shadowColor: 'rgba(0, 0, 0, 0.1)',
-        //                         shadowBlur: 10
-        //                     }
-        //                 },
-        //                 itemStyle: {
-        //                     normal: {
-        //                         color: 'rgb(137,189,27)',
-        //                         borderColor: 'rgba(137,189,2,0.27)',
-        //                         borderWidth: 12
-        //                     }
-        //                 },
-        //                 // data: day30Data,
-        //                 data: [10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,],
-        //             }
-        //         ]
-        //     };
-        // function line_1() {
-        //     var myChart = echarts.init(document.getElementById('picChart-2'));
-        //     myChart.setOption(option_1);
-        // }
-        // line_1();
-    // 请求数据==重新渲染图表==
     var timeDistribute_url='/homepage/timeDistribute/';
     public_ajax.call_request('get',timeDistribute_url,line_1_new);
     var option_1 = {
@@ -2476,8 +2358,8 @@
         }
     }
 
-// ====字符云====
-    // 当天感知数
+// ====右上角字符云====
+    // 当天感知数  --- 今日入库
     var warnCount_url='/perceived/warnCount/';
     public_ajax.call_request('get',warnCount_url,warnCount);
     function warnCount (data){
@@ -2529,6 +2411,10 @@
                     },
                     tooltip: {
                         show: true,
+                        formatter:function(param){
+                            // console.log(param);
+                            return param.name
+                        }
                     },
                     series: [{
                         type: 'wordCloud',
@@ -2640,29 +2526,6 @@
     keywords();
 
 // ====右下角热点舆情====
-    /*
-
-        var commentData = ['银承派','中储贷','财富观','鼎信贷','派财网','汇金益','易保利','橙旗贷'];
-        var commentData_2 = [
-            '如此任性的银承派 银承派薅羊毛预警-平台曝光台-网贷经典http://t.cn/R0cSO63 ​​​​​',
-            '点银网世联集金种子拼图亚租所红金宝堆金网东方车贷C金所沃要投古德金融超市银承派摇财树微镇精融汇合伙人金融融裕贷  兆金所掌中财富绿化贷升值贷固金所佰亿猫前海广深发万盈金融阿凡达e贷考拉理财好好理财优投金服 ',
-            ' 利典金融钱兜金融米缸金融小袋理财  中航生意贷上雨创投财来网全通贷群盈财富隆筹金融互融CLUB广群金融全民财富玺鉴',
-            '飞鸟金融前海领投便利贷创富部落财火火融金桥石榴壳钱眼金融车富88产融贷华人金融汉沃财富易享贷富门理财e路同心锐盈财富利往行中业兴融前海红筹派派猪理财共赢时贷钱罐子有米贷司库金服妈妈资本华众时贷新常态金服倍多金理财农场小树时代理财 ',
-            '派财网的资产端对接的是保理公司，和一般做个贷的平台并不同。 保理资产的特点是基于核心企业应收账款or仓单质押的借款，并予央行备案登记，',
-            '自2016年8月24日多部委联合发布《网络借贷信息中介机构业务活动管理暂行办法》(以下简称《暂行办法》)至今已一年，一年以来，',
-            '也许每个人都经历过肆意挥霍的时光吧。刚毕业那一年，整整一年，发财树小编是月光族的一员。现在回想过去，心中满是后悔。',
-            '​​​​#跟钱做朋友#上周六日，上了本田健老师的财富课程，明天来给大家分享复盘，颠覆你之前的财富观，跟钱做朋友。做一个快乐的富翁。'];
-        function comment_test(data,data2){
-            $('#container .bottom_right #picChart-6 #comment').empty();
-            for(var i=0;i<data.length;i++){
-                var str = '<p><span class="comment_lef">'+data[i]+'</span><span class="comment_rig" title=\"'+data2[i]+'\">'+data2[i]+'</span>';
-                $('#container .bottom_right #picChart-6 #comment').append(str)
-            }
-        }
-        comment_test(commentData,commentData_2);
-     */
-
-
     var hotSpot_url = '/homepage/hotSpot/';
     function comment(data){
         if(data){

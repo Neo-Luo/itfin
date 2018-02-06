@@ -68,9 +68,13 @@
     }
 
 //====预警记录====
-    var earlyWarning_url='/detection/detectData/?date=7&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all';
+    // 前台分页
+    // var earlyWarning_url='/detection/detectData/?date=7&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all';
+    var earlyWarning_url='/detection/totalDetectData/?date=7&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all';
     // public_ajax.call_request('get',earlyWarning_url,earlyWarning);
     function earlyWarning(data) {
+        $('#recordingTable p.load').show();
+        $('#recordingTable').bootstrapTable('destroy');
         $('#recordingTable').bootstrapTable('load', data);
         $('#recordingTable').bootstrapTable({
             data:data,
@@ -201,6 +205,19 @@
                     valign: "middle",//垂直
                     formatter: function (value, row, index) {
                         return '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="一键取证"><i class="icon icon-signin"></i></span>';
+                    }
+                },
+                {
+                    title: "预警结果审核",//标题
+                    field: "h",//键名
+                    sortable: true,//是否可排序
+                    order: "desc",//默认排序方式
+                    align: "center",//水平
+                    valign: "middle",//垂直
+                    formatter: function (value, row, index) {
+                        var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="prove(\''+row.a+'\')" title="审核通过"><i class="icon icon-thumbs-up"></i>(777)</span>'+
+                            '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="审核失败"><i class="icon icon-thumbs-down"></i>(888)</span>';
+                        return str;
                     }
                 },
             ],
@@ -376,7 +393,7 @@
                 },
                 {
                     title: "一键取证",//标题
-                    field: "",//键名
+                    field: "g",//键名
                     sortable: true,//是否可排序
                     order: "desc",//默认排序方式
                     align: "center",//水平
@@ -387,7 +404,7 @@
                 },
                 {
                     title: "预警结果审核",//标题
-                    field: "",//键名
+                    field: "h",//键名
                     sortable: true,//是否可排序
                     order: "desc",//默认排序方式
                     align: "center",//水平
@@ -405,7 +422,7 @@
 
         // 点击搜索框 启用前端分页
         $('.recordingTable .fixed-table-toolbar .search input').click(function(event) {
-            alert(1)
+            public_ajax.call_request('get',earlyWarning_url,earlyWarning);
         });
     };
     // earlyWarning_ser()
