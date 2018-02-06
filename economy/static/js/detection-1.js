@@ -215,8 +215,8 @@
                     align: "center",//水平
                     valign: "middle",//垂直
                     formatter: function (value, row, index) {
-                        var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="prove(\''+row.a+'\')" title="审核通过"><i class="icon icon-thumbs-up"></i>(777)</span>'+
-                            '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="审核失败"><i class="icon icon-thumbs-down"></i>(888)</span>';
+                        var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="prove(\''+row.a+'\')" title="审核通过"><i class="icon icon-thumbs-up"></i>(0)</span>'+
+                            '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="审核失败"><i class="icon icon-thumbs-down"></i>(0)</span>';
                         return str;
                     }
                 },
@@ -410,8 +410,8 @@
                     align: "center",//水平
                     valign: "middle",//垂直
                     formatter: function (value, row, index) {
-                        var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="prove(\''+row.a+'\')" title="审核通过"><i class="icon icon-thumbs-up"></i>(777)</span>'+
-                            '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="审核失败"><i class="icon icon-thumbs-down"></i>(888)</span>';
+                        var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="prove(\''+row.a+'\')" title="审核通过"><i class="icon icon-thumbs-up"></i>(0)</span>'+
+                            '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="审核失败"><i class="icon icon-thumbs-down"></i>(0)</span>';
                         return str;
                     }
                 },
