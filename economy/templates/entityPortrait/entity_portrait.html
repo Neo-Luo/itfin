@@ -329,6 +329,8 @@
     });
     var show=0;
     $('.firstScreen .search .moreSitu').on('click',function () {
+        $(this).children('i').toggleClass('icon-minus');  //切换图标
+        $(this).children('i').toggleClass('icon-plus');  //切换图标
         // if (show==0){
         //     $('#container .content').slideDown(130);
         //     show=1;

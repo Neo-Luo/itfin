@@ -215,8 +215,8 @@
                     align: "center",//水平
                     valign: "middle",//垂直
                     formatter: function (value, row, index) {
-                        var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',1)" title="审核通过"><i class="icon icon-thumbs-up"></i>('+row.support_num+')</span>'+
-                            '<span style="cursor:pointer;color:white;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',0)" title="审核失败"><i class="icon icon-thumbs-down"></i>('+row.against_num+')</span>';
+                        var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',1)" title="赞成预警"><i class="icon icon-thumbs-up"></i>('+row.support_num+')</span>'+
+                            '<span style="cursor:pointer;color:white;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',0)" title="反对预警"><i class="icon icon-thumbs-down"></i>('+row.against_num+')</span>';
                         return str;
                     }
                 },

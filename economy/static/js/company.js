@@ -1168,6 +1168,7 @@ var monitor_status_1;
     var data_billing_diagram ;//广告趋势图数据
     function publicityTable(data){
         if(data.length !=0){
+            $('#publicityTable').css('height','300px');
             data_billing_diagram = data;
             // console.log(data);
             var item = data[0];
@@ -1999,6 +2000,7 @@ var monitor_status_1;
     function billing_diagram (data){
         // console.log(data)
         if(data.length!=0){
+            $('#billing_diagram').css('height','300px');
             var ad1_data = [],inf1_data = [],inf2_data = [],inf3_data = [];
             // 时间
             var date = [];
