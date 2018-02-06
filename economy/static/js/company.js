@@ -55,11 +55,12 @@ var monitor_status_1;
             $('.status-1').html('<i class="icon icon-retweet"></i>&nbsp;恢复监测');
         }
 
-        var t1='',t2='',t3='否',t4='0',t5='0',t6='否';
+        var t1='未知',t2='未知',t3='否',t4='0',t5='0',t6='否';
         var operationMode = '互联网金融';
         var legalPerson = '未知';
         var capital = '未知';
-        if (item.entity_type==1){t1='平台';}else if (item.entity_type==2){t1='公司';}else if (item.entity_type==1){t1='项目';}else {t1=''}
+        var company = '未知';
+        if (item.entity_type==1){t1='平台';}else if (item.entity_type==2){t1='公司';}else if (item.entity_type==1){t1='项目';}else {t1='未知'}
         if (item.set_time){t2=item.set_time;}//成立时间
         $('.location').text(item.regist_address||''); //注册地
         if (item.operation_mode==1){
@@ -69,7 +70,8 @@ var monitor_status_1;
             operationMode = '互联网金融';
         }
         if(item.legal_person){legalPerson = item.legal_person};
-        if(item.capital){capital = item.capital+'万元'}
+        if(item.capital && item.capital!= ''){capital = item.capital+'万元'}
+        if(item.company && item.company!= ''){company = item.company}
         $('.type-1').text(operationMode);//运营模式
         $('.type-2').text(t1);//实体类型
         $('.type-3').text(t2);//成立时间
@@ -212,25 +214,24 @@ var monitor_status_1;
     // })
 
 // 编辑基本信息
+    // 值 渲染到input
+    var select_url = '/detection/OperationModeBox/';    //运营模式
+    public_ajax.call_request('get',select_url,slectUrl);
+    function slectUrl(data){
+        if(data){
+            var str = '';
+            for(var i=0;i<data.length;i++){
+                str += '<option value="'+data[i].id+'">'+data[i].operation+'</option>'
+            }
+            $('#editCard .user-1 .u1_Val').append(str);
+            // console.log(operation_mode_1);
+            // $("#editCard .user-1 select option[value='"+operation_mode_1+"']").attr('selected',"selected");
+        }
+    }
     $('#card-edit').on('click',function(){
         $('#editCard').modal('show');
 
-        // 值 渲染到input
-        var select_url = '/detection/OperationModeBox/';    //运营模式
-        public_ajax.call_request('get',select_url,slectUrl);
-        function slectUrl(data){
-            if(data){
-                var str = '';
-                for(var i=0;i<data.length;i++){
-                    str += '<option value="'+data[i].id+'">'+data[i].operation+'</option>'
-                }
-                $('#editCard .user-1 .u1_Val').append(str);
-
-                // console.log(operation_mode_1);
-                // $("#editCard .user-1 select option[value='"+operation_mode_1+"']").attr('selected',"selected");
-                $("#editCard .user-1 select").val(operation_mode_1);
-            }
-        }
+        $("#editCard .user-1 select").val(operation_mode_1);
         // console.log(operation_mode_1);
         // $("#editCard .user-1 select option[value='"+operation_mode_1+"']").attr('selected',"selected");
         // 注册地
@@ -1159,121 +1160,123 @@ var monitor_status_1;
 
     var data_billing_diagram ;//广告趋势图数据
     function publicityTable(data){
-        data_billing_diagram = data;
-        // console.log(data);
-        var item = data[0];
-        var inf1_data = [],inf2_data = [],inf3_data = [];
-        inf1_data.push(item.inf1_wechat,item.inf1_zhihu,item.inf1_bbs,item.inf1_webo,item.inf1_forum);
-        inf2_data.push(item.inf2_wechat,item.inf2_zhihu,item.inf2_bbs,item.inf2_webo,item.inf2_forum);
-        inf3_data.push(item.inf3_wechat,item.inf3_zhihu,item.inf3_bbs,item.inf3_webo,item.inf3_forum);
-        var myChart = echarts.init(document.getElementById('publicityTable'));
-        var option = {
-            tooltip : {
-                trigger: 'axis',
-                axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                    type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                }
-            },
-            legend: {
-                // data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎','百度','谷歌','必应','其他']
-                data:['强煽动性广告','一般煽动性广告','无煽动性广告']
-                // .wechat; .zhihu; .bbs; .webo; .forum;
-            },
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            },
-            xAxis : [
-                {
-                    type : 'category',
-                    // data : ['周一','周二','周三','周四','周五','周六','周日']
-                    data:['微信','知乎','论坛','微博','贴吧']
-                }
-            ],
-            yAxis : [
-                {
-                    type : 'value'
-                }
-            ],
-            series : [
-                // {
-                //     name:'直接访问',
-                //     type:'bar',
-                //     data:[320, 332, 301, 334, 390, 330, 320]
-                // },
-                {
-                    name:'强煽动性广告',
-                    type:'bar',
-                    barWidth : 55,
-                    stack: '广告',
-                    // data:[120, 132, 101, 134, 90,]
-                    data:inf3_data
-                },
-                {
-                    name:'一般煽动性广告',
-                    type:'bar',
-                    barWidth : 55,
-                    stack: '广告',
-                    // data:[220, 182, 191, 234, 290,]
-                    data:inf2_data
-                },
-                {
-                    name:'无煽动性广告',
-                    type:'bar',
-                    barWidth : 55,
-                    stack: '广告',
-                    // data:[150, 232, 201, 154, 190,]
-                    data:inf1_data
-                },
-                /*
-                    {
-                        name:'搜索引擎',
-                        type:'bar',
-                        data:[862, 1018, 964, 1026, 1679, 1600, 1570],
-                        markLine : {
-                            lineStyle: {
-                                normal: {
-                                    type: 'dashed'
-                                }
-                            },
-                            data : [
-                                [{type : 'min'}, {type : 'max'}]
-                            ]
-                        }
-                    },
-                    {
-                        name:'百度',
-                        type:'bar',
-                        barWidth : 5,
-                        stack: '搜索引擎',
-                        data:[620, 732, 701, 734, 1090, 1130, 1120]
-                    },
-                    {
-                        name:'谷歌',
-                        type:'bar',
-                        stack: '搜索引擎',
-                        data:[120, 132, 101, 134, 290, 230, 220]
-                    },
-                    {
-                        name:'必应',
-                        type:'bar',
-                        stack: '搜索引擎',
-                        data:[60, 72, 71, 74, 190, 130, 110]
-                    },
-                    {
-                        name:'其他',
-                        type:'bar',
-                        stack: '搜索引擎',
-                        data:[62, 82, 91, 84, 109, 110, 120]
+        if(data.length !=0){
+            data_billing_diagram = data;
+            // console.log(data);
+            var item = data[0];
+            var inf1_data = [],inf2_data = [],inf3_data = [];
+            inf1_data.push(item.inf1_wechat,item.inf1_zhihu,item.inf1_bbs,item.inf1_webo,item.inf1_forum);
+            inf2_data.push(item.inf2_wechat,item.inf2_zhihu,item.inf2_bbs,item.inf2_webo,item.inf2_forum);
+            inf3_data.push(item.inf3_wechat,item.inf3_zhihu,item.inf3_bbs,item.inf3_webo,item.inf3_forum);
+            var myChart = echarts.init(document.getElementById('publicityTable'));
+            var option = {
+                tooltip : {
+                    trigger: 'axis',
+                    axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                        type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
                     }
-                */
-            ]
-        };
-        myChart.setOption(option);
+                },
+                legend: {
+                    // data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎','百度','谷歌','必应','其他']
+                    data:['强煽动性广告','一般煽动性广告','无煽动性广告']
+                    // .wechat; .zhihu; .bbs; .webo; .forum;
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis : [
+                    {
+                        type : 'category',
+                        // data : ['周一','周二','周三','周四','周五','周六','周日']
+                        data:['微信','知乎','论坛','微博','贴吧']
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value'
+                    }
+                ],
+                series : [
+                    // {
+                    //     name:'直接访问',
+                    //     type:'bar',
+                    //     data:[320, 332, 301, 334, 390, 330, 320]
+                    // },
+                    {
+                        name:'强煽动性广告',
+                        type:'bar',
+                        barWidth : 55,
+                        stack: '广告',
+                        // data:[120, 132, 101, 134, 90,]
+                        data:inf3_data
+                    },
+                    {
+                        name:'一般煽动性广告',
+                        type:'bar',
+                        barWidth : 55,
+                        stack: '广告',
+                        // data:[220, 182, 191, 234, 290,]
+                        data:inf2_data
+                    },
+                    {
+                        name:'无煽动性广告',
+                        type:'bar',
+                        barWidth : 55,
+                        stack: '广告',
+                        // data:[150, 232, 201, 154, 190,]
+                        data:inf1_data
+                    },
+                    /*
+                        {
+                            name:'搜索引擎',
+                            type:'bar',
+                            data:[862, 1018, 964, 1026, 1679, 1600, 1570],
+                            markLine : {
+                                lineStyle: {
+                                    normal: {
+                                        type: 'dashed'
+                                    }
+                                },
+                                data : [
+                                    [{type : 'min'}, {type : 'max'}]
+                                ]
+                            }
+                        },
+                        {
+                            name:'百度',
+                            type:'bar',
+                            barWidth : 5,
+                            stack: '搜索引擎',
+                            data:[620, 732, 701, 734, 1090, 1130, 1120]
+                        },
+                        {
+                            name:'谷歌',
+                            type:'bar',
+                            stack: '搜索引擎',
+                            data:[120, 132, 101, 134, 290, 230, 220]
+                        },
+                        {
+                            name:'必应',
+                            type:'bar',
+                            stack: '搜索引擎',
+                            data:[60, 72, 71, 74, 190, 130, 110]
+                        },
+                        {
+                            name:'其他',
+                            type:'bar',
+                            stack: '搜索引擎',
+                            data:[62, 82, 91, 84, 109, 110, 120]
+                        }
+                    */
+                ]
+            };
+            myChart.setOption(option);
 
-        billing_diagram(data_billing_diagram);
+            billing_diagram(data_billing_diagram);
+        }
     }
 
 //====经营异常
@@ -1985,7 +1988,7 @@ var monitor_status_1;
     // 加一个折线图  ===广告趋势图===
     function billing_diagram (data){
         // console.log(data)
-        if(data){
+        if(data.length!=0){
             var ad1_data = [],inf1_data = [],inf2_data = [],inf3_data = [];
             // 时间
             var date = [];
@@ -2309,7 +2312,8 @@ var monitor_status_1;
     var trend_url='/index/comment/?id='+pid;
     public_ajax.call_request('get',trend_url,line_2);
     function line_2(data) {
-        if(data){
+        if(data && data.length!=0){
+            $('#opinion').css('height','300px');
             var day30Data_0 = [],day30Data_1 = [],day30Data_2 = [];
             // 时间
             var date = [];
@@ -2323,6 +2327,89 @@ var monitor_status_1;
                 // 时间
                 date.push(data[i].date);
             }
+            var myChart = echarts.init(document.getElementById('opinion'));
+            var option = {
+                title: {
+                    text: '',
+                    subtext: ''
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:['一般负面评论','严重负面评论']
+                },
+                xAxis:  {
+                    type: 'category',
+                    boundaryGap: false,
+                    // data: day30
+                    data: date
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                series: [
+                    {
+                        name:'一般负面评论',
+                        type:'line',
+                        smooth:true,
+                        data:day30Data_0,
+                        itemStyle:{normal:{areaStyle:{type:'default'}}},
+                        // markPoint: {
+                        //     data: [
+                        //         {type: 'max', name: '最大值'},
+                        //         {type: 'min', name: '最小值'}
+                        //     ]
+                        // },
+                        markLine: {
+                            data: [
+                                {type: 'average', name: '平均值'}
+                            ]
+                        }
+                    },
+                    {
+                        name:'严重负面评论',
+                        type:'line',
+                        smooth:true,
+                        data:day30Data_1,
+                        itemStyle:{normal:{areaStyle:{type:'default'}}},
+                        // markPoint: {
+                        //     data: [
+                        //         {type: 'max', name: '最大值'},
+                        //         {type: 'min', name: '最小值'}
+                        //     ]
+                        // },
+                        markLine: {
+                            data: [
+                                {type: 'average', name: '平均值'}
+                            ]
+                        }
+                    },
+                    // {
+                    //     name:'积极评论',
+                    //     type:'line',
+                    //     smooth:true,
+                    //     data:day30Data_2,
+                    //     itemStyle:{normal:{areaStyle:{type:'default'}}},
+                    //     markPoint: {
+                    //         data: [
+                    //             {type: 'max', name: '最大值'},
+                    //             {type: 'min', name: '最小值'}
+                    //         ]
+                    //     },
+                    //     markLine: {
+                    //         data: [
+                    //             {type: 'average', name: '平均值'}
+                    //         ]
+                    //     }
+                    // },
+                ]
+            };
+            myChart.setOption(option);
+            _myChart2 = myChart;
         }
         // var item = data[0];
         // var day30Data_0 = [];
@@ -2334,89 +2421,7 @@ var monitor_status_1;
         // var date = [];
         // date.push(item.date);
 
-        var myChart = echarts.init(document.getElementById('opinion'));
-        var option = {
-            title: {
-                text: '',
-                subtext: ''
-            },
-            tooltip: {
-                trigger: 'axis'
-            },
-            legend: {
-                data:['一般负面评论','严重负面评论']
-            },
-            xAxis:  {
-                type: 'category',
-                boundaryGap: false,
-                // data: day30
-                data: date
-            },
-            yAxis: {
-                type: 'value',
-                axisLabel: {
-                    formatter: '{value}'
-                }
-            },
-            series: [
-                {
-                    name:'一般负面评论',
-                    type:'line',
-                    smooth:true,
-                    data:day30Data_0,
-                    itemStyle:{normal:{areaStyle:{type:'default'}}},
-                    // markPoint: {
-                    //     data: [
-                    //         {type: 'max', name: '最大值'},
-                    //         {type: 'min', name: '最小值'}
-                    //     ]
-                    // },
-                    markLine: {
-                        data: [
-                            {type: 'average', name: '平均值'}
-                        ]
-                    }
-                },
-                {
-                    name:'严重负面评论',
-                    type:'line',
-                    smooth:true,
-                    data:day30Data_1,
-                    itemStyle:{normal:{areaStyle:{type:'default'}}},
-                    // markPoint: {
-                    //     data: [
-                    //         {type: 'max', name: '最大值'},
-                    //         {type: 'min', name: '最小值'}
-                    //     ]
-                    // },
-                    markLine: {
-                        data: [
-                            {type: 'average', name: '平均值'}
-                        ]
-                    }
-                },
-                // {
-                //     name:'积极评论',
-                //     type:'line',
-                //     smooth:true,
-                //     data:day30Data_2,
-                //     itemStyle:{normal:{areaStyle:{type:'default'}}},
-                //     markPoint: {
-                //         data: [
-                //             {type: 'max', name: '最大值'},
-                //             {type: 'min', name: '最小值'}
-                //         ]
-                //     },
-                //     markLine: {
-                //         data: [
-                //             {type: 'average', name: '平均值'}
-                //         ]
-                //     }
-                // },
-            ]
-        };
-        myChart.setOption(option);
-        _myChart2 = myChart;
+
     }
     // line_2();
 

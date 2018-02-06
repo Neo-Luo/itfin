@@ -434,12 +434,7 @@ def getDetectData(date,table1,table2,table3,field,risk_level,operation_mode,ille
 
 	cur.execute(sql1)
 	res = cur.fetchall()
-<<<<<<< HEAD
-	# result = [{k:row[i] for i,k in enumerate(field)} for row in res]
-	result = {'total':534,"rows":[{k:row[i] for i,k in enumerate(field)} for row in res]}
-=======
 	result = {'total':detectionCount,'rows':[{k:row[i] for i,k in enumerate(field)} for row in res]}
->>>>>>> 259378ebcacf4a32d77e37e187ea9e8d9b89461f
 	cur.close()
 	return result
 	'''演示版

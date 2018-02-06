@@ -1,0 +1,1010 @@
+{% extends "publicNav.html" %}
+{% block title %}<title>预警报告</title>{% endblock %}
+{% block my_css %}
+<link rel="stylesheet" href="/static/css/company.css">
+<style>
+    <!---->
+    #nav .nav_middle .main_li:nth-of-type(2) {
+        -webkit-transform: scale(1.3);
+        -moz-transform: scale(1.3);
+        -ms-transform: scale(1.3);
+        -o-transform: scale(1.3);
+        transform: scale(1.3);
+    }
+    #nav .nav_middle .main_li:nth-of-type(2) a, #nav .nav_middle .main_li:nth-of-type(2) a i{
+        color: #08F !important;
+    }
+    #nav {background: #fff;box-shadow: 0 2px 5px rgba(41,46,51,0.15);color: #0e0e0e;}
+    #nav .nav_middle .main_li .li_a,#nav .nav_right span {color: #0e0e0e;}
+    #nav .nav_middle .main_li .line {background-color: #08F;}
+    #nav .nav_right span {border: 1px solid #787878;}
+    #nav .nav_middle, #nav .nav_right {display: block;}
+    #nav .nav_right span:hover {
+        background: #2ad1ff !important;
+        color: white!important;
+    }
+    .page-list {display: none;}
+    <!---->
+    .riskValueTable .fixed-table-toolbar .search,.publicityTable .fixed-table-toolbar .search {
+        display: none;
+    }
+    .riskValueTable .bootstrap-table .table thead>tr>th,.publicityTable .bootstrap-table .table thead>tr>th{
+        width: 5%;
+    }
+    #commentinforContent tbody,#commentinforContent tr,#commentinforContent td {
+        display:block;
+        width:100%;
+    }
+    /* 宣传行为 */
+    #pubTable {
+        border-collapse:collapse;
+        width:100%;
+        border: 1px solid #ddd;
+        border-radius:1px;
+        padding:8px;
+    }
+    .publicityTable table>thead>tr>th{
+        border-bottom:1px solid #ddd;
+    }
+
+
+    /* ====lvlei====*/
+    /* 模态框 */
+    #moreInfo, #editCard, #editIncome,
+    #EditRelatedPlat-box ,#EditRelatedCompany-box,
+    #saveSuccess ,#MonitorStatus_off{
+        top:100px;
+    }
+    /* #moreInfo .modal-title, #editCard .modal-title ,#editIncome .modal-title,
+    #EditRelatedPlat-box .modal-title ,#EditRelatedCompany-box .modal-title,
+    #saveSuccess .modal-title {
+        text-align: center;
+    } */
+    #moreInfo .modal-title {
+        text-align: center;
+    }
+    #moreInfo .modal-body{
+        max-height:500px;
+        overflow:auto;
+    }
+    #moreInfo .modal-body span.titleName {
+        font-weight:700;
+    }
+    #moreInfo .modal-body #words {
+        text-indent:2em;
+    }
+    @media (min-width: 768px) {
+        .modal-dialog {
+            width: 800px;
+            margin: 30px auto;
+        }
+    }
+    /* 广告内容 */
+    .billing span {
+        /* font-weight:700; */
+    }
+    .billing .inforContent .main p.context {
+        max-height:300px;
+        overflow:auto;
+    }
+    /* 评论内容 */
+    .commentinforContent span {
+        font-weight:700;
+    }
+    .commentinforContent span.pagination-info {
+        font-weight:400;
+    }
+    .commentinforContent .inforContent .main p.context {
+        max-height:300px;
+        overflow:auto;
+        word-wrap:break-word;
+        word-break:break-all;
+    }
+    /* 加载提示信息 */
+    .load {
+        text-align:center;
+        margin-top:10px;
+    }
+    /* 去掉顶边框 */
+    #inforChange thead th,#lawsuit thead th {
+        border-top:none;
+    }
+    /*信息变更  诉讼记录 */
+    #container .register h3,#container .litigation h3 {
+        margin-bottom:15px;
+    }
+    #container .riskValue b {
+        font-size:18px;
+    }
+    /* 子公司分公司图表 */
+    #table-1 {
+        margin:0 auto;
+    }
+    /* 股东信息 */
+    #table-3,#table-4 {
+        text-align:left;
+    }
+    #table-3 p,#table-4 p {
+        /* font-size: 16px; */
+        margin:20px 0 0 40px;
+        max-width:100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        /* font-weight: 700; */
+    }
+    /* 去掉分页选项 - 信息变更  诉讼记录  广告内容*/
+    .inforChange .page-list,.litigation .page-list,.advertising .page-list{
+        display: none;
+    }
+    /* 宣传行为 */
+    #publicityTable {
+        width:100%;
+        height:300px;
+    }
+    /* 收益率分布 */
+    #container .inforContent_2 .main {
+        text-align: left;
+        position: relative;
+        padding: 5px 5px 5px 30px;
+        background: rgba(88, 88, 88, 0.1);
+        margin: 20px auto 0;
+        width:96%;
+    }
+    #container .inforContent_2 .main .textFlag{
+        position: absolute;
+        left:8px;
+    }
+    /* 经营异常标题信息 信息变更  诉讼记录*/
+    .business_title,.inforChange_title,.lawsuit_title {
+        margin:20px 0;
+    }
+    .business_title span,.inforChange_title span,.lawsuit_title span {
+        display:inline-block;
+        width: 24%;
+    }
+    .business_title span b,.inforChange_title span b,.lawsuit_title span b{
+        color:#ff6d70;
+        font-size:18px;
+    }
+    /* 广告内容图表 */
+    #billing_diagram {
+        width:100%;
+        height:300px;
+    }
+    /* 对外投资数量 */
+    #table-2New{
+        text-align:left;
+    }
+    #table-2New p {
+        margin:10px 0 20px 40px;
+    }
+     #table-2New p span,#table-3 p span  {/* 股东数量*/
+        float:right;
+        margin-right:80%;
+    }
+    /* 二级标题 */
+    .twoLevel_headlines {
+        padding-left:30px;
+        font-size: 16px;
+    }
+    /* ===12 22 === */
+    .smallTit p {
+        margin:10px 0 0 10px;
+        display: inline-block;
+    }
+    .smallTit span {
+        display: inline-block;
+        margin: 0 15px;
+    }
+    .smallTit span:nth-of-type(1) {
+        width: 100px;
+        text-align: right;
+    }
+    /* 编辑功能 */
+    .edit {
+        contenteditable:true;
+    }
+    #editCard .example ,#editIncome .example,
+    #EditRelatedPlat-box .example,#EditRelatedCompany-box .example {
+        margin-top: 20px;
+        /* text-align: center; */
+        text-align: left;
+        padding-left:5%;
+    }
+    #editCard .example span, #editIncome .example span,
+    #EditRelatedPlat-box .example span,
+    #EditRelatedCompany-box .example span{
+        display: inline-block;
+        /* width: 100px; */
+        width: 25%;
+        text-align: center;
+    }
+    #editCard .example input, #editCard .example select ,#editIncome .example input,
+    #EditRelatedPlat-box .example input,
+    #EditRelatedCompany-box .example input {
+        /* width: 250px; */
+        width: 50%;
+        background: transparent;
+        border: 1px solid silver;
+        border-radius: 5px;
+        padding: 3px 7px;
+        /* color: white; */
+        text-align: center;
+    }
+    /* 停止恢复监测 */
+    #MonitorStatus_off .modal-body textarea{
+        max-width: 100%;
+        min-width:100%;
+        background: transparent;
+        border: 1px solid silver;
+        border-radius: 5px;
+        padding: 3px 7px;
+        /* color: white; */
+        text-align: left;
+        min-height:80px;
+    }
+
+</style>
+{% endblock %}
+{% block main %}
+
+<div id="container">
+    <div style="text-align: right;">
+        <span class="top-1 btn btn-primary">一键取证</span>
+        <!-- <span class="top-2 btn btn-primary">一键报告</span> -->
+        <!--<span id="LL" class="top-2 btn btn-primary">导出word</span>-->
+        <span id="LL-PDF" class="top-2 btn btn-primary">一键报告</span>
+    </div>
+    <div style="text-align: center;margin-bottom: 20px;">
+        <span id="title" style="font-size: 36px;">“<span id="title-1"></span>”预警报告</span>
+    </div>
+    <div id="card">
+        <div class="infor">
+            <h3>
+                <b class="name"></b>&nbsp;<i class="icon icon-edit comBisic" title="编辑" id="card-edit"></i>
+                <span class="nameStatus" style="font-size: 12px;color: #ff761f;">正在监测</span>
+                <span class="status-1 status btn-primary"><i class="icon icon-retweet"></i>&nbsp;停止监测</span>
+                <span class="status-2 status btn-primary"><i class="icon icon-sitemap"></i>&nbsp;查看网络图</span>
+            </h3>
+            <p class="infor-3 inforLine">
+                <span>实体类型：</span>&nbsp;<b class="type-2"></b>
+            </p>
+
+            <p class="infor-2 inforLine">
+                <span>运营模式：</span>&nbsp;<b class="type-1"></b>
+            </p>
+            <p class="infor-1 inforLine" style="max-width:50%;min-width:50%;margin-right:0;">
+                <span style="text-align:left;">注册地：</span>&nbsp;<b class="location" style="max-width:100%;"></b>
+            </p>
+            <p class="infor-4 inforLine">
+                <span>成立时间：</span>&nbsp;<b class="type-3"></b>
+            </p>
+            <p class="infor-5 inforLine">
+                <span>法人代表：</span>&nbsp;<b class="type-4"></b>
+            </p>
+            <p class="infor-6 inforLine">
+                <span>注册资本：</span>&nbsp;<b class="type-5"></b>
+            </p>
+            <p class="isPlatform inforLine" style="display: none;min-width:100%;">
+                <span>工商注册公司名称：</span>&nbsp;<b class="isPlatformName"></b>
+            </p>
+            <p class="infor-7 inforLine">
+                <span>旗下产品：</span>&nbsp;<b class="type">无</b>
+            </p>
+
+        </div>
+    </div>
+    <div class="riskValue">
+        <!-- <h3><i class="icon icon-exclamation-sign"></i>&nbsp;风险评价&nbsp;&nbsp;<i class="icon icon-edit comRisk" title="编辑"></i></h3> -->
+        <h3><i class="icon icon-exclamation-sign"></i>&nbsp;风险评价&nbsp;&nbsp;</h3>
+        <div class="riskLeft">
+            <p><span>是否疑似非法集资：</span>&nbsp;<b class="val-1" style="color: #ff9645;"></b></p>
+            <p><span>风险等级：</span>&nbsp;<b class="val-2" style="color: #ff9645;"></b></p>
+            <p><span>影响等级：</span>&nbsp;<b class="val-3" style="color: #ff9645;"></b></p>
+            <p><span>集资模式：</span>&nbsp;<b class="val-4" style="color: #ff9645;"></b></p>
+            <p><span>是否已判罚：</span>&nbsp;<b class="val-5" style="color: #ff9645;"></b></p>
+        </div>
+        <div class="riskRight">
+            <span>时间：</span>
+            <select class="time">
+                <option value="全部">全部</option>
+                <option value="近一周">近一周</option>
+                <option value="近一个月">近一个月</option>
+                <option value="近三个月">近三个月</option>
+                <option value="近一年">近一年</option>
+            </select>
+            <div class="monitor">
+                <span>模型预警：<b class="mon-2">0</b></span>
+                <span>舆情预警：<b class="mon-1">0</b></span>
+                <!-- <span>舆情预警：<b class="mon-3">54</b></span> -->
+            </div>
+            <div class="riskValueTable" style="margin-top: 10px;">
+                <div id="riskValueTable">
+                    <!-- <p class="load">正在拼命加载中....</p> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="downCompany">
+        <h3><i class="icon icon-sitemap"></i>&nbsp;企业关系</h3>
+        <div class="smallTit" style="margin: 10px 0;">
+            <p>
+                <span>对外投资数量：</span>
+                <span>一层：<b class="down-1" style="color: #ff9645;"></b></span>
+                <span>二层：<b class="down-2" style="color: #ff9645;"></b></span>
+                <span>三层：<b class="down-3" style="color: #ff9645;"></b></span>
+            </p>
+            <p>
+                <span>股东数量：</span>
+                <span>一层：<b class="up-1" style="color: #ff9645;"></b></span>
+                <span>二层：<b class="up-2" style="color: #ff9645;"></b></span>
+                <span>三层：<b class="up-3" style="color: #ff9645;"></b></span>
+            </p>
+        </div>
+        <!-- <h3><i class="icon icon-fire"></i>&nbsp;子公司、分公司情况</h3> -->
+
+        <div style="width: 100%;margin-top:20px;">
+            <h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;关联公司情况</h5>
+            <div id="table-1">
+                <p class="load">正在拼命加载中....</p>
+            </div>
+            <!-- <table id="table-2" cellpadding="0" cellspacing="0" border="1">
+                <thead>
+                    <td colspan="2" id="tableName"></td>
+                    <td>一层</td>
+                    <td>二层</td>
+                    <td>三层</td>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="2">股东数量</td>
+                        <td>上</td>
+                        <td class="up-1"></td>
+                        <td class="up-2"></td>
+                        <td class="up-3"></td>
+                    </tr>
+                    <tr>
+                        <td>下</td>
+                        <td class="down-1"></td>
+                        <td class="down-2"></td>
+                        <td class="down-3"></td>
+                    </tr>
+                    <tr>
+                        <td rowspan="3">股东信息</td>
+                        <td colspan="4" rowspan="3" class="mid-3"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="table-2New">
+                对外投资数量：
+                <p>
+                    <span>
+                        一层：<b class="down-1" style="color: #ff9645;"></b>
+                        二层：<b class="down-2" style="color: #ff9645;"></b>
+                        三层：<b class="down-3" style="color: #ff9645;"></b>
+                    </span>
+                </p>
+            </div>
+            <div id="table-3" class="clearfix">
+                <h4 class="twoLevel_headlines"><i class="icon icon-inbox"></i>&nbsp;股东数量：</h4>
+                <p>股东数量：
+                    <span>
+                        一层：<b class="up-1" style="color: #ff9645;"></b>
+                        二层：<b class="up-2" style="color: #ff9645;"></b>
+                        三层：<b class="up-3" style="color: #ff9645;"></b>
+                    </span>
+                </p>
+                <div style="float:left;">
+                    <p><span>上一层：</span>&nbsp;<b class="up-1" style="color: #ff9645;"></b></p>
+                    <p><span>上二层：</span>&nbsp;<b class="up-2" style="color: #ff9645;"></b></p>
+                    <p><span>上三层：</span>&nbsp;<b class="up-3" style="color: #ff9645;"></b></p>
+                </div>
+                <div style="float:left;">
+                    <p><span>下一层：</span>&nbsp;<b class="down-1" style="color: #ff9645;"></b></p>
+                    <p><span>下二层：</span>&nbsp;<b class="down-2" style="color: #ff9645;"></b></p>
+                    <p><span>下三层：</span>&nbsp;<b class="down-3" style="color: #ff9645;"></b></p>
+                </div>
+            </div>-->
+            <div id="table-4">
+                <h5 class="twoLevel_headlines" style="margin-top:20px;"><i class="icon icon-bookmark"></i>&nbsp;股东信息：</h5>
+                <p class="mid-3"></p>
+            </div>
+        </div>
+    </div>
+    <div class="operating">
+        <!-- <h3><i class="icon icon-warning-sign"></i>&nbsp;经营异常&nbsp;&nbsp;<i class="icon icon-edit operating-1" title="编辑"></i></h3> -->
+        <h3><i class="icon icon-warning-sign"></i>&nbsp;经营异常&nbsp;&nbsp;</h3>
+        <div class="business">
+            <p class="business_title">
+                <span>无法联系类异常数量：<b class="business_1"></b></span>
+                <span>弄虚作假类异常数量：<b class="business_2"></b></span>
+                <span>未公布年报类异常数量：<b class="business_3"></b></span>
+                <span>其他类异常数量：<b class="business_4"></b></span>
+            </p>
+            <div id="business">
+                <p class="load">正在拼命加载中....</p>
+            </div>
+        </div>
+        <!--<div class="inforContent">-->
+        <!--<div class="main">-->
+        <!--<img src="/static/images/textIcon.png" class="textFlag">-->
+        <!--<p class="context">-->
+        <!--2015年7月13日，被武汉市江汉区工商列入异常经营1次。-->
+        <!--</p>-->
+        <!--</div>-->
+        <!--</div>-->
+    </div>
+    <div class="register">
+        <!-- <h3><i class="icon icon-retweet"></i>&nbsp;信息变更&nbsp;&nbsp;<i class="icon icon-edit register-1" title="编辑"></i></h3> -->
+        <h3><i class="icon icon-retweet"></i>&nbsp;信息变更&nbsp;&nbsp;</h3>
+        <!--<div class="inforContent">-->
+        <!--<div class="main">-->
+        <!--<img src="/static/images/textIcon.png" class="textFlag">-->
+        <!--<p class="context">-->
+        <!--2015年7月13日，被武汉市江汉区工商列入异常经营1次。-->
+        <!--</p>-->
+        <!--</div>-->
+        <!--</div>-->
+        <div class="inforChange">
+            <p class="inforChange_title">
+                <span>人员类变更数量：<b class="inforChange_1"></b></span>
+                <span>经营类变更数量：<b class="inforChange_2"></b></span>
+                <span>资本类变更数量：<b class="inforChange_3"></b></span>
+                <span>其他类变更数量：<b class="inforChange_4"></b></span>
+            </p>
+            <div id="inforChange">
+                <p class="load">正在拼命加载中....</p>
+            </div>
+        </div>
+    </div>
+    <div class="litigation">
+        <!-- <h3><i class="icon icon-file-alt"></i>&nbsp;诉讼记录&nbsp;&nbsp;<i class="icon icon-edit inter-1" title="编辑"></i></h3> -->
+        <h3><i class="icon icon-file-alt"></i>&nbsp;诉讼记录&nbsp;&nbsp;</h3>
+        <!--<div class="inforContent">-->
+        <!--<div class="main">-->
+        <!--<img src="/static/images/textIcon.png" class="textFlag">-->
+        <!--<p class="context">-->
+        <!--因著作权权属、侵权纠纷和侵害商标纠纷引起的法律诉讼共2起-->
+        <!--</p>-->
+        <!--</div>-->
+        <!--</div>-->
+        <div class="lawsuit">
+            <p class="lawsuit_title">
+                <span>行政类诉讼数量：<b class="lawsuit_1"></b></span>
+                <span>民事诉讼数量：<b class="lawsuit_2"></b></span>
+                <span>刑事诉讼数量：<b class="lawsuit_3"></b></span>
+                <span>其他诉讼数量：<b class="lawsuit_4"></b></span>
+            </p>
+            <div id="lawsuit">
+                <p class="load">正在拼命加载中....</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="income">
+        <h3><i class="icon icon-credit-card"></i>&nbsp;收益率及其分布&nbsp;&nbsp;<i class="icon icon-edit inter-1" title="编辑" id="income-edit"></i></h3>
+        <!--<div id="incomeTable" style="width: 100%;height: 450px;"></div>-->
+        <div class="incomeTable">
+            <div id="incomeTable">
+                <p class="load">正在拼命加载中....</p>
+            </div>
+        </div>
+    </div>
+    <div class="promise">
+        <!-- <h3><i class="icon icon-check"></i>&nbsp;收益/保本/担保承诺&nbsp;&nbsp;<i class="icon icon-edit comPro-1" title="编辑"></i></h3> -->
+        <h3><i class="icon icon-check"></i>&nbsp;收益/保本/担保承诺&nbsp;&nbsp;</h3>
+        <div class="guarantee">
+            <div id="guarantee">
+                <p class="load">正在拼命加载中....</p>
+            </div>
+        </div>
+        <!--<div class="promiseCon">-->
+        <!--<div class="inforContent">-->
+        <!--<div class="main">-->
+        <!--<img src="/static/images/textIcon.png" class="textFlag" style="top: 8px;">-->
+        <!--<p class="option">-->
+        <!--<span>承诺类型：<b style="color: #ff6d70">担保</b></span>-->
+        <!--<button class="original btn-primary btn-xs">查看全文</button>-->
+        <!--</p>-->
+        <!--<p class="context">-->
+        <!--新手注册免费领取30800u币约30.8元；充值返利；邀请用户返利；累计奖励30次、60次-->
+        <!--</p>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+    </div>
+    <div class="advertising">
+        <!-- <h3><i class="icon icon-envelope-alt"></i>&nbsp;广告信息&nbsp;&nbsp;<i class="icon icon-edit advert-1" title="编辑"></i></h3> -->
+        <h3><i class="icon icon-envelope-alt"></i>&nbsp;广告信息&nbsp;&nbsp;</h3>
+        <div class="billing" style="margin-top:20px;">
+            <h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;广告发布趋势</h5>
+            <div id="billing_diagram">
+
+            </div>
+            <h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;广告内容</h5>
+            <div id="billing">
+                <p class="load">正在拼命加载中....</p>
+            </div>
+            <!-- <div id="billing_0">
+                <span>微信</span>
+                <p class="load">正在拼命加载中....</p>
+            </div>
+            <div id="billing_1">
+                <span>知乎</span>
+                <p class="load">正在拼命加载中....</p>
+            </div>
+            <div id="billing_2">
+                <span>论坛</span>
+                <p class="load">正在拼命加载中....</p>
+            </div>
+            <div id="billing_3">
+                <span>微博</span>
+                <p class="load">正在拼命加载中....</p>
+            </div>
+            <div id="billing_4">
+                <span>贴吧</span>
+                <p class="load">正在拼命加载中....</p>
+            </div> -->
+        </div>
+        <!--<div class="inforContent">-->
+        <!--<div class="main">-->
+        <!--<img src="/static/images/textIcon.png" class="textFlag" style="top: 8px;">-->
+        <!--<p class="option">-->
+        <!--<span>煽动性：<b style="color: #ff6d70">强</b></span>-->
+        <!--<span>广告渠道：<b style="color: #ff6d70">百度贴吧</b></span>-->
+        <!--<span>发布时间：<b style="color: #ff6d70">2017-11-22</b></span>-->
+        <!--<button class="original btn-primary btn-xs">查看全文</button>-->
+        <!--</p>-->
+        <!--<p class="context">-->
+        <!--广告内容：放款快，审核简单，赶快注册！-->
+        <!--</p>-->
+        <!--</div>-->
+        <!--</div>-->
+    </div>
+
+    <div class="publicity">
+        <h3 style="margin-bottom: 15px;">
+            <!-- <span style="display: inline-block;"><i class="icon icon-bullhorn"></i>&nbsp;宣传行为&nbsp;&nbsp;<i class="icon icon-edit publicity-1" title="编辑"></i></span> -->
+            <span style="display: inline-block;"><i class="icon icon-bullhorn"></i>&nbsp;宣传行为&nbsp;&nbsp;</span>
+            <button type="button" class="btn btn-info" style="position: relative;top: -3px;left: 20px;">存档取证</button>
+        </h3>
+        <div class="publicityTable">
+            <div id="publicityTable"></div>
+            <!-- <table id="pubTable" border="1">
+                <thead>
+                    <th></th>
+                    <th>微博</th>
+                    <th>贴吧</th>
+                    <th>论坛</th>
+                    <th>微信</th>
+                    <th>知乎</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>强煽动性广告</td>
+                        <td class="inf3_webo">1111</td>
+                        <td class="inf3_forum">1111</td>
+                        <td class="inf3_bbs">1111</td>
+                        <td class="inf3_wechat">1111</td>
+                        <td class="inf3_zhihu">1111</td>
+                    </tr>
+                    <tr>
+                        <td>一般煽动性广告</td>
+                        <td class="inf2_webo">2222</td>
+                        <td class="inf2_forum">2222</td>
+                        <td class="inf2_bbs">2222</td>
+                        <td class="inf2_wechat">2222</td>
+                        <td class="inf2_zhihu">2222</td>
+                    </tr>
+                    <tr>
+                        <td>无煽动性广告</td>
+                        <td class="inf1_webo">333</td>
+                        <td class="inf1_forum">333</td>
+                        <td class="inf1_bbs">333</td>
+                        <td class="inf1_wechat">333</td>
+                        <td class="inf1_zhihu">333</td>
+                    </tr>
+                    <tr>
+                        <td>非广告</td>
+                        <td class="ad0_webo">444</td>
+                        <td class="ad0_forum">444</td>
+                        <td class="ad0_bbs">444</td>
+                        <td class="ad0_wechat">444</td>
+                        <td class="ad0_zhihu">444</td>
+                    </tr>
+                </tbody>
+            </table> -->
+        </div>
+    </div>
+    <div class="commentInfor">
+        <h3 style="margin-bottom: 15px;">
+            <!-- <span style="display: inline-block;"><i class="icon icon-bar-chart"></i>&nbsp;舆情分析&nbsp;&nbsp;<i class="icon icon-edit comment-1" title="编辑"></i></span> -->
+            <span style="display: inline-block;"><i class="icon icon-bar-chart"></i>&nbsp;舆情分析&nbsp;&nbsp;</span>
+            <button type="button" class="btn btn-info" style="position: relative;top: -3px;left: 20px;">存档取证</button>
+        </h3>
+        <div style="margin-top: 20px;">
+            <!-- <h4><i class="icon icon-signal"></i>&nbsp;趋势统计</h4> -->
+            <h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;舆情趋势</h5>
+            <div id="opinion" style="width: 100%;height: 300px;"></div>
+        </div>
+        <div>
+            <!-- <h4><i class="icon icon-comment"></i>&nbsp;评论信息</h4> -->
+            <h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;舆情内容</h5>
+            <div class="commentinforContent">
+                <div id="commentinforContent">
+                    <p class="load">正在拼命加载中....</p>
+                </div>
+                <!-- <div id="commentinforContent_0">
+                    <span>微信</span>
+                    <p class="load">正在拼命加载中....</p>
+                </div>
+                <div id="commentinforContent_1">
+                    <span>知乎</span>
+                    <p class="load">正在拼命加载中....</p>
+                </div>
+                <div id="commentinforContent_2">
+                    <span>论坛</span>
+                    <p class="load">正在拼命加载中....</p>
+                </div>
+                <div id="commentinforContent_3">
+                    <span>微博</span>
+                    <p class="load">正在拼命加载中....</p>
+                </div>
+                <div id="commentinforContent_4">
+                    <span>贴吧</span>
+                    <p class="load">正在拼命加载中....</p>
+                </div> -->
+            </div>
+            <!--<div class="inforContent" id="commentinforContent">-->
+            <!--<div class="main">-->
+            <!--<img src="/static/images/textIcon.png" class="textFlag" style="top:8px;">-->
+            <!--<p class="option">-->
+            <!--<span>评论倾向：<b style="color: #ff6d70">积极</b></span>-->
+            <!--<span>评论来源：<b style="color: #ff6d70">百度贴吧</b></span>-->
+            <!--<span>发布时间：<b style="color: #ff6d70">2017-12-11</b></span>-->
+            <!--<button class="originalbtn btn-primary btn-xs">查看全文</button>-->
+            <!--</p>-->
+            <!--<p class="context">-->
+            <!--评论内容：放款快，审核简单，赶快注册！-->
+            <!--</p>-->
+            <!--</div>-->
+            <!--</div>-->
+        </div>
+
+    </div>
+    <div class="related">
+        <div class="pro related-1" style="float: left;">
+            <h4><i class="icon icon-link"></i>&nbsp;关联产品&nbsp;&nbsp;<i id="EditRelatedPlat" class="icon icon-edit comment-1" title="编辑"></i></h4>
+            <div id="product">无</div>
+        </div>
+        <div class="pro related-2" style="float: right">
+            <h4><i class="icon icon-link"></i>&nbsp;关联企业&nbsp;&nbsp;<i id="EditRelatedCompany" class="icon icon-edit comment-1" title="编辑"></i></h4>
+            <div id="company">无</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- 模态框  收益率机器分布 查看全文-->
+<div class="modal fade " id="moreInfo" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">更多信息</h4>
+            </div>
+            <div class="modal-body">
+                <span class="titleName">渠道：</span><span id="channel"></span><br>
+                <span class="titleName">发布时间：</span><span id="Release_time"></span><br>
+                <span class="titleName">标题：</span><span id="Advertising_Headlines"></span><span id="url"><a href=""></a></span><br>
+                <span class="titleName">作者：</span><span id="author"></span><br>
+                <span class="titleName">用户：</span><span id="usn"></span><br>
+                <span class="titleName">内容：</span>
+
+                <span id="words" style="word-wrap:break-word;"></span><br>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- 模态框  编辑基本信息 -->
+<div class="modal fade " id="editCard" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">编辑</h4>
+            </div>
+            <div class="modal-body">
+                <div class="user-1 example">
+                    <span>运营模式:</span>
+                    <select class="u1_Val">
+                        <option value="0" selected>全部</option>
+                        <!-- <option value="P2P理财">P2P理财</option>
+                        <option value="投资项目">投资项目</option>
+                        <option value="游戏">游戏</option>
+                        <option value="任务奖励">任务奖励</option>
+                        <option value="股权私募基金">股权私募基金</option> -->
+                    </select>
+                </div>
+                <div class="user-2 example">
+                    <span>注册地:</span><input type="text" class="u2_Val">
+                </div>
+                <div class="user-3 example">
+                    <span>成立时间:</span><input type="text" class="u3_Val">
+                </div>
+                <div class="user-4 example">
+                    <span>法人代表:</span><input type="text" class="u4_Val">
+                </div>
+                <div class="user-5 example">
+                    <span>注册资本:</span><input type="text" class="u5_Val"> 万元
+                </div>
+                <div class="user-6 example">
+                    <span>工商注册公司名称:</span><input type="text" class="u6_Val">
+                </div>
+                <!-- <div class="user-3 example">
+                    <span>实体类别</span>
+                    <select class="u3_Val">
+                        <option value="1">平台</option>
+                        <option value="2">公司</option>
+                        <option value="3">项目</option>
+                    </select>
+                </div>
+                <div class="user-4 example">
+                    <span>注册公司</span><input type="text" class="u4_Val"><span class="prompt" style="width:25%;"></span>
+                </div>
+                <div class="user-5 example">
+                    <span>相关人物</span><input type="text" class="u5_Val"><span class="prompt" style="width:25%;">(请用英文逗号分隔)</span>
+                </div>
+                <div class="user-6 example">
+                    <span>其他关键词</span><input type="text" class="u6_Val"><span class="prompt" style="width:25%;">(请用英文逗号分隔)</span>
+                </div> -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="sure">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- 模态框  收益率分布 -->
+<div class="modal fade " id="editIncome" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">编辑</h4>
+            </div>
+            <div class="modal-body">
+                <div class="user-1 example">
+                    <span>宣传收益率:</span><input type="text" class="u1_Val"> %
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="sure_1">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 关联产品 -->
+<div class="modal fade " id="EditRelatedPlat-box" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">编辑</h4>
+            </div>
+            <div class="modal-body">
+                <div class="user-1 example">
+                    <span>关联产品:</span><input type="text" class="u1_Val" placeholder="多项用英文逗号分隔">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="sure_2">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 关联企业 -->
+<div class="modal fade " id="EditRelatedCompany-box" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">编辑</h4>
+            </div>
+            <div class="modal-body">
+                <div class="user-1 example">
+                    <span>关联企业:</span><input type="text" class="u1_Val" placeholder="多项用英文逗号分隔">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="sure_3">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 保存成功提示 -->
+<div class="modal fade " id="saveSuccess" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">提示信息</h4>
+            </div>
+            <div class="modal-body">
+                <center>保存成功</center>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> -->
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="closeThis">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 停止/恢复监测 模态框 -->
+<div class="modal fade " id="MonitorStatus_off" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">停止监测</h4>
+            </div>
+            <div class="modal-body">
+                <!-- <input type="text" name="" placeholder="请输入修改理由"> -->
+                <textarea id="reason_text" placeholder="请输入修改理由" autofocus required></textarea>
+                <span style="color:red;">请输入修改理由</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="sure_4">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+<!-- 自己的JS -->
+{% block my_js %}
+<script src="/static/echarts/echarts-all-3.min.js"></script>
+<script src="/static/js/FileSaver.js"></script>
+<script src="/static/js/jquery.wordexport.js"></script>
+<!-- 导出PDF -->
+<script src="/static/js/html2canvas.js" type="text/javascript"></script>
+<script src="/static/js/jspdf.debug.js" type="text/javascript"></script>
+<script>
+    var name='{{name}}';
+    var type='{{flag}}';
+    var pid='{{pid}}';
+    if (type=='1'){
+        $('.isPlatform').show();
+    }
+    $('#title-1').text(unescape(name));
+    $('.name').text(unescape(name));
+    $('#tableName').text(unescape(name));
+    // $('.isPlatformName').text(unescape(name));
+
+    //导出PDF
+    var downPdf = document.getElementById("LL-PDF");
+    downPdf.onclick = function() {
+        html2canvas(document.body, {
+            onrendered:function(canvas) {
+
+                var contentWidth = canvas.width;
+                var contentHeight = canvas.height;
+
+                // 一页pdf显示页面生成的canvas高度
+                var pageHeight = contentWidth / 592.28*841.89;
+                // 未生成pdf的HTML页面的高度
+                var leftHeight = contentHeight;
+                // 页面偏移
+                var position = 0;
+                // A4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+                var imgWidth = 595.28;
+                var imgHeight = 592.28/contentWidth*contentHeight;
+
+                var pageData = canvas.toDataURL('image/jpeg', 1.0);
+
+                var pdf = new jsPDF('', 'pt', 'a4');
+
+                //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+                //当内容未超过pdf一页显示的范围，无需分页
+                if(leftHeight < pageHeight){
+                    pdf.addImage(pageData,'JPEG',0,0,imgWidth,imgHeight)
+                }else{
+                    while(leftHeight > 0) {
+                        pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
+                        leftHeight -= pageHeight;
+                        position -= 841.89;
+                        //避免添加空白页
+                        if(leftHeight > 0) {
+                            pdf.addPage();
+
+                        }
+                    }
+                }
+
+                // //返回图片dataURL，参数：图片格式和清晰度(0-1)
+                // var pageData = canvas.toDataURL('image/jpeg', 1.0);
+
+                // //方向默认竖直，尺寸ponits，格式a4[595.28,841.89]
+                // var pdf = new jsPDF('', 'pt', 'a4');
+
+                // //addImage后两个参数控制添加图片的尺寸，此处将页面高度按照a4纸宽高比列进行压缩
+                // pdf.addImage(pageData, 'JPEG', 0, 0, 595.28, 592.28/canvas.width * canvas.height );
+
+                pdf.save('公司画像.pdf');
+
+            }
+        })
+    }
+
+    //===========================
+    $('#nav .nav_middle .main_li .li_a').on('mouseover',function () {
+        $(this).siblings('.line').css({left:'0%'});
+        if ($(document).scrollTop()!=0){
+            $(this).css({color:'#ff9645'});
+            $(this).find('i').css({color:'#ff9645'});
+        }else {
+            $(this).css({color:'#08F'});
+            $(this).find('i').css({color:'#08F'});
+        }
+    }).on('mouseout',function () {
+        $(this).siblings('.line').css({left:'-100%'});
+        if ($(document).scrollTop()!=0){
+            $(this).css({color:'#fff'});
+            $(this).find('i').css({color:'#fff'});
+            $('#nav .nav_middle .main_li').eq(2).find('a').css({color:'#ff9645'});
+            $('#nav .nav_middle .main_li').eq(2).find('i').css({color:'#ff9645'});
+        }else {
+            $(this).css({color:'#000'});
+            $(this).find('i').css({color:'#000'});
+        }
+    });
+
+    $('#nav .nav_left img').attr('src','/static/images/scroll_logo.png');
+    $('#nav .nav_left h3').css({color:'black'});
+    window.onscroll=function () {
+        $('#nav').css({backgroundColor:'#777'});
+        $('#nav .nav_left h3').css({color:'white'});
+        $('#nav .nav_left img').attr('src','/static/images/logo.png');
+        $('#nav .nav_middle .main_li .line').css({backgroundColor:'#ff9645'});
+        $('#nav .nav_middle .main_li .li_a').css({color:'white'});
+        $('#nav .nav_middle .main_li .li_a i').css({color:'white'});
+        $('#nav .nav_right span').css({color:'#fff',background:'#35baee'});
+        $('#nav .nav_middle .main_li').eq(1).find('a').css({color:'#ff9645'});
+        $('#nav .nav_middle .main_li').eq(1).find('i').css({color:'#ff9645'});
+        if ($(document).scrollTop()==0){
+            $('#nav').css({backgroundColor:'#fff'});
+            $('#nav .nav_left h3').css({color:'black'});
+            $('#nav .nav_left img').attr('src','/static/images/scroll_logo.png');
+            $('#nav .nav_middle .main_li .line').css({backgroundColor:'#08F'});
+            $('#nav .nav_middle .main_li .li_a').css({color:'black'});
+            $('#nav .nav_middle .main_li .li_a i').css({color:'black'});
+            $('#nav .nav_right span').css({color:'#0e0e0e',background:'white'});
+            $('#nav .nav_middle .main_li').eq(1).find('a').css({color:'#08F'});
+            $('#nav .nav_middle .main_li').eq(1).find('i').css({color:'#08F'});
+        }
+    };
+
+</script>
+<script src="/static/js/company.js"></script>
+
+{% endblock %}
+
+
