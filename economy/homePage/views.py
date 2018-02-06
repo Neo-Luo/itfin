@@ -26,7 +26,8 @@ def warn_count():
 @homePage.route('/cityRank/')
 def city_rank():
 	province = request.args.get('province','')
-	result = get_city_rank(TABLE_MONITOR,TABLE_GONGSHANG,field,province, RISK_LEVEL)
+	result = get_city_rank(TABLE_MONITOR,TABLE_GONGSHANG,field,province, RISK_LEVEL)#读取预存储数据需要注释掉这句
+	#result = get_prepared_city_rank(province)    #建好表计算出数据后把这句恢复了就可以读取预存储数据了
 	return json.dumps(result,ensure_ascii=False)
 
 @homePage.route('/provinceRank/')

@@ -710,6 +710,28 @@ def h_getWarnCount(table, field, risk_level):
 	cur.close()
 	return data
 
+def get_prepared_city_rank(province):           #读取预先存好的地图数据 用于替换views中的get_city_rank
+    cur = defaultDatabase()
+    field_city = ['id','date','city','count30','province','count7']
+    field_province = ['id','province','count','date']
+    if province:            #查询某一省份
+        executer = "select max(date) from %s" % (TABLE_CITY_RANK)
+        cur.execute(executer)
+        last_date = cur.fetchall()[0][0]
+        executer = "select * from %s where province='%s' and date='%s'" % (TABLE_CITY_RANK,province,last_date)
+        cur.execute(executer)
+        result = cur.fetchall()
+        result = [{k: row[i] for i, k in enumerate(field_city)} for row in result]
+    else:
+        executer = "select max(date) from %s" % (TABLE_PROVINCE_RANK)
+        cur.execute(executer)
+        last_date = cur.fetchall()[0][0]
+        executer = "select * from %s where date='%s'" % (TABLE_PROVINCE_RANK,last_date)
+        cur.execute(executer)
+        result = cur.fetchall()
+        result = [{k: row[i] for i, k in enumerate(field_province)} for row in result]
+    # print result
+    return result
 
 def get_city_rank(table,table4,field,province_name,risk_level):
 	cur = defaultDatabase()
