@@ -578,12 +578,12 @@
 
     // 展示空表格的数据
         var L_data = [
-                {'entity_name':'','rec_type':'','entity_type':'','company':'','related_person':'','key_words':''},
-                {'entity_name':'','rec_type':'','entity_type':'','company':'','related_person':'','key_words':''},
-                {'entity_name':'','rec_type':'','entity_type':'','company':'','related_person':'','key_words':''},
-                {'entity_name':'','rec_type':'','entity_type':'','company':'','related_person':'','key_words':''},
-                {'entity_name':'','rec_type':'','entity_type':'','company':'','related_person':'','key_words':''},
-                {'entity_name':'','rec_type':'','entity_type':'','company':'','related_person':'','key_words':''},
+                {'entity_name':'','entity_type':'','company':'','related_person':'','key_words':''},
+                {'entity_name':'','entity_type':'','company':'','related_person':'','key_words':''},
+                {'entity_name':'','entity_type':'','company':'','related_person':'','key_words':''},
+                {'entity_name':'','entity_type':'','company':'','related_person':'','key_words':''},
+                {'entity_name':'','entity_type':'','company':'','related_person':'','key_words':''},
+                {'entity_name':'','entity_type':'','company':'','related_person':'','key_words':''},
             ];
 
         var libaryList_2=[]; //用于传给后台的数据
@@ -615,7 +615,7 @@
                     field: "select",
                     checkbox: true,
                     align: "center",//水平
-                    valign: "middle"//垂直
+                    valign: "middle",//垂直
                 },
                 {
                     title: "实体名称",//标题
@@ -693,21 +693,21 @@
                         };
                     }
                 },
-                {
-                    title: "推荐理由",//标题
-                    field: "rec_type",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        if (row.rec_type==''||row.rec_type=='null'||row.rec_type=='unknown'||!row.rec_type){
-                            return '';
-                        }else {
-                            return row.rec_type;
-                        };
-                    }
-                },
+                // {
+                //     title: "推荐理由",//标题
+                //     field: "rec_type",//键名
+                //     sortable: true,//是否可排序
+                //     order: "desc",//默认排序方式
+                //     align: "center",//水平
+                //     valign: "middle",//垂直
+                //     formatter: function (value, row, index) {
+                //         if (row.rec_type==''||row.rec_type=='null'||row.rec_type=='unknown'||!row.rec_type){
+                //             return '';
+                //         }else {
+                //             return row.rec_type;
+                //         };
+                //     }
+                // },
                 {
                     title: "操作",//标题
                     field: "g",//键名
@@ -734,7 +734,9 @@
                 }else if(row.entity_type == '项目'){
                     row.entity_type = 3;
                 }
-                libaryList_2.push({entity_name:row.entity_name,rec_type:row.rec_type,entity_type:row.entity_type,company:row.company,related_person:row.related_person,key_words:row.key_words});
+                // libaryList_2.push({entity_name:row.entity_name,rec_type:row.rec_type,entity_type:row.entity_type,company:row.company,related_person:row.related_person,key_words:row.key_words});
+                libaryList_2.push({entity_name:row.entity_name,entity_type:row.entity_type,company:row.company,related_person:row.related_person,key_words:row.key_words});
+                // console.log(libaryList_2);
                 testLib_2()
             },
             onUncheck:function (row) {
@@ -758,7 +760,8 @@
                 // 先清空 再添加
                 libaryList_2.length = 0;
                 for(var i=0;i<row.length;i++){
-                    libaryList_2.push({entity_name:row[i].entity_name,rec_type:row[i].rec_type,entity_type:row[i].entity_type,company:row[i].company,related_person:row[i].related_person,key_words:row[i].key_words});
+                    // libaryList_2.push({entity_name:row[i].entity_name,rec_type:row[i].rec_type,entity_type:row[i].entity_type,company:row[i].company,related_person:row[i].related_person,key_words:row[i].key_words});
+                    libaryList_2.push({entity_name:row[i].entity_name,entity_type:row[i].entity_type,company:row[i].company,related_person:row[i].related_person,key_words:row[i].key_words});
                 }
                 // console.log(libaryList_2);
                 testLib_2()
@@ -774,8 +777,9 @@
     //增加一行
         $('#add').click(function () {
             var one=$('.add-1').val();
-            var two=parseInt($('.add-2').val());//推荐理由 暂为数字类型
-            if(one == '' || two == ''){
+            // var two=parseInt($('.add-2').val());//推荐理由 暂为数字类型
+            // if(one == '' || two == ''){
+            if(one == ''){
                 // alert('不能为空')
                 $('#delSuccess .modal-body').empty().append('<center>实体名称不能为空！</center>');
                 $('#delSuccess').modal('show');
@@ -809,7 +813,8 @@
                 //                     '       <input type="button" value="确定" class="btn-info btn btn-sm" onclick="sureThisRow(this)">'+
                 //                     '       <input type="button" value="删除" class="btn-info btn btn-sm deleteone" onclick="delThisRow(\''+one+'\')">'}
                 // 去掉编辑功能
-                var row = {'entity_name':one,'rec_type':two,'entity_type':three,'company':four,'related_person':five,'key_words':six,'g':'<input type="button" value="删除" class="btn-info btn btn-sm deleteone" onclick="delThisRow(\''+one+'\')">'}
+                // var row = {'entity_name':one,'rec_type':two,'entity_type':three,'company':four,'related_person':five,'key_words':six,'g':'<input type="button" value="删除" class="btn-info btn btn-sm deleteone" onclick="delThisRow(\''+one+'\')">'}
+                var row = {'entity_name':one,'entity_type':three,'company':four,'related_person':five,'key_words':six,'g':'<input type="button" value="删除" class="btn-info btn btn-sm deleteone" onclick="delThisRow(\''+one+'\')">'}
                 $('#addClub').bootstrapTable('insertRow',{index: 0, row: row});//在最开始插入新行
                 // $("#addClub").prepend(str);
                 // $('#addClub tbody tr:last').remove();
@@ -881,7 +886,8 @@
         $('#addClub').bootstrapTable('removeByUniqueId',_thisOne);
         var currentTrlen=$('#addClub tbody tr').length;
         if (currentTrlen<6){
-            var row = {'entity_name':'','rec_type':'','entity_type':'','company':'','related_person':'','key_words':'','g':''};
+            // var row = {'entity_name':'','rec_type':'','entity_type':'','company':'','related_person':'','key_words':'','g':''};
+            var row = {'entity_name':'','entity_type':'','company':'','related_person':'','key_words':'','g':''};
             $('#addClub').bootstrapTable('insertRow',{index: 5, row: row});
         }
 
@@ -978,6 +984,9 @@
         var ext = file.slice(file.lastIndexOf(".")+1).toLowerCase();
         console.log(ext);
         if(ext == 'xlsx' || ext == 'xls' || ext == 'et'){
+            // 隐藏模态框
+            $('#importf_info').modal('hide');
+
             var f = obj.files[0];
             var reader = new FileReader();
             reader.onload = function(e) {
@@ -1015,8 +1024,9 @@
                         var four = somAddData[i]['注册公司'];
                         var five = somAddData[i]['相关人物'];
                         var six = somAddData[i]['其他关键词'];
-                        var two = parseInt(somAddData[i]['推荐理由']);//暂 转为数字
-                        var row = {'entity_name':one,'rec_type':two,'entity_type':three,'company':four,'related_person':five,'key_words':six,'g':'<input type="button" value="删除" class="btn-info btn btn-sm deleteone" onclick="delThisRow(\''+one+'\')">'}
+                        // var two = parseInt(somAddData[i]['推荐理由']);//暂 转为数字
+                        // var row = {'entity_name':one,'rec_type':two,'entity_type':three,'company':four,'related_person':five,'key_words':six,'g':'<input type="button" value="删除" class="btn-info btn btn-sm deleteone" onclick="delThisRow(\''+one+'\')">'}
+                        var row = {'entity_name':one,'entity_type':three,'company':four,'related_person':five,'key_words':six,'g':'<input type="button" value="删除" class="btn-info btn btn-sm deleteone" onclick="delThisRow(\''+one+'\')">'}
                         $('#addClub').bootstrapTable('insertRow',{index: 0, row: row});//在最开始插入新行
                         $('#addClub').bootstrapTable('removeByUniqueId','');//删除行的方法
                     }
