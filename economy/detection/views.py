@@ -7,7 +7,7 @@ from . import detection
 import json
 from economy.config import *
 
-field = ['id','entity_name','entity_type','operation_mode','province','city','district','illegal_type','date','support_num','against_num']
+field = ['id','entity_name','entity_type','operation_mode','province','city','district','illegal_type','date','support_num','against_num','entity_source']
 rank_field = ['entity_id','entity_name','count']
 dis_field = ['illegal_type','province','city','count']
 warn_type_field = ['illegal_type','count']
