@@ -803,7 +803,6 @@ def get_city_rank(table,table4,field,province_name,risk_level):
 				for dict in result1:
 					if dict['city'] == d['city']:
 						pro_dict.update({'count7':dict['count']})
-						print dict['city'],dict['count']
 				for dict in result2:
 					if dict['city'] == d['city']:
 						pro_dict.update({'count30':dict['count']})
