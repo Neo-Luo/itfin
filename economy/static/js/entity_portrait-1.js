@@ -69,6 +69,7 @@ function monitorCount(data){
             showToggle:false,
             sortName:'bci',
             sortOrder:"desc",
+            // sortStable:true,
             columns: [
                 {
                     title: "监测对象",//标题
@@ -108,6 +109,29 @@ function monitorCount(data){
                             // registAddress = registAddress.substring(0,i+1);
                             return '<span style="cursor:pointer;color:white;" title="注册地">'+registAddress+'</span>';
                         };
+                    }
+                },
+                {
+                    title: "实体来源",//标题
+                    field: "entity_source ",//键名
+                    sortable: true,//是否可排序
+                    order: "desc",//默认排序方式
+                    align: "center",//水平
+                    valign: "middle",//垂直
+                    formatter: function (value, row, index) {
+                        var entitySource;
+                        if(row.entity_source == 1){
+                            entitySource = '网贷之家';
+                        }else if(row.entity_source == 2 || row.entity_source == 3){
+                            entitySource = '数据库';
+                        }else if(row.entity_source == 2 ){
+                            entitySource = '新感知';
+                        }else if (row.entity_source==''||row.entity_source=='null'||row.entity_source=='unknown'||!row.entity_source){
+                            entitySource = '未知';
+                        }else {
+                            entitySource = entity_source;
+                        }
+                        return entitySource;
                     }
                 },
                 {

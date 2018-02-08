@@ -98,7 +98,8 @@
                         min : 0,
                         max : 1000,
                         // calculable : true,
-                        itemGap:2,
+                        itemGap:10,//各个item之间的间隔，单位px，默认为10，横向布局时为水平间隔，纵向布局时为纵向间隔，
+                        itemWidth:30,
                         splitList: [
                             {start: 100},
                             // {start: 700, end: 999},
@@ -112,9 +113,12 @@
                         textStyle:{
                             color:'white'
                         },
-                        color: ['#cf181d','#fee9b4'],
                         // color: ['maroon','purple','red','orange','yellow','lightgreen']
                         // color: ['#ccc97a','#264861','#b3c587']
+
+                        // color: ['#cf181d','#fee9b4'],
+                        // color: ['#FF0000','#FF0066','#FF6699','#FF9999','#fee9b4'],
+                        color: ['#910505','#cc3333','#e68068','#f2b48e','#fee9b4'],
                     }
                     option.series[0] = {
                         name: '',
@@ -1902,7 +1906,8 @@
                         y: 'bottom',
                         //text:['2500','0'],           // 文本，默认为数值文本
                         // calculable : true,
-                        itemGap:2,
+                        itemGap:10,//各个item之间的间隔，单位px，默认为10，横向布局时为水平间隔，纵向布局时为纵向间隔，
+                        itemWidth:30,
                         splitList: [
                             // {start: 800},
                             // // {start: 700, end: 999},
@@ -1929,9 +1934,12 @@
                         textStyle:{
                             color:'white'
                         },
-                        color: ['#cf181d','#fee9b4'],
                         // color:['#8a7ca8','#e098c7','#8fd3e8','#71669e','#cc70af','#7cb4cc']
                         // color: ['#ccc97a','#264861','#b3c587']
+
+                        // color: ['#cf181d','#fee9b4'],
+                        // color: ['#FF0000','#FF0066','#FF6699','#FF9999','#fee9b4'],
+                        color: ['#910505','#cc3333','#e68068','#f2b48e','#fee9b4'],
                     }
                     option.series[0] = {
                         name: '随机数据',
@@ -2056,7 +2064,8 @@
                     y: 'bottom',
                     // text:['高','低'],           // 文本，默认为数值文本
                     // calculable : true,
-                    itemGap:2,
+                    itemGap:10,//各个item之间的间隔，单位px，默认为10，横向布局时为水平间隔，纵向布局时为纵向间隔，
+                    itemWidth:30,
                     splitList: [
                         // {start: 800},
                         // // {start: 700, end: 999},
@@ -2089,7 +2098,13 @@
                     // color: ['#de8c68','#e87e51','#f2753f','#f29f3f','#ffe957']
                     // color:['#8a7ca8','#e098c7','#8fd3e8','#71669e','#cc70af','#7cb4cc']
                     // color: ['#ccc97a','#264861','#b3c587']
-                    color: ['#cf181d','#fee9b4'],
+
+                    // color: ['#cf181d','#fee9b4'],
+                    // '#993333','
+                    // color: ['#cf181d','#fee9b4'],
+                    // color: ['#a90000','#cc3333','#e68068','#f2b48e','#fee9b4'],
+                    color: ['#910505','#cc3333','#e68068','#f2b48e','#fee9b4'],
+                    // color: ['#FF0000','#FF0066','#FF6699','#FF9999','#fee9b4'],
                 },
                 series : [
                     {
@@ -2132,45 +2147,46 @@
                                 }
                             }
                         },
-                        data:[]
+                        // data:[]
                         /*
-                        data:[
-                            {name: '北京',value: Math.round(Math.random()*1000)},
-                            {name: '天津',value: Math.round(Math.random()*1000)},
-                            {name: '上海',value: Math.round(Math.random()*1000)},
-                            {name: '重庆',value: Math.round(Math.random()*1000)},
-                            {name: '河北',value: Math.round(Math.random()*1000)},
-                            {name: '河南',value: Math.round(Math.random()*1000)},
-                            {name: '云南',value: Math.round(Math.random()*1000)},
-                            {name: '辽宁',value: Math.round(Math.random()*1000)},
-                            {name: '黑龙江',value: Math.round(Math.random()*1000)},
-                            {name: '湖南',value: Math.round(Math.random()*1000)},
-                            {name: '安徽',value: Math.round(Math.random()*1000)},
-                            {name: '山东',value: Math.round(Math.random()*1000)},
-                            {name: '新疆',value: Math.round(Math.random()*1000)},
-                            {name: '江苏',value: Math.round(Math.random()*1000)},
-                            {name: '浙江',value: Math.round(Math.random()*1000)},
-                            {name: '江西',value: Math.round(Math.random()*1000)},
-                            {name: '湖北',value: Math.round(Math.random()*1000)},
-                            {name: '广西',value: Math.round(Math.random()*1000)},
-                            {name: '甘肃',value: Math.round(Math.random()*1000)},
-                            {name: '山西',value: Math.round(Math.random()*1000)},
-                            {name: '内蒙古',value: Math.round(Math.random()*1000)},
-                            {name: '陕西',value: Math.round(Math.random()*1000)},
-                            {name: '吉林',value: Math.round(Math.random()*1000)},
-                            {name: '福建',value: Math.round(Math.random()*1000)},
-                            {name: '贵州',value: Math.round(Math.random()*1000)},
-                            {name: '广东',value: Math.round(Math.random()*1000)},
-                            {name: '青海',value: Math.round(Math.random()*1000)},
-                            {name: '西藏',value: Math.round(Math.random()*1000)},
-                            {name: '四川',value: Math.round(Math.random()*1000)},
-                            {name: '宁夏',value: Math.round(Math.random()*1000)},
-                            {name: '海南',value: Math.round(Math.random()*1000)},
-                            {name: '台湾',value: Math.round(Math.random()*1000)},
-                            {name: '香港',value: Math.round(Math.random()*1000)},
-                            {name: '澳门',value: Math.round(Math.random()*1000)}
-                        ],
+                            data:[
+                                {name: '北京',value: 555},
+                                {name: '天津',value: 400},
+                                {name: '上海',value: 55},
+                                {name: '重庆',value: 30},
+                                {name: '河北',value: 400},
+                                {name: '河南',value: 500},
+                                {name: '云南',value: 500},
+                                {name: '辽宁',value: 500},
+                                {name: '黑龙江',value: 500},
+                                {name: '湖南',value: 400},
+                                {name: '安徽',value: 400},
+                                {name: '山东',value: 400},
+                                {name: '新疆',value: Math.round(Math.random()*10)},
+                                {name: '江苏',value: 400},
+                                {name: '浙江',value: 400},
+                                {name: '江西',value: 400},
+                                {name: '湖北',value: 400},
+                                {name: '广西',value: Math.round(Math.random()*10)},
+                                {name: '甘肃',value: 55},
+                                {name: '山西',value: 55},
+                                {name: '内蒙古',value: 55},
+                                {name: '陕西',value: 55},
+                                {name: '吉林',value: 55},
+                                {name: '福建',value: 55},
+                                {name: '贵州',value: 55},
+                                {name: '广东',value: 30},
+                                {name: '青海',value: 30},
+                                {name: '西藏',value: Math.round(Math.random()*10)},
+                                {name: '四川',value: 30},
+                                {name: '宁夏',value: 30},
+                                {name: '海南',value: Math.round(Math.random()*10)},
+                                {name: '台湾',value: Math.round(Math.random()*10)},
+                                {name: '香港',value: Math.round(Math.random()*10)},
+                                {name: '澳门',value: Math.round(Math.random()*10)}
+                            ],
                          */
+
                     },
                 ]
             };
@@ -2220,7 +2236,7 @@
                 // 右下角热点舆情
                 public_ajax.call_request('get',hotSpot_url,comment);
             }
-            // myChart.setOption(option);
+            myChart.setOption(option);
         }
     );
 

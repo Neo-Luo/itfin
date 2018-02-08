@@ -1,7 +1,7 @@
 {% extends "publicNav.html" %}
 {% block title %}<title>预警报告</title>{% endblock %}
 {% block my_css %}
-<link rel="stylesheet" href="/static/css/company.css">
+<link rel="stylesheet" href="/static/css/company_monitor.css">
 <style>
     <!---->
     #nav .nav_middle .main_li:nth-of-type(3) {
@@ -48,7 +48,7 @@
                 <span class="status-1 status btn-primary"><i class="icon icon-retweet"></i>&nbsp;停止监测</span>
                 <span class="status-2 status btn-primary"><i class="icon icon-sitemap"></i>&nbsp;查看网络图</span>
             </h3>
-            <p class="isPlatform inforLine" style="display: none;min-width:56%;">
+            <p class="isPlatform inforLine" style="min-width:56%;">
                 <span>工商注册公司名称：</span>&nbsp;<b class="isPlatformName"></b>
             </p>
             <p class="infor-3 inforLine">
@@ -205,11 +205,11 @@
         <!-- <h3><i class="icon icon-envelope-alt"></i>&nbsp;广告信息&nbsp;&nbsp;<i class="icon icon-edit advert-1" title="编辑"></i></h3> -->
         <h3><i class="icon icon-envelope-alt"></i>&nbsp;广告信息&nbsp;&nbsp;</h3>
         <div class="billing" style="margin-top:20px;">
-            <h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;广告发布趋势</h5>
+            <h5 class="twoLevel_headlines billing_diagram-title"><i class="icon icon-bookmark"></i>&nbsp;广告发布趋势</h5>
             <div id="billing_diagram">
                 <center>暂无记录</center>
             </div>
-            <h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;广告内容</h5>
+            <h5 class="twoLevel_headlines billing-title"><i class="icon icon-bookmark"></i>&nbsp;广告内容</h5>
             <div id="billing">
                 <p class="load">正在拼命加载中....</p>
             </div>
@@ -236,14 +236,14 @@
         </h3>
         <div style="margin-top: 20px;">
             <!-- <h4><i class="icon icon-signal"></i>&nbsp;趋势统计</h4> -->
-            <h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;舆情趋势</h5>
+            <h5 class="twoLevel_headlines opinion-title"><i class="icon icon-bookmark"></i>&nbsp;舆情趋势</h5>
             <div id="opinion" style="width: 100%;">
                 <center>暂无记录</center>
             </div>
         </div>
         <div style="margin-top: 20px;">
             <!-- <h4><i class="icon icon-comment"></i>&nbsp;评论信息</h4> -->
-            <h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;舆情内容</h5>
+            <h5 class="twoLevel_headlines commentinforContent-title"><i class="icon icon-bookmark"></i>&nbsp;舆情内容</h5>
             <div class="commentinforContent">
                 <div id="commentinforContent">
                     <p class="load">正在拼命加载中....</p>
@@ -471,9 +471,9 @@
     var name='{{name}}';
     var type='{{flag}}';
     var pid='{{pid}}';
-    if (type=='1'){
-        $('.isPlatform').show();
-    }
+    // if (type=='1'){
+    //     $('.isPlatform').show();
+    // }
     $('#title-1').text(unescape(name));
     $('.name').text(unescape(name));
     $('#tableName').text(unescape(name));
@@ -583,7 +583,8 @@
     };
 
 </script>
-<script src="/static/js/company.js"></script>
+<!-- <script src="/static/js/company.js"></script> -->
+<script src="/static/js/company_monitor.js"></script>
 
 {% endblock %}
 

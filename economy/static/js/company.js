@@ -61,9 +61,10 @@ var monitor_status_1;
         var capital = '未知';
         var company = '未知';
         var risk_level = '未知';
-        if (item.entity_type==1){t1='平台';}else if (item.entity_type==2){t1='公司';}else if (item.entity_type==1){t1='项目';}else {t1='未知'}
+        var registAddress = '未知';
+        if (item.entity_type==1){t1='平台';}else if (item.entity_type==2){t1='公司';}else if (item.entity_type==3){t1='项目';}else {t1='未知'}
         if (item.set_time){t2=item.set_time;}//成立时间
-        $('.location').text(item.regist_address||''); //注册地
+
         if (item.operation_mode==1){
             operationMode = '互联网金融';
         }else{
@@ -73,12 +74,16 @@ var monitor_status_1;
         if(item.legal_person){legalPerson = item.legal_person};
         if(item.capital && item.capital!= ''){capital = item.capital+'万元'}
         if(item.company && item.company!= ''){company = item.company}
+            if(item.regist_address && item.regist_address!= ''){
+            registAddress = item.regist_address
+        }
         $('.type-1').text(operationMode);//运营模式
         $('.type-2').text(t1);//实体类型
         $('.type-3').text(t2);//成立时间
         $('.type-4').text(legalPerson);//法人代表
         $('.type-5').text(capital);//注册资本
         $('.isPlatformName').text(company);//工商注册公司名称：
+        $('.location').text(registAddress); //注册地
 
         //风险评价
         if (item.illegal_type > 0){//是否疑似非法集资
@@ -102,25 +107,25 @@ var monitor_status_1;
         }
         $('.val-1').text(t3);
 
-        var illegal_type_1 = parseInt(item.illegal_type);
+        var illegal_type_1 = parseInt(item.illegal_type);//---风险等级
         var risk_level_1 = parseInt(item.risk_level);
         if(illegal_type_1 == 1){
             if(risk_level_1 >= 99){
-                risk_level = '重大';
+                risk_level = '重大（' + risk_level_1 + '）';
             }else if(risk_level_1 <= 98 && risk_level_1 >=95){
-                risk_level = '大';
+                risk_level = '大（' + risk_level_1 + '）';
             }else if(risk_level_1 < 95){
-                risk_level = '一般';
+                risk_level = '一般（' + risk_level_1 + '）';
             }else {
                 risk_level = risk_level_1;
             }
         }else if(illegal_type_1 == 2){
             if(risk_level_1 >= 100){
-                risk_level = '重大';
+                risk_level = '重大（' + risk_level_1 + '）';
             }else if(risk_level_1 <= 99 && risk_level_1 >= 85){
-                risk_level = '大';
+                risk_level = '大（' + risk_level_1 + '）';
             }else if(risk_level_1 < 85){
-                risk_level = '一般';
+                risk_level = '一般（' + risk_level_1 + '）';
             }else {
                 risk_level = risk_level_1;
             }
