@@ -241,9 +241,7 @@ def holderContent():
 @index.route('/riskCommentTable/')
 def risk_comment_table():
     entity_id = int(request.args.get('entity_id',''))
-    type = int(request.args.get('type',''))
-    #result = get_risk_comment_table(TABLE_PLAT_DETAIL,TABLE_COMPANY_DETAIL,TABLE_PROJECT_DETAIL,entity_id,type,table_field)
-    result = get_risk_comment_table(TABLE_PLAT_DETAIL,entity_id,table_field)
+    result = get_risk_comment_table(TABLE_MONITOR,entity_id,table_field,ILLEGAL_TYPE,ILLEGAL_SCORE)
     return json.dumps(result,ensure_ascii=False)
 
 
