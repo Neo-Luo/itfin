@@ -23,18 +23,20 @@ TABLE_CITY_RANK = 'city_rank_daily'
 TABLE_PROVINCE_RANK = 'province_rank_daily'
 
 #es
-ES_HOST = '219.224.134.214'
-ES_PORT = 9202
+ES_HOST = '10.110.0.106'
+ES_PORT = 9200
 INDEX_NAME = {"bbs":"bbs","weibo":"weibo","zhihu":"zhihu","forum":"forum","wechat":"wechat"}
-TYPE = {"bbs":"type1","webo":"type1","zhihu":"type2","forum":"type1","wechat":"type1"}
+TYPE = {"bbs":"type1","webo":"type1","zhihu":"type1","forum":"type1","wechat":"type1"}
 
 #db
-HOST = "219.224.134.214"
+HOST = "10.110.0.104"
 USER = "root"
 PASSWORD = ""
-DEFAULT_DB = "itfin-20180124"
+DEFAULT_DB = "itfin_on"
 CHARSET = "utf8"
 TEST_DB = "zyz"
 
 #para
-RISK_LEVEL = 0
+RISK_LEVEL = 98
+ILLEGAL_SCORE = 0
+ILLEGAL_TYPE = 0
