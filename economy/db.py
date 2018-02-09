@@ -213,7 +213,7 @@ def get_monitor_count(table):
 def get_portrait(table1,table2,table5,field,letter):
 	result = []
 	cur = defaultDatabase()
-	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.date,pd.illegal_type from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s as b) and pd.date=(select max(date) from %s as a)" % (table1,table2,table5,table5,table2)
+	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.date,pd.illegal_type,el.entity_source from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s as b) and pd.date=(select max(date) from %s as a)" % (table1,table2,table5,table5,table2)
 	cur.execute(sql1)
 	res1 = cur.fetchall()
 	#sql2 = "select el.id,el.entity_name,el.entity_type,cd.operation_mode,gs.province,gs.city,gs.district,cd.date,cd.illegal_type from %s as el inner join %s as cd on el.id=cd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s as b) and cd.date=(select max(date) from %s as a)" % (table1,table3,table5,table5,table3)
@@ -241,9 +241,9 @@ def get_portrait(table1,table2,table5,field,letter):
 
 
 #实体详情页
-def platform_detail(table1,table2,table3,id,field):
+def platform_detail(table1,table2,table3,table4,id,field):
 	cur = defaultDatabase()
-	sql = "select * from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where el.id=%d and gs.date=(select max(date) from %s) order by pd.date desc limit 1" % (table1,table2,table3,id,table3)
+	sql = "select * from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id inner join %s as m on el.id=m.entity_id where el.id=%d and m.date=(select max(date) from %s) and gs.date=(select max(date) from %s) order by pd.date desc limit 1" % (table1,table2,table3,table4,id,table4,table3)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:str(row[i]).replace('(','').replace(')','').replace('人民币','').replace('万','').replace('元','') for i,k in enumerate(field)} for row in res]
@@ -439,7 +439,7 @@ def totalDetectData(date,table1,table2,table3,field,risk_level,operation_mode,il
 	end_time = cur.fetchall()[0][0]
 	start_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=int(date))
 	start_time = start_time.strftime("%Y-%m-%d")
-	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.illegal_type,pd.date,pd.support_num,pd.against_num,el.entity_source from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status>='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc,el.id desc" % (table1, table2, table3, start_time, end_time, risk_level, operation_mode, illegal_type, entity_type, warn_distribute)
+	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.illegal_type,pd.date,pd.support_num,pd.against_num,el.entity_source from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status>='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc,pd.illegal_score desc" % (table1, table2, table3, start_time, end_time, risk_level, operation_mode, illegal_type, entity_type, warn_distribute)
 
 	if operation_mode == 0:
 		sql1 = sql1.replace(' and pd.operation_mode=0','')
@@ -803,6 +803,7 @@ def get_city_rank(table,table4,field,province_name,risk_level):
 				for dict in result1:
 					if dict['city'] == d['city']:
 						pro_dict.update({'count7':dict['count']})
+						print dict['city'],dict['count']
 				for dict in result2:
 					if dict['city'] == d['city']:
 						pro_dict.update({'count30':dict['count']})
