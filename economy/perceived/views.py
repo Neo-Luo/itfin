@@ -22,10 +22,11 @@ def perceive_data():
 
 @perceived.route('/perceiveContent/')
 def perceive_content():
-	text_id = request.args.get('text_id','')
+	#text_id = request.args.get('text_id','')
 	index_name = request.args.get('index_name','')
+	entity_name = request.args.get('entity_name','')
 	type = TYPE[index_name]
-	result = get_perceive_content(index_name,type,text_id)
+	result = get_perceive_content(index_name,type,entity_name)
 	return json.dumps(result,ensure_ascii=False)
 
 @perceived.route('/warnCount/')

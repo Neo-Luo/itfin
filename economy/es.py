@@ -190,18 +190,18 @@ def get_holderContent(firm,index_name):
 	return unique_result
 
 
-def get_perceive_content(index_name,type,text_id):
+def get_perceive_content(index_name,type,entity_name):
 	list = []
-	for id in text_id.split(','):
-		query_body = {
-				"query":{
-					"match":{
-						"_id":id
-					}
+	query_body = {
+			"query":{
+				"match":{
+					"query_name":entity_name
 				}
-		}
-		result = es.search(index=index_name,doc_type=type,body=query_body)['hits']['hits'][0]['_source']
-		list.append(result)
+			}
+	}
+	for each in es.search(index=index_name,doc_type=type,body=query_body)['hits']['hits']:
+		if entity_name in each['_source']['content']:
+			list.append(each['_source'])
 	return list
 
 
