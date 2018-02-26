@@ -893,7 +893,7 @@ def getTimeDistribute(table,risk_level,illegal_score):
 #感知入库
 def get_perceive_data(table,field):
 	cur = defaultDatabase()
-	sql = 'select * from %s where status<2 group by entity_name order by date desc'%table
+	sql = 'select * from %s where status<2 group by entity_name order by date desc,id desc'%table
 	cur.execute(sql)
 	res = cur.fetchall()
 	result = [{k:row[i] for i,k in enumerate(field)} for row in res]
