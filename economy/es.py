@@ -193,6 +193,7 @@ def get_holderContent(firm,index_name):
 def get_perceive_content(index_name,type,entity_name):
 	list = []
 	query_body = {
+			"size":5000,
 			"query":{
 				"match":{
 					"query_name":entity_name

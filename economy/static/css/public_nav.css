@@ -100,6 +100,12 @@ body {
     margin-right: 10px;
     cursor: pointer;
 }
+#nav .nav_right span a{
+    color:#fff;
+}
+#nav .nav_right span a:hover{
+    color: black;
+}
 #nav .nav_right span:hover {
     background: white;
     color: black;

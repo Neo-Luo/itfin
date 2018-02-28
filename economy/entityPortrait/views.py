@@ -7,7 +7,7 @@ from . import entityPortrait
 from economy.config import *
 import json
 
-field = ['id','entity_name','entity_type','operation_mode','province','city','district','date','illegal_type','entity_source']
+field = ['id','entity_name','entity_type','operation_mode','province','city','district','date','illegal_type','entity_source','problem']
 plat_field = ['id','entity_name','illegal_type','entity_type']
 
 @entityPortrait.route('/entityPortrait/')
