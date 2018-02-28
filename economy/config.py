@@ -21,6 +21,7 @@ TABLE_ILLEGAL_LIST = 'illegal_list'
 TABLE_LOG = 'logs'
 TABLE_CITY_RANK = 'city_rank_daily'
 TABLE_PROVINCE_RANK = 'province_rank_daily'
+TABLE_USERINFO = 'user_info'
 
 #es
 ES_HOST = '219.224.134.214'
