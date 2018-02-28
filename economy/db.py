@@ -491,7 +491,7 @@ def getDetectData(date,table1,table2,table3,field,risk_level,illegal_score,opera
 	end_time = cur.fetchall()[0][0]
 	start_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=int(date))
 	start_time = start_time.strftime("%Y-%m-%d")
-	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.illegal_type,pd.date,el.support_num,el.against_num,el.entity_source from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status>='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.illegal_score>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc limit %d,%d" % (table1, table2, table3, start_time, end_time, risk_level, illegal_score, operation_mode, illegal_type, entity_type, warn_distribute, begin, page_size)
+	sql1 = "select el.id,el.entity_name,el.entity_type,el.operation_mode,gs.province,gs.city,gs.district,pd.illegal_type,pd.date,el.support_num,el.against_num,el.entity_source,el.problem from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status>='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.illegal_score>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc limit %d,%d" % (table1, table2, table3, start_time, end_time, risk_level, illegal_score, operation_mode, illegal_type, entity_type, warn_distribute, begin, page_size)
 
 	if operation_mode == 0:
 		sql1 = sql1.replace(' and pd.operation_mode=0','')
@@ -548,13 +548,13 @@ def detectionCount(date,table1,table2,table3,field,risk_level,illegal_score,oper
 def detectionResultCheck(table,entity_id,date,type,illegal_type):
 	cur = defaultDatabase()
 	if type == 1:
-		sql = "update %s set support_num=support_num+1 where entity_id=%d and illegal_type=%d"%(table,entity_id,illegal_type)
+		sql = "update %s set support_num=support_num+1 where entity_id=%d"%(table,entity_id)
 		cur.execute(sql)
 		dict = {'status':'ok'}
 		cur.close()
 		return dict
 	elif type == 0:
-		sql = "update %s set against_num=against_num+1 where entity_id=%d and illegal_type=%d"%(table,entity_id,illegal_type)
+		sql = "update %s set against_num=against_num+1 where entity_id=%d"%(table,entity_id)
 		cur.execute(sql)
 		dict = {'status':'ok'}
 		cur.close()
