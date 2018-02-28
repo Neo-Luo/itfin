@@ -12,7 +12,7 @@ optparser.add_option('-p','--port',dest='port',help='Server Http Port Number', d
 (options, args) = optparser.parse_args()
 
 app = create_app()
-app.secret_key = 'xerxes'
+app.secret_key = "itfin"
 
 if __name__ == '__main__':
 	app.debug = True
