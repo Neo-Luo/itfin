@@ -28,8 +28,13 @@ def testDatabase():
 #实体画像
 def get(table1,table2,table5,field,operation_mode,illegal_type,entity_type,warn_distribute):
 	cur = defaultDatabase()
-	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.date,pd.illegal_type from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s) and el.monitor_status>='1' and pd.date=(select max(date) from %s as a) and pd.operation_mode=%d and pd.illegal_type=%d and el.entity_type=%d and gs.province='%s'" % (table1,table2,table5,table5,table2,operation_mode,illegal_type,entity_type,warn_distribute)
-	#sql2 = "select el.id,el.entity_name,el.entity_type,cd.operation_mode,gs.province,gs.city,gs.district,cd.date,cd.illegal_type from %s as el inner join %s as cd on el.id=cd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s) and el.monitor_status>='1' and cd.date=(select max(date) from %s as a) and cd.operation_mode=%d and cd.illegal_type=%d and el.entity_type=%d and gs.province='%s'" % (table1,table3,table5,table5,table3,operation_mode,illegal_type,entity_type,warn_distribute)
+	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.date,pd.illegal_type,el.entity_source from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s) and el.monitor_status>='1' and pd.date=(select max(date) from %s as a) and pd.operation_mode=%d and pd.illegal_type=%d and el.entity_type=%d and gs.province='%s'" % (table1,table2,table5,table5,table2,operation_mode,illegal_type,entity_type,warn_distribute)
+	# sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.date,pd.illegal_type from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s) and el.monitor_status>='1' and pd.operation_mode=%d and pd.illegal_type=%d and el.entity_type=%d and gs.province='%s' group by pd.entity_id order by pd.date desc " % (table1,table2,table5,table5,operation_mode,illegal_type,entity_type,warn_distribute)
+	# sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.date,pd.illegal_type\
+	#  from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date)\
+	#   from %s) and el.monitor_status>='1' and pd.operation_mode=%d and pd.illegal_type=%d and\
+	#    el.entity_type=%d and gs.province='%s' and pd.id in (select SUBSTRING_INDEX(group_concat(pd.id order by pd.date desc),',',1) from plat_detail_daily group by entity_id) order by pd.date desc " % (table1,table2,table5,table5,operation_mode,illegal_type,entity_type,warn_distribute)
+	# #sql2 = "select el.id,el.entity_name,el.entity_type,cd.operation_mode,gs.province,gs.city,gs.district,cd.date,cd.illegal_type from %s as el inner join %s as cd on el.id=cd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s) and el.monitor_status>='1' and cd.date=(select max(date) from %s as a) and cd.operation_mode=%d and cd.illegal_type=%d and el.entity_type=%d and gs.province='%s'" % (table1,table3,table5,table5,table3,operation_mode,illegal_type,entity_type,warn_distribute)
 	#sql3 = "select el.id,el.entity_name,el.entity_type,p.operation_mode,gs.province,gs.city,gs.district,p.date,p.illegal_type from %s as el inner join %s as p on el.id=p.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s) and el.monitor_status>='1' and p.date=(select max(date) from %s as a) and p.operation_mode=%d and p.illegal_type=%d and el.entity_type=%d and gs.province='%s'" % (table1,table4,table5,table5,table4,operation_mode,illegal_type,entity_type,warn_distribute)
 	if operation_mode == 0:
 		sql1 = sql1.replace(' and pd.operation_mode=0','')
@@ -60,7 +65,7 @@ def get(table1,table2,table5,field,operation_mode,illegal_type,entity_type,warn_
 		data = [{k:row[i] for i,k in enumerate(field)} for row in res]
 		result = {'status':1,'data':data}
 	else:
-		result = {'status':0,'data':'null'}
+		result = {'status':1,'data':[]}
 	return result
 
 
@@ -139,7 +144,7 @@ def diviPage(table1,table2,table3,table4,table5,field,operation_mode,illegal_typ
 	# 		data += [{k:row[i] for i,k in enumerate(field)} for row in res2]
 	# 	return data
 	# elif begin >= platCount and begin < platCount + comCount:
-	# 	begin -= platCount 
+	# 	begin -= platCount
 	# 	cur.execute(sql2)
 	# 	res2 = cur.fetchall()
 	# 	data = [{k:row[i] for i,k in enumerate(field)} for row in res2]
@@ -161,7 +166,7 @@ def diviPage(table1,table2,table3,table4,table5,field,operation_mode,illegal_typ
 
 def get_platform(table,field):
 	cur = defaultDatabase()
-	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=1"%(table)
+	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=1 and date=(select max(date) from %s)"%(table,table)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
@@ -170,7 +175,7 @@ def get_platform(table,field):
 
 def get_company(table,field):
 	cur = defaultDatabase()
-	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=2"%(table)
+	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=2 and date=(select max(date) from %s)"%(table,table)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
@@ -179,7 +184,7 @@ def get_company(table,field):
 
 def get_project(table,field):
 	cur = defaultDatabase()
-	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=3"%(table)
+	sql = "select entity_id,entity_name,illegal_type,entity_type from %s where illegal_type>0 and entity_type=3 and date=(select max(date) from %s)"%(table,table)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
@@ -208,7 +213,7 @@ def get_monitor_count(table):
 def get_portrait(table1,table2,table5,field,letter):
 	result = []
 	cur = defaultDatabase()
-	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.date,pd.illegal_type from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s as b) and pd.date=(select max(date) from %s as a)" % (table1,table2,table5,table5,table2)
+	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.date,pd.illegal_type,el.entity_source from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s as b) and pd.date=(select max(date) from %s as a)" % (table1,table2,table5,table5,table2)
 	cur.execute(sql1)
 	res1 = cur.fetchall()
 	#sql2 = "select el.id,el.entity_name,el.entity_type,cd.operation_mode,gs.province,gs.city,gs.district,cd.date,cd.illegal_type from %s as el inner join %s as cd on el.id=cd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from %s as b) and cd.date=(select max(date) from %s as a)" % (table1,table3,table5,table5,table3)
@@ -236,9 +241,9 @@ def get_portrait(table1,table2,table5,field,letter):
 
 
 #实体详情页
-def platform_detail(table1,table2,table3,id,field):
+def platform_detail(table1,table2,table3,table4,id,field):
 	cur = defaultDatabase()
-	sql = "select * from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where el.id=%d and gs.date=(select max(date) from %s) order by pd.date desc limit 1" % (table1,table2,table3,id,table3)
+	sql = "select * from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id inner join %s as m on el.id=m.entity_id where el.id=%d and m.date=(select max(date) from %s) and gs.date=(select max(date) from %s) order by pd.date desc limit 1" % (table1,table2,table3,table4,id,table4,table3)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:str(row[i]).replace('(','').replace(')','').replace('人民币','').replace('万','').replace('元','') for i,k in enumerate(field)} for row in res]
@@ -271,7 +276,7 @@ def get_ad(table,id,field):
 	res = cur.fetchall()
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
 	k_list = []
-	except_list = ['id', 'entity_id', 'entity_name', 'date']
+	except_list = ['id', 'entity_id', 'entity_name', 'date', 'ad0_bbs', 'ad0_zhihu', 'ad0_forum', 'ad0_webo', 'ad0_wechat']
 	for d in data:
 	    for k in d.keys():
 			if not k in except_list:
@@ -324,20 +329,22 @@ def get_return_rate(table1,table2,id,field):
 	return data
 
 
-def get_risk_comment_table(table1,entity_id,field):
+def get_risk_comment_table(table,entity_id,field,illegal_type,illegal_score):
 	cur = defaultDatabase()
 	result = []
 	dict = {}
-	#if type == 1:
-	sql = "select date,illegal_type from %s where illegal_type>0 and entity_id=%d order by date desc"%(table1,entity_id)
+	sql = "select date,illegal_type from %s where illegal_type>%d and illegal_score>%d and entity_id=%d order by date desc"%(table,illegal_type,illegal_score,entity_id)
 	cur.execute(sql)
 	res = cur.fetchall()
 	result = [{k:row[i] for i,k in enumerate(field)} for row in res]
 
-	sql = "select count(*) from %s where illegal_type>0 and entity_id=%d order by date desc"%(table1,entity_id)
+	sql = "select count(*) from %s where illegal_type>%d and illegal_score>%d and entity_id=%d order by date desc"%(table,illegal_type,illegal_score,entity_id)
 	cur.execute(sql)
 	res = cur.fetchall()[0][0]
 	dict = {res:result}
+
+	cur.close()
+	return dict
 
 	# if type == 2:
 	# 	sql = "select date,illegal_type from %s where illegal_type>0 and entity_id=%d order by date desc"%(table2,entity_id)
@@ -360,8 +367,6 @@ def get_risk_comment_table(table1,entity_id,field):
 	# 	cur.execute(sql)
 	# 	res = cur.fetchall()[0][0]
 	# 	dict = {res:result}
-	cur.close()
-	return dict
 
 
 def EditDetail(table1, table2, dict):
@@ -427,14 +432,14 @@ def MonitorStatus(table1, table, entity_name, log_type, remark):
 
 
 #监测预警
-def totalDetectData(date,table1,table2,table3,field,risk_level,operation_mode,illegal_type,entity_type,warn_distribute):
+def totalDetectData(date,table1,table2,table3,field,risk_level,illegal_score,operation_mode,illegal_type,entity_type,warn_distribute):
 	cur = defaultDatabase()
 	sql = "select max(date) from %s"%table2
 	cur.execute(sql)
 	end_time = cur.fetchall()[0][0]
 	start_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=int(date))
 	start_time = start_time.strftime("%Y-%m-%d")
-	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.illegal_type,pd.date,pd.support_num,pd.against_num from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc" % (table1, table2, table3, start_time, end_time, risk_level, operation_mode, illegal_type, entity_type, warn_distribute)
+	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.illegal_type,pd.date,pd.support_num,pd.against_num,el.entity_source from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status>='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.illegal_score>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc,pd.illegal_score desc" % (table1, table2, table3, start_time, end_time, risk_level, illegal_score, operation_mode, illegal_type, entity_type, warn_distribute)
 
 	if operation_mode == 0:
 		sql1 = sql1.replace(' and pd.operation_mode=0','')
@@ -452,7 +457,7 @@ def totalDetectData(date,table1,table2,table3,field,risk_level,operation_mode,il
 	return result
 
 
-def getDetectData(date,table1,table2,table3,field,risk_level,operation_mode,illegal_type,entity_type,warn_distribute,page_number,page_size,detectionCount):
+def getDetectData(date,table1,table2,table3,field,risk_level,illegal_score,operation_mode,illegal_type,entity_type,warn_distribute,page_number,page_size,detectionCount):
 	cur = defaultDatabase()
 	begin = (page_number - 1) * page_size
 	sql = "select max(date) from %s"%table2
@@ -460,7 +465,7 @@ def getDetectData(date,table1,table2,table3,field,risk_level,operation_mode,ille
 	end_time = cur.fetchall()[0][0]
 	start_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=int(date))
 	start_time = start_time.strftime("%Y-%m-%d")
-	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.illegal_type,pd.date,pd.support_num,pd.against_num from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status>='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc limit %d,%d" % (table1, table2, table3, start_time, end_time, risk_level, operation_mode, illegal_type, entity_type, warn_distribute, begin, page_size)
+	sql1 = "select el.id,el.entity_name,el.entity_type,pd.operation_mode,gs.province,gs.city,gs.district,pd.illegal_type,pd.date,pd.support_num,pd.against_num,el.entity_source from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status>='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.illegal_score>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc limit %d,%d" % (table1, table2, table3, start_time, end_time, risk_level, illegal_score, operation_mode, illegal_type, entity_type, warn_distribute, begin, page_size)
 
 	if operation_mode == 0:
 		sql1 = sql1.replace(' and pd.operation_mode=0','')
@@ -490,14 +495,14 @@ def getDetectData(date,table1,table2,table3,field,risk_level,operation_mode,ille
 		else:
 			list2.append(r)
 '''
-def detectionCount(date,table1,table2,table3,field,risk_level,operation_mode,illegal_type,entity_type,warn_distribute):
+def detectionCount(date,table1,table2,table3,field,risk_level,illegal_score,operation_mode,illegal_type,entity_type,warn_distribute):
 	cur = defaultDatabase()
 	sql = "select max(date) from %s"%table2
 	cur.execute(sql)
 	end_time = cur.fetchall()[0][0]
 	start_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=int(date))
 	start_time = start_time.strftime("%Y-%m-%d")
-	sql1 = "select count(*) from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status>='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc" % (table1, table2, table3, start_time, end_time, risk_level, operation_mode, illegal_type, entity_type, warn_distribute)
+	sql1 = "select count(*) from %s as el inner join %s as pd on el.id=pd.entity_id inner join %s as gs on el.id=gs.entity_id where gs.date=(select max(date) from gongshang_daily) and pd.date>'%s' and pd.date<='%s' and el.monitor_status>='1' and pd.illegal_type>0 and pd.risk_level>%d and pd.illegal_score>%d and pd.operation_mode=%d and pd.illegal_type=%d and pd.entity_type=%d and gs.province='%s' order by pd.date desc" % (table1, table2, table3, start_time, end_time, risk_level, illegal_score, operation_mode, illegal_type, entity_type, warn_distribute)
 
 	if operation_mode == 0:
 		sql1 = sql1.replace(' and pd.operation_mode=0','')
@@ -514,22 +519,22 @@ def detectionCount(date,table1,table2,table3,field,risk_level,operation_mode,ill
 	return res
 
 
-def detectionResultCheck(table,entity_id,date,type):
+def detectionResultCheck(table,entity_id,date,type,illegal_type):
 	cur = defaultDatabase()
 	if type == 1:
-		sql = "update %s set support_num=support_num+1 where entity_id=%d and date='%s'"%(table,entity_id,date)
+		sql = "update %s set support_num=support_num+1 where entity_id=%d and date='%s' and illegal_type=%d"%(table,entity_id,date,illegal_type)
 		cur.execute(sql)
 		dict = {'status':'ok'}
 		cur.close()
 		return dict
 	elif type == 0:
-		sql = "update %s set against_num=against_num+1 where entity_id=%d and date='%s'"%(table,entity_id,date)
+		sql = "update %s set against_num=against_num+1 where entity_id=%d and date='%s' and illegal_type=%d"%(table,entity_id,date,illegal_type)
 		cur.execute(sql)
 		dict = {'status':'ok'}
 		cur.close()
-		return dict		
+		return dict
 
-def getDetectRank(table, date, field, risk_level, entity_type):
+def getDetectRank(table, date, field, risk_level, illegal_score, entity_type):
 	cur = defaultDatabase()
 	sql = "select max(date) from %s"%table
 	cur.execute(sql)
@@ -537,7 +542,7 @@ def getDetectRank(table, date, field, risk_level, entity_type):
 	start_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=int(date))
 	start_time = start_time.strftime("%Y-%m-%d")
 
-	sql = 'select entity_id,entity_name,max(risk_level) from %s where date>"%s" and date<="%s" and illegal_type>0 and risk_level>%d and entity_type=%d group by entity_id order by sum(risk_level) desc'%(table, start_time, end_time, risk_level, entity_type)
+	sql = 'select entity_id,entity_name,max(risk_level) from %s where date>"%s" and date<="%s" and illegal_type>0 and risk_level>%d and illegal_score>%d and entity_type=%d group by entity_id order by sum(risk_level) desc'%(table, start_time, end_time, risk_level, illegal_score, entity_type)
 	if entity_type == 0:
 		sql = sql.replace(' and entity_type=0','')
 	cur.execute(sql)
@@ -546,7 +551,7 @@ def getDetectRank(table, date, field, risk_level, entity_type):
 	cur.close()
 	return result
 
-def getDetectDistribute(date,table,table4,field,risk_level):
+def getDetectDistribute(date,table,table4,field,risk_level,illegal_score):
 	cur = defaultDatabase()
 	sql = "select max(date) from %s"%table
 	cur.execute(sql)
@@ -555,9 +560,9 @@ def getDetectDistribute(date,table,table4,field,risk_level):
 	start_time = start_time.strftime("%Y-%m-%d")
 	province_list = []
 	list = []
-	sql1 = 'select pd.illegal_type,gs.province,gs.city,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where pd.date>"%s" and pd.date<="%s" and pd.illegal_type=1 and pd.risk_level>%d and gs.date=(select max(date) from %s) group by province,city'%(table,table4,start_time,end_time,risk_level,table4)
-	sql2 = 'select pd.illegal_type,gs.province,gs.city,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where pd.date>"%s" and pd.date<="%s" and pd.illegal_type=2 and pd.risk_level>%d and gs.date=(select max(date) from %s) group by province,city'%(table,table4,start_time,end_time,risk_level,table4)
-	sql3 = 'select pd.illegal_type,gs.province,gs.city,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where pd.date>"%s" and pd.date<="%s" and pd.illegal_type=3 and pd.risk_level>%d and gs.date=(select max(date) from %s) group by province,city'%(table,table4,start_time,end_time,risk_level,table4)
+	sql1 = 'select pd.illegal_type,gs.province,gs.city,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where pd.date>"%s" and pd.date<="%s" and pd.illegal_type=1 and pd.risk_level>%d and pd.illegal_score>%d and gs.date=(select max(date) from %s) group by province,city'%(table,table4,start_time,end_time,risk_level,illegal_score,table4)
+	sql2 = 'select pd.illegal_type,gs.province,gs.city,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where pd.date>"%s" and pd.date<="%s" and pd.illegal_type=2 and pd.risk_level>%d and pd.illegal_score>%d and gs.date=(select max(date) from %s) group by province,city'%(table,table4,start_time,end_time,risk_level,illegal_score,table4)
+	sql3 = 'select pd.illegal_type,gs.province,gs.city,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where pd.date>"%s" and pd.date<="%s" and pd.illegal_type=3 and pd.risk_level>%d and pd.illegal_score>%d and gs.date=(select max(date) from %s) group by province,city'%(table,table4,start_time,end_time,risk_level,illegal_score,table4)
 	cur.execute(sql1)
 	res1 = cur.fetchall()
 	result1 = [{k:row[i] for i,k in enumerate(field)} for row in res1]
@@ -602,7 +607,7 @@ def getDetectDistribute(date,table,table4,field,risk_level):
 	cur.close()
 	return list
 
-def getWarnCount(table,risk_level):
+def getWarnCount(table,risk_level,illegal_score):
 	cur = defaultDatabase()
 	sql = "select max(date) from %s"%table
 	cur.execute(sql)
@@ -613,9 +618,9 @@ def getWarnCount(table,risk_level):
 	start_time0 = start0_time.strftime("%Y-%m-%d")
 	start_time1 = start1_time.strftime("%Y-%m-%d")
 	start_time2 = start2_time.strftime("%Y-%m-%d")
-	sql01 = "select count(*) from %s where illegal_type>0 and risk_level>%d and date>'%s' and date<='%s'"%(table,risk_level,start_time0,end_time)
-	sql02 = "select count(*) from %s where illegal_type>0 and risk_level>%d and date>'%s' and date<='%s'"%(table,risk_level,start_time1,end_time)
-	sql03 = "select count(*) from %s where illegal_type>0 and risk_level>%d and date>'%s' and date<='%s'"%(table,risk_level,start_time2,end_time)
+	sql01 = "select count(*) from %s where illegal_type>0 and risk_level>%d and illegal_score>%d and date>'%s' and date<='%s'"%(table,risk_level,illegal_score,start_time0,end_time)
+	sql02 = "select count(*) from %s where illegal_type>0 and risk_level>%d and illegal_score>%d and date>'%s' and date<='%s'"%(table,risk_level,illegal_score,start_time1,end_time)
+	sql03 = "select count(*) from %s where illegal_type>0 and risk_level>%d and illegal_score>%d and date>'%s' and date<='%s'"%(table,risk_level,illegal_score,start_time2,end_time)
 	cur.execute(sql01)
 	c01 = cur.fetchall()[0][0]
 	cur.execute(sql02)
@@ -630,7 +635,7 @@ def getWarnCount(table,risk_level):
 	return dict
 
 
-def getWarnEntityCount(table, risk_level):
+def getWarnEntityCount(table, risk_level, illegal_score):
 	cur = defaultDatabase()
 	sql = "select max(date) from %s"%table
 	cur.execute(sql)
@@ -641,9 +646,9 @@ def getWarnEntityCount(table, risk_level):
 	start_time0 = start0_time.strftime("%Y-%m-%d")
 	start_time1 = start1_time.strftime("%Y-%m-%d")
 	start_time2 = start2_time.strftime("%Y-%m-%d")
-	sql01 = "select count(*) from %s where illegal_type>0 and risk_level>%d and date>'%s' and date<='%s' group by entity_id"%(table,risk_level,start_time0,end_time)
-	sql02 = "select count(*) from %s where illegal_type>0 and risk_level>%d and date>'%s' and date<='%s' group by entity_id"%(table,risk_level,start_time1,end_time)
-	sql03 = "select count(*) from %s where illegal_type>0 and risk_level>%d and date>'%s' and date<='%s' group by entity_id"%(table,risk_level,start_time2,end_time)
+	sql01 = "select count(*) from %s where illegal_type>0 and risk_level>%d and illegal_score>%d and date>'%s' and date<='%s' group by entity_id"%(table,risk_level,illegal_score,start_time0,end_time)
+	sql02 = "select count(*) from %s where illegal_type>0 and risk_level>%d and illegal_score>%d and date>'%s' and date<='%s' group by entity_id"%(table,risk_level,illegal_score,start_time1,end_time)
+	sql03 = "select count(*) from %s where illegal_type>0 and risk_level>%d and illegal_score>%d and date>'%s' and date<='%s' group by entity_id"%(table,risk_level,illegal_score,start_time2,end_time)
 	cur.execute(sql01)
 	c01 = len(cur.fetchall())
 	cur.execute(sql02)
@@ -658,14 +663,14 @@ def getWarnEntityCount(table, risk_level):
 	return dict
 
 
-def getWarnType(table, table2, risk_level, date, field, illegal_type, entity_type, operation_mode, warn_distribute):
+def getWarnType(table, table2, risk_level, illegal_score, date, field, illegal_type, entity_type, operation_mode, warn_distribute):
 	cur = defaultDatabase()
 	sql = 'select max(date) from %s'%table
 	cur.execute(sql)
 	end_time = cur.fetchall()[0][0]
 	start_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=date)
 	start_time = start_time.strftime("%Y-%m-%d")
-	sql = 'select a.illegal_type,count(*) from %s as a inner join %s as b on a.entity_id=b.entity_id where b.date=(select max(date) from %s) and a.risk_level>%d and a.date>"%s" and a.date<="%s" and a.illegal_type=%d and a.entity_type=%d and a.operation_mode=%d and b.province="%s" group by a.illegal_type'%(table, table2, table2, risk_level, start_time, end_time, illegal_type, entity_type, operation_mode, warn_distribute)
+	sql = 'select a.illegal_type,count(*) from %s as a inner join %s as b on a.entity_id=b.entity_id where b.date=(select max(date) from %s) and a.risk_level>%d and a.illegal_score>%d and a.date>"%s" and a.date<="%s" and a.illegal_type=%d and a.entity_type=%d and a.operation_mode=%d and b.province="%s" group by a.illegal_type'%(table, table2, table2, risk_level, illegal_score, start_time, end_time, illegal_type, entity_type, operation_mode, warn_distribute)
 
 
 	if operation_mode == 0:
@@ -684,7 +689,7 @@ def getWarnType(table, table2, risk_level, date, field, illegal_type, entity_typ
 	return data
 
 
-def GetTimeDistribute(table, table2, risk_level, date, illegal_type, entity_type, operation_mode, warn_distribute):
+def GetTimeDistribute(table, table2, risk_level, illegal_score, date, illegal_type, entity_type, operation_mode, warn_distribute):
 	cur = defaultDatabase()
 	list = []
 	count_list = []
@@ -697,7 +702,7 @@ def GetTimeDistribute(table, table2, risk_level, date, illegal_type, entity_type
 		start_time = start_time.strftime("%Y-%m-%d")
 		time_list.append(start_time)
 	for i,time in enumerate(time_list):
-		sql1 = "select count(*) from %s as a inner join %s as b on a.entity_id=b.entity_id where b.date=(select max(date) from %s) and a.date='%s' and a.risk_level>%d and a.illegal_type=%d and a.entity_type=%d and a.operation_mode=%d and b.province='%s'"%(table, table2, table2, time, risk_level, illegal_type, entity_type, operation_mode, warn_distribute)
+		sql1 = "select count(*) from %s as a inner join %s as b on a.entity_id=b.entity_id where b.date=(select max(date) from %s) and a.date='%s' and a.risk_level>%d and a.illegal_score>%d and a.illegal_type=%d and a.entity_type=%d and a.operation_mode=%d and b.province='%s'"%(table, table2, table2, time, risk_level, illegal_score, illegal_type, entity_type, operation_mode, warn_distribute)
 
 		if operation_mode == 0:
 			sql1 = sql1.replace(' and a.operation_mode=0','')
@@ -719,14 +724,14 @@ def GetTimeDistribute(table, table2, risk_level, date, illegal_type, entity_type
 
 
 # 首页
-def h_getWarnCount(table, field, risk_level):
+def h_getWarnCount(table, field, risk_level, illegal_score):
 	cur = defaultDatabase()
 	sql = "select max(date) from %s"%table
 	cur.execute(sql)
 	end_time = cur.fetchall()[0][0]
 	start_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=7)
 	start_time = start_time.strftime("%Y-%m-%d")
-	sql = 'select entity_type,count(*) from %s where illegal_type>0 and risk_level>%d and date>"%s" and date<="%s" group by entity_type'%(table,risk_level,start_time,end_time)
+	sql = 'select entity_type,count(*) from %s where illegal_type>0 and risk_level>%d and illegal_score>%d and date>"%s" and date<="%s" group by entity_type'%(table,risk_level,illegal_score,start_time,end_time)
 	cur.execute(sql)
 	res = cur.fetchall()
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
@@ -762,7 +767,7 @@ def get_prepared_city_rank(province):           #读取预先存好的地图数�
         result = [{k: row[i] for i, k in enumerate(field_province)} for row in result]
     return result
 
-def get_city_rank(table,table4,field,province_name,risk_level):
+def get_city_rank(table,table4,field,province_name,risk_level,illegal_score):
 	cur = defaultDatabase()
 	city_list = []
 	list = []
@@ -774,11 +779,11 @@ def get_city_rank(table,table4,field,province_name,risk_level):
 	start_time = start_time.strftime("%Y-%m-%d")
 	start1_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=30)
 	start_time1 = start1_time.strftime("%Y-%m-%d")
-	sql1 = 'select pd.illegal_type,gs.province,gs.city,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where gs.date=(select max(date) from %s) and pd.date>"%s" and pd.date<="%s" and illegal_type>0 and risk_level>%d group by province,city'%(table,table4,table4,start_time,end_time,risk_level)
+	sql1 = 'select pd.illegal_type,gs.province,gs.city,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where gs.date=(select max(date) from %s) and pd.date>"%s" and pd.date<="%s" and illegal_type>0 and risk_level>%d and illegal_score>%d group by province,city'%(table,table4,table4,start_time,end_time,risk_level,illegal_score)
 	cur.execute(sql1)
 	res1 = cur.fetchall()
 	result1 = [{k:row[i] for i,k in enumerate(field)} for row in res1]
-	sql2 = 'select pd.illegal_type,gs.province,gs.city,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where gs.date=(select max(date) from %s) and pd.date>"%s" and pd.date<="%s" and illegal_type>0 and risk_level>%d group by province,city'%(table,table4,table4,start_time1,end_time,risk_level)
+	sql2 = 'select pd.illegal_type,gs.province,gs.city,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where gs.date=(select max(date) from %s) and pd.date>"%s" and pd.date<="%s" and illegal_type>0 and risk_level>%d and illegal_score>%d group by province,city'%(table,table4,table4,start_time1,end_time,risk_level,illegal_score)
 	cur.execute(sql2)
 	res2 = cur.fetchall()
 	result2 = [{k:row[i] for i,k in enumerate(field)} for row in res2]
@@ -798,6 +803,7 @@ def get_city_rank(table,table4,field,province_name,risk_level):
 				for dict in result1:
 					if dict['city'] == d['city']:
 						pro_dict.update({'count7':dict['count']})
+						print dict['city'],dict['count']
 				for dict in result2:
 					if dict['city'] == d['city']:
 						pro_dict.update({'count30':dict['count']})
@@ -816,7 +822,7 @@ def get_city_rank(table,table4,field,province_name,risk_level):
 	return list
 
 
-def get_province_rank(table,table4,field,risk_level):
+def get_province_rank(table,table4,field,risk_level,illegal_score):
 	cur = defaultDatabase()
 	list = []
 	province_list = []
@@ -827,11 +833,11 @@ def get_province_rank(table,table4,field,risk_level):
 	start1_time = datetime.strptime(end_time,"%Y-%m-%d") - timedelta(days=30)
 	start_time0 = start0_time.strftime("%Y-%m-%d")
 	start_time1 = start1_time.strftime("%Y-%m-%d")
-	sql1 = 'select gs.province,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where gs.date=(select max(date) from %s) and pd.date>"%s" and pd.date<="%s" and illegal_type>0 and risk_level>%d group by province'%(table,table4,table4,start_time0,end_time, risk_level)
+	sql1 = 'select gs.province,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where gs.date=(select max(date) from %s) and pd.date>"%s" and pd.date<="%s" and illegal_type>0 and risk_level>%d and illegal_score>%d group by province'%(table,table4,table4,start_time0,end_time, risk_level,illegal_score)
 	cur.execute(sql1)
 	res1 = cur.fetchall()
 	result1 = [{k:row[i] for i,k in enumerate(field)} for row in res1]
-	sql2 = 'select gs.province,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where gs.date=(select max(date) from %s) and pd.date>"%s" and pd.date<="%s" and illegal_type>0 and risk_level>%d group by province'%(table,table4,table4,start_time1,end_time, risk_level)
+	sql2 = 'select gs.province,count(*) from %s as pd inner join %s as gs on pd.entity_id=gs.entity_id where gs.date=(select max(date) from %s) and pd.date>"%s" and pd.date<="%s" and illegal_type>0 and risk_level>%d and illegal_score>%d group by province'%(table,table4,table4,start_time1,end_time, risk_level,illegal_score)
 	cur.execute(sql2)
 	res2 = cur.fetchall()
 	result2 = [{k:row[i] for i,k in enumerate(field)} for row in res2]
@@ -861,7 +867,7 @@ def get_province_rank(table,table4,field,risk_level):
 	return list
 
 
-def getTimeDistribute(table,risk_level):
+def getTimeDistribute(table,risk_level,illegal_score):
 	cur = defaultDatabase()
 	list = []
 	count_list = []
@@ -874,7 +880,7 @@ def getTimeDistribute(table,risk_level):
 		start_time = start_time.strftime("%Y-%m-%d")
 		time_list.append(start_time)
 	for i,time in enumerate(time_list):
-		sql1 = "select count(*) from %s where date='%s' and illegal_type>0 and risk_level>%d"%(table,time,risk_level)
+		sql1 = "select count(*) from %s where date='%s' and illegal_type>0 and risk_level>%d and illegal_score>%d"%(table,time,risk_level,illegal_score)
 		cur.execute(sql1)
 		result = cur.fetchall()[0][0]
 		dict = {'time':time,'count':result}
@@ -887,7 +893,7 @@ def getTimeDistribute(table,risk_level):
 #感知入库
 def get_perceive_data(table,field):
 	cur = defaultDatabase()
-	sql = 'select * from %s where status<2 group by entity_name order by date desc'%table
+	sql = 'select * from %s where status<2 group by entity_name order by date desc,id desc'%table
 	cur.execute(sql)
 	res = cur.fetchall()
 	result = [{k:row[i] for i,k in enumerate(field)} for row in res]
@@ -995,4 +1001,51 @@ def illegalTypeBox(table, field):
 	data = [{k:row[i] for i,k in enumerate(field)} for row in res]
 	cur.close()
 	return data
+
+
+
+#用户管理
+def register(table, data, field):
+	cur = defaultDatabase()
+	sql = 'insert into %s (%s) values(%s)' % (table, ','.join(field), ','.join(["'%s'" % data[x] for x in field]))
+	cur.execute(sql)
+	dict = {'status':'ok'}
+	return dict
+
+
+def check_user(table, data):
+	cur = defaultDatabase()
+	tag = False
+	sql = 'select * from %s where username="%s"' % (table, data['username'])
+	cur.execute(sql)
+	user = cur.fetchone()
+	if user:
+		tag = True
+	return tag
+
+
+def getUser(table, data, field):
+	cur = defaultDatabase()
+	sql = 'select * from %s where username="%s"' % (table, data['username'])
+	cur.execute(sql)
+	res = cur.fetchone()
+	result = {k:res[i] for i,k in enumerate(field)}
+	return result
+
+
+def deleteUser(table, id):
+	cur = defaultDatabase()
+	sql = 'delete from %s where id=%d' % (table, id)
+	cur.execute(sql)
+	return 'Delete'
+
+
+# def getList()
+
+
+
+
+
+
+
 

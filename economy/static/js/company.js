@@ -107,28 +107,43 @@ var monitor_status_1;
         }
         $('.val-1').text(t3);
 
-        var illegal_type_1 = parseInt(item.illegal_type);//---风险等级
-        var risk_level_1 = parseInt(item.risk_level);
-        if(illegal_type_1 == 1){
-            if(risk_level_1 >= 99){
-                risk_level = '重大（' + risk_level_1 + '）';
-            }else if(risk_level_1 <= 98 && risk_level_1 >=95){
-                risk_level = '大（' + risk_level_1 + '）';
-            }else if(risk_level_1 < 95){
-                risk_level = '一般（' + risk_level_1 + '）';
-            }else {
-                risk_level = risk_level_1;
+        // var illegal_type_1 = parseInt(item.illegal_type);//---风险等级
+        /*
+            var risk_level_1 = parseInt(item.risk_level);
+            if(illegal_type_1 == 1){
+                if(risk_level_1 >= 99){
+                    risk_level = '重大（' + risk_level_1 + '）';
+                }else if(risk_level_1 <= 98 && risk_level_1 >=95){
+                    risk_level = '大（' + risk_level_1 + '）';
+                }else if(risk_level_1 < 95){
+                    risk_level = '一般（' + risk_level_1 + '）';
+                }else {
+                    risk_level = risk_level_1;
+                }
+            }else if(illegal_type_1 == 2){
+                if(risk_level_1 >= 100){
+                    risk_level = '重大（' + risk_level_1 + '）';
+                }else if(risk_level_1 <= 99 && risk_level_1 >= 85){
+                    risk_level = '大（' + risk_level_1 + '）';
+                }else if(risk_level_1 < 85){
+                    risk_level = '一般（' + risk_level_1 + '）';
+                }else {
+                    risk_level = risk_level_1;
+                }
             }
-        }else if(illegal_type_1 == 2){
-            if(risk_level_1 >= 100){
-                risk_level = '重大（' + risk_level_1 + '）';
-            }else if(risk_level_1 <= 99 && risk_level_1 >= 85){
-                risk_level = '大（' + risk_level_1 + '）';
-            }else if(risk_level_1 < 85){
-                risk_level = '一般（' + risk_level_1 + '）';
-            }else {
-                risk_level = risk_level_1;
-            }
+         */
+        var illegal_score_1 = parseInt(item.illegal_score);//---风险等级
+        if(illegal_score_1 >= 38){
+            // risk_level = '重大（' + illegal_score_1 + '）';
+            risk_level = '重大';
+        }else if(illegal_score_1 < 38 && illegal_score_1 >= 20){
+            // risk_level = '大（' + illegal_score_1 + '）';
+            risk_level = '大';
+        }else if(illegal_score_1 < 20){
+            // risk_level = '一般（' + illegal_score_1 + '）';
+            risk_level = '一般';
+        }else {
+            risk_level = item.illegal_score
         }
         $('.val-2').text(risk_level);//风险等级
 
@@ -519,16 +534,16 @@ var monitor_status_1;
     function table_1(data){
         // console.log(data);
         /*
-        var myChart = echarts.init(document.getElementById('table-1'));
-        myChart.showLoading(
-            {type:'default',
-            opts: {
-              text: '正在加载中...',
-              color: '#c23531',
-              textColor: '#000',
-              maskColor: 'rgba(255, 255, 255, 0.8)',
-              zlevel: 0
-            }
+            var myChart = echarts.init(document.getElementById('table-1'));
+            myChart.showLoading(
+                {type:'default',
+                opts: {
+                  text: '正在加载中...',
+                  color: '#c23531',
+                  textColor: '#000',
+                  maskColor: 'rgba(255, 255, 255, 0.8)',
+                  zlevel: 0
+                }
             });//自定义设置未作用
          */
         var option = {
@@ -961,14 +976,11 @@ var monitor_status_1;
                 var myChart = echarts.init(document.getElementById('table-1'));
                 myChart.showLoading(
                     {
-                        type:'default',
-                        opts: {
-                          text: '正在加载中...',
-                          color: '#c23531',
-                          textColor: '#000',
-                          maskColor: 'rgba(255, 255, 255, 0.8)',
-                          zlevel: 0
-                        }
+                        text: '正在加载中...',
+                        color: '#c23531',
+                        textColor: '#000',
+                        maskColor: 'rgba(255, 255, 255, 0.8)',
+                        zlevel: 0
                     }
                 );//自定义设置未作用
             }else{
@@ -1062,14 +1074,11 @@ var monitor_status_1;
                     var myChart = echarts.init(document.getElementById('table-1'));
                     myChart.showLoading(
                         {
-                            type:'default',
-                            opts: {
-                              text: '正在加载中...',
-                              color: '#c23531',
-                              textColor: '#000',
-                              maskColor: 'rgba(255, 255, 255, 0.8)',
-                              zlevel: 0
-                            }
+                            text: '正在加载中...',
+                            color: '#c23531',
+                            textColor: '#000',
+                            maskColor: 'rgba(255, 255, 255, 0.8)',
+                            zlevel: 0
                         }
                     );//自定义设置未作用
                 }else{
@@ -1145,14 +1154,11 @@ var monitor_status_1;
                 var myChart = echarts.init(document.getElementById('table-1'));
                 myChart.showLoading(
                     {
-                        type:'default',
-                        opts: {
-                          text: '正在加载中...',
-                          color: '#c23531',
-                          textColor: '#000',
-                          maskColor: 'rgba(255, 255, 255, 0.8)',
-                          zlevel: 0
-                        }
+                        text: '正在加载中...',
+                        color: '#c23531',
+                        textColor: '#000',
+                        maskColor: 'rgba(255, 255, 255, 0.8)',
+                        zlevel: 0
                     }
                 );//自定义设置未作用
             };
@@ -1600,7 +1606,7 @@ var monitor_status_1;
                         }
 
                         var avg_return;//披露收益率
-                        if(row.avg_return == '-' || row.avg_return == 'null'){
+                        if(row.avg_return == '-' || row.avg_return == 'null' || row.avg_return == null){
                             avg_return = '未知';
                         }else{
                             avg_return = row.avg_return;
@@ -1809,10 +1815,10 @@ var monitor_status_1;
             $('#moreInfo #words').text(data.content);//内容
             // 原网页链接
             var url;
-            if(row.url){
-                url = row.url;
+            if(data.url){
+                url = data.url;
             }else{
-                url = row.u;
+                url = data.u;
             }
             $('#moreInfo #url a').text('原网页链接').attr({'href':url,'target':'_blank','title':'原网页链接'});//原文链接
 

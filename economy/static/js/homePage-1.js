@@ -2056,7 +2056,8 @@
                 legend: {
                     orient: 'vertical',
                     x:'right',
-                    data:['随机数据']
+                    data:['随机数据'],
+                    show:false
                 },
                 dataRange: {
                     show:true,

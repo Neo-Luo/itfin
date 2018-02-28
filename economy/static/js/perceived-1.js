@@ -225,7 +225,7 @@
                             }
                             return Storage+'<span style="cursor:pointer;color:white;margin:0 10px;" onclick="editThis(\''+row.id+'\',\''+row.entity_name+'\',\''+row.rec_type+'\',\''+row.entity_type+'\',\''+row.company+'\',\''+row.related_person+'\',\''+row.key_words+'\')" title="编辑"><i class="icon icon-edit"></i></span>'+
                                 // '<span style="cursor:pointer;color:white;display: inline-block;margin: 0 10px;" onclick="addThis(\''+row.id+'\')" title="添加入库"><i class="icon icon-star-empty"></i></span>'+
-                                '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="lookThis(\''+row.text_id+'\',\''+row.index_name+'\')" title="查看文本"><i class="icon icon-book"></i></span>'+
+                                '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="lookThis(\''+row.entity_name+'\',\''+row.index_name+'\')" title="查看文本"><i class="icon icon-book"></i></span>'+
                                 '<span style="cursor:pointer;color:white;" onclick="delThis(\''+row.id+'\')" title="删除"><i class="icon icon-trash"></i></span>';
                         }
                     },
@@ -444,9 +444,9 @@
     }
 
 //====查看文本====
-    function lookThis(text_id,index_name) {
-        if(text_id != '' && index_name != ''){
-            var perceiveContent_url = '/perceived/perceiveContent/?text_id='+text_id+'&index_name='+index_name;
+    function lookThis(entity_name,index_name) {
+        if(entity_name != '' && index_name != ''){
+            var perceiveContent_url = '/perceived/perceiveContent/?entity_name='+entity_name+'&index_name='+index_name;
             public_ajax.call_request('get',perceiveContent_url,perceiveContent);
         }else{
             console.log('====暂无更多内容====')
