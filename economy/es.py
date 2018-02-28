@@ -190,26 +190,73 @@ def get_holderContent(firm,index_name):
 	return unique_result
 
 
-def get_perceive_content(index_name,type,text_id):
+def get_perceive_content(index_name,type,entity_name):
 	list = []
-	for id in text_id.split(','):
-		query_body = {
-				"query":{
-					"match":{
-						"_id":id
-					}
+	query_body = {
+			"query":{
+				"match":{
+					"query_name":entity_name
 				}
-		}
-		result = es.search(index=index_name,doc_type=type,body=query_body)['hits']['hits'][0]['_source']
-		list.append(result)
+			}
+	}
+	for each in es.search(index=index_name,doc_type=type,body=query_body)['hits']['hits']:
+		if entity_name in each['_source']['content']:
+			list.append(each['_source'])
 	return list
 
 
 #首页
 def getHotSpot(entity_list):
+	exist_list = []
 	type = 'type1'
 	results = []
 	number = 0
+	flag = 0
+	for index_name in ['bbs','forum','webo']:
+		query_body = {
+					"size":1000,
+					"sort":{"publish_time":{"order":"desc"}},
+					"query": {
+						"bool": {
+							"must": [
+									{
+								"match": {
+									"em1": 1
+									}
+								}
+							]
+						}
+					}
+		}
+		res = es.search(index=index_name, doc_type=type, body=query_body, request_timeout=400)
+		hits = res['hits']['hits']
+
+		if(len(hits)):
+			for item in hits:
+				entity_name = item['_source']['query_name']
+
+				if entity_name not in exist_list:
+					exist_list.append(entity_name)
+					# sql语句
+					# id = dict['id']
+					# entity_type = dict['entity_type']
+					content = item['_source']['content']
+					results.append({'id':1,'name':entity_name,'content':content,'entity_type':1})
+					if(len(exist_list)>=10):
+						break
+						
+		if(len(exist_list)>=10):
+						break					
+
+	
+	return results
+
+
+def getHotSpot_backup(entity_list):
+	type = 'type1'
+	results = []
+	number = 0
+	flag = 0
 	for dict in entity_list:
 		indexB = ScalableBloomFilter(1000,0.001)
 		for index_name in ['bbs','forum','webo']:
@@ -234,6 +281,7 @@ def getHotSpot(entity_list):
 				}
 			res = es.search(index=index_name, doc_type=type, body=query_body, request_timeout=100)
 			hits = res['hits']['hits']
+
 			if(len(hits)):
 				for item in hits:
 					if dict['name'] in item['_source']['content']:
@@ -247,7 +295,13 @@ def getHotSpot(entity_list):
 								[indexB.add(index_name)]
 								number += 1
 							else:
-								return results
+								flag = 1
+								break
+
+			if(flag):
+				break
+		if(flag):
+			break
 	
 	return results
 
