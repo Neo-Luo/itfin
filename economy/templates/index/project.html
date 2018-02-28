@@ -6,11 +6,12 @@
     <style>
         <!---->
         #nav {background: #fff;box-shadow: 0 2px 5px rgba(41,46,51,0.15);color: #0e0e0e;}
-        #nav .nav_middle .main_li .li_a,#nav .nav_right span {color: #0e0e0e;}
+        #nav .nav_middle .main_li .li_a,#nav .nav_right span,#nav .nav_right span a {color: #0e0e0e;}
         #nav .nav_middle .main_li .line {background-color: #08F;}
         #nav .nav_right span {border: 1px solid #787878;}
         #nav .nav_middle, #nav .nav_right {display: block;}
-        #nav .nav_right span:hover {
+        #nav .nav_right span:hover,
+        #nav .nav_right span:hover a {
             background: #2ad1ff !important;
             color: white!important;
         }
@@ -237,6 +238,7 @@
         $('#nav .nav_middle .main_li .li_a').css({color:'white'});
         $('#nav .nav_middle .main_li .li_a i').css({color:'white'});
         $('#nav .nav_right span').css({color:'#fff',background:'#35baee'});
+        $('#nav .nav_right span a').css({color:'#fff',background:'#35baee'});
         if ($(document).scrollTop()==0){
             $('#nav').css({backgroundColor:'#fff'});
             $('#nav .nav_left h3').css({color:'black'});
@@ -245,6 +247,7 @@
             $('#nav .nav_middle .main_li .li_a').css({color:'black'});
             $('#nav .nav_middle .main_li .li_a i').css({color:'black'});
             $('#nav .nav_right span').css({color:'#0e0e0e',background:'white'});
+            $('#nav .nav_right span a').css({color:'#0e0e0e',background:'white'});
         }
     };
 </script>

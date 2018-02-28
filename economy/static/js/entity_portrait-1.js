@@ -1,12 +1,12 @@
 // 当前监测实体
-var monitorCount_url='/portraite/monitorCount/';
-public_ajax.call_request('get',monitorCount_url,monitorCount);
-function monitorCount(data){
-    if(data){
-        $('.com-1').text(data.all)
-        $('.com-2').text(data.today)
+    var monitorCount_url='/portraite/monitorCount/';
+    public_ajax.call_request('get',monitorCount_url,monitorCount);
+    function monitorCount(data){
+        if(data){
+            $('.com-1').text(data.all)
+            $('.com-2').text(data.today)
+        }
     }
-}
 
 // 渲染下拉框
     var select_url = '/detection/OperationModeBox/';    //运营模式
@@ -191,24 +191,56 @@ function monitorCount(data){
                         }
                     }
                 },
+                // {
+                //     title: "运营模式",//标题
+                //     field: "e",//键名
+                //     sortable: true,//是否可排序
+                //     order: "desc",//默认排序方式
+                //     align: "center",//水平
+                //     valign: "middle",//垂直
+                //     formatter: function (value, row, index) {
+                //         if (row.operation_mode==''||row.operation_mode=='null'||row.operation_mode=='unknown'||!row.operation_mode){
+                //             return '未知';
+                //         }else if(row.operation_mode == 1){
+                //             return '互联网金融';
+                //         }else if(row.operation_mode == 2){
+                //             return '2';
+                //         }else if(row.operation_mode == 3){
+                //             return '3';
+                //         }
+                //         // return '互联网金融';
+                //     }
+                // },
                 {
                     title: "运营模式",//标题
-                    field: "e",//键名
+                    field: "operation_mode",//键名
                     sortable: true,//是否可排序
                     order: "desc",//默认排序方式
                     align: "center",//水平
                     valign: "middle",//垂直
                     formatter: function (value, row, index) {
-                        if (row.operation_mode==''||row.operation_mode=='null'||row.operation_mode=='unknown'||!row.operation_mode){
+                        if (row.operation_mode==''||row.operation_mode=='null' || row.operation_mode==null ||row.operation_mode=='unknown'||!row.operation_mode){
+                            // return '互联网金融';
                             return '未知';
-                        }else if(row.operation_mode == 1){
-                            return '互联网金融';
-                        }else if(row.operation_mode == 2){
-                            return '2';
-                        }else if(row.operation_mode == 3){
-                            return '3';
-                        }
-                        // return '互联网金融';
+                        }else {
+                            // return '互联网金融'; // ====先写死====
+                            return row.operation_mode;
+                        };
+                    }
+                },
+                {
+                    title: "相关问题",//标题
+                    field: "problem",//键名
+                    sortable: true,//是否可排序
+                    order: "desc",//默认排序方式
+                    align: "center",//水平
+                    valign: "middle",//垂直
+                    formatter: function (value, row, index) {
+                        if (row.problem==''||row.problem=='null'|| row.problem==null || row.problem=='unknown'||!row.problem){
+                            return '未知';
+                        }else {
+                            return row.problem;
+                        };
                     }
                 },
                 {
@@ -501,26 +533,34 @@ $uList3.hover(function() {
     }).trigger("mouseleave"); //自动触发触摸事件
 //滚动动画
 function scrollList_1(obj) {
-    //获得当前<li>的高度
-    var scrollHeight = $(".scroll-1 p:first").height();
-    //滚动出一个<li>的高度
-    // $uList.stop().animate({
-    $uList1.stop().animate({
-            marginTop: -scrollHeight
-        },
-        600,
-        function() {
-            //动画结束后，将当前<ul>marginTop置为初始值0状态，再将第一个<li>拼接到末尾。
-                   // $uList.css({
-                   $uList1.css({
-                       marginTop: 0
-                   // }).find("p:first").appendTo($uList);
-                   }).find("p:first").appendTo($uList1);
-            // $uList.css({
-            //     marginTop: 0
-            // }).find("p:first").remove();
-            // $('.scroll-box .box').append(phonehtml.shift());
-        });
+    var len = $('.scroll-1 p').length;
+    // console.log(len);
+    // p标签不足6个 禁止滚动
+    if(len < 6){
+        return false;
+    }else {
+        //获得当前<li>的高度
+        var scrollHeight = $(".scroll-1 p:first").height();
+        //滚动出一个<li>的高度
+        // $uList.stop().animate({
+        $uList1.stop().animate({
+                marginTop: -scrollHeight
+            },
+            600,
+            function() {
+                //动画结束后，将当前<ul>marginTop置为初始值0状态，再将第一个<li>拼接到末尾。
+                       // $uList.css({
+                       $uList1.css({
+                           marginTop: 0
+                       // }).find("p:first").appendTo($uList);
+                       }).find("p:first").appendTo($uList1);
+                // $uList.css({
+                //     marginTop: 0
+                // }).find("p:first").remove();
+                // $('.scroll-box .box').append(phonehtml.shift());
+            });
+    }
+
 };
 function scrollList_2(obj) {
     //获得当前<li>的高度

@@ -4,12 +4,23 @@
     <link rel="stylesheet" href="/static/css/monitorDetails.css">
     <style>
         <!---->
+        #nav .nav_middle .main_li:nth-of-type(2) {
+            -webkit-transform: scale(1.3);
+            -moz-transform: scale(1.3);
+            -ms-transform: scale(1.3);
+            -o-transform: scale(1.3);
+            transform: scale(1.3);
+        }
+        #nav .nav_middle .main_li:nth-of-type(2) a, #nav .nav_middle .main_li:nth-of-type(2) a i{
+            color: #08F !important;
+        }
         #nav {background: #fff;box-shadow: 0 2px 5px rgba(41,46,51,0.15);color: #0e0e0e;}
-        #nav .nav_middle .main_li .li_a,#nav .nav_right span {color: #0e0e0e;}
+        #nav .nav_middle .main_li .li_a,#nav .nav_right span,#nav .nav_right span a {color: #0e0e0e;}
         #nav .nav_middle .main_li .line {background-color: #08F;}
         #nav .nav_right span {border: 1px solid #787878;}
         #nav .nav_middle, #nav .nav_right {display: block;}
-        #nav .nav_right span:hover {
+        #nav .nav_right span:hover,
+        #nav .nav_right span:hover a {
             background: #2ad1ff !important;
             color: white!important;
         }
@@ -21,117 +32,7 @@
             width: 5%;
         }
 
-        /* ====lvlei==== */
-        /* 工商注册公司名称 */
-        #container .infor .isPlatform span{
-            width: auto!important;
-        }
-        #container .infor .isPlatform,
-        #container .infor .isPlatform b {
-            max-width: 100%!important;
-        }
-        /* 舆情内容 */
-        .commentinforContent span {
-            font-weight:700;
-        }
-        .commentinforContent span.pagination-info {
-            font-weight:400;
-        }
-        .commentinforContent .inforContent .main p.context {
-            max-height:300px;
-            overflow:auto;
-            word-wrap:break-word;
-            word-break:break-all;
-        }
-        /* 加载提示信息 */
-        .load {
-            text-align:center;
-            margin-top:10px;
-        }
-        /* 二级标题 */
-        .twoLevel_headlines {
-            padding-left:30px;
-            font-size: 16px;
-        }
-        /* 舆情内容盒子 */
-        #container .inforContent .main {
-            text-align:left;
-        }
-        /* 去掉边框 */
-        .business .fixed-table-container,.business .bootstrap-table .table>thead>tr>th,
-        .business .table>tbody>tr>td,.business .bootstrap-table .table,
-        .incomeTable .fixed-table-container,.incomeTable .bootstrap-table .table>thead>tr>th,
-        .incomeTable .table>tbody>tr>td,.incomeTable .bootstrap-table .table,
-        .guarantee .fixed-table-container,.guarantee .bootstrap-table .table>thead>tr>th,
-        .guarantee .table>tbody>tr>td,.guarantee .bootstrap-table .table,
-        .billing .fixed-table-container,.billing .bootstrap-table .table>thead>tr>th,
-        .billing .table>tbody>tr>td,.billing .bootstrap-table .table,
-        .commentinforContent .fixed-table-container,.commentinforContent .bootstrap-table .table>thead>tr>th,
-        .commentinforContent .table>tbody>tr>td,.commentinforContent .bootstrap-table .table
-        {border: none;}
-        .business .fixed-table-container thead th .both,.incomeTable .fixed-table-container thead th .both,
-        .guarantee .fixed-table-container thead th .both,.billing .fixed-table-container thead th .both,
-        .commentinforContent .fixed-table-container thead th .both {background-image: none;}
-        .business .fixed-table-container thead th .th-inner,
-        .business .table>tbody>tr>td,.business .bootstrap-table .table:not(.table-condensed)>tbody>tr>td,
-        .incomeTable .fixed-table-container thead th .th-inner,
-        .incomeTable .table>tbody>tr>td,.incomeTable .bootstrap-table .table:not(.table-condensed)>tbody>tr>td,
-        .guarantee .fixed-table-container thead th .th-inner,
-        .guarantee .table>tbody>tr>td,.guarantee .bootstrap-table .table:not(.table-condensed)>tbody>tr>td,
-        .billing .fixed-table-container thead th .th-inner,
-        .billing .table>tbody>tr>td,.billing .bootstrap-table .table:not(.table-condensed)>tbody>tr>td,
-        .commentinforContent .fixed-table-container thead th .th-inner,
-        .commentinforContent .table>tbody>tr>td,.commentinforContent .bootstrap-table .table:not(.table-condensed)>tbody>tr>td
-        {padding: 0;}
 
-        /* 模态框 */
-        #moreInfo, #editCard, #editIncome,
-        #EditRelatedPlat-box ,#EditRelatedCompany-box,
-        #saveSuccess ,#MonitorStatus_off{
-            top:100px;
-        }
-        /* 编辑功能 */
-        #editCard .example ,#editIncome .example,
-        #EditRelatedPlat-box .example,#EditRelatedCompany-box .example {
-            margin-top: 20px;
-            /* text-align: center; */
-            text-align: left;
-            padding-left:5%;
-        }
-        #editCard .example span, #editIncome .example span,
-        #EditRelatedPlat-box .example span,
-        #EditRelatedCompany-box .example span{
-            display: inline-block;
-            /* width: 100px; */
-            width: 25%;
-            text-align: center;
-        }
-        #editCard .example input, #editCard .example select ,#editIncome .example input,
-        #EditRelatedPlat-box .example input,
-        #EditRelatedCompany-box .example input {
-            /* width: 250px; */
-            width: 50%;
-            background: transparent;
-            border: 1px solid silver;
-            border-radius: 5px;
-            padding: 3px 7px;
-            /* color: white; */
-            text-align: center;
-        }
-        /* 停止恢复监测 */
-        #MonitorStatus_off .modal-body textarea{
-            max-width: 100%;
-            min-width:100%;
-            background: transparent;
-            border: 1px solid silver;
-            border-radius: 5px;
-            padding: 3px 7px;
-            /* color: white; */
-            text-align: left;
-            min-height:80px;
-        }
-
-        /* ====lvlei==== */
 
     </style>
 {% endblock %}
@@ -153,21 +54,12 @@
             <h3>
                 <b class="name"></b>&nbsp;<i class="icon icon-edit comBisic" title="编辑" id="card-edit"></i>
                 <span class="nameStatus" style="font-size: 12px;color: #ff761f;">正在监测</span>
-                <span class="status-1 status btn-primary"><i class="icon icon-retweet"></i>&nbsp;恢复监测</span>
+                <span class="status-1 status btn-primary"><i class="icon icon-retweet"></i>&nbsp;停止监测</span>
                 <span class="status-2 status btn-primary"><i class="icon icon-sitemap"></i>&nbsp;查看网络图</span>
             </h3>
-            <!-- <p class="infor-1 inforLine">
-                <span>注册地：</span>&nbsp;<b class="location">北京</b>
+            <p class="isPlatform inforLine" style="display: none;min-width:56%;">
+                <span>工商注册公司名称：</span>&nbsp;<b class="isPlatformName"></b>
             </p>
-            <p class="infor-2 inforLine">
-                <span>运营模式：</span>&nbsp;<b class="type1">互联网金融-P2P理财</b>
-            </p>
-            <p class="infor-3 inforLine">
-                <span>实体类型：</span>&nbsp;<b class="type2">项目</b>
-            </p>
-            <p class="infor-4 inforLine">
-                <span>发展阶段：</span>&nbsp;<b class="type3">成立于2006年</b>
-            </p> -->
             <p class="infor-3 inforLine">
                 <span>实体类型：</span>&nbsp;<b class="type-2"></b>
             </p>
@@ -175,10 +67,8 @@
             <p class="infor-2 inforLine">
                 <span>运营模式：</span>&nbsp;<b class="type-1"></b>
             </p>
-            <p class="infor-1 inforLine" style="max-width:50%;min-width:50%;margin-right:0;">
-                <span style="text-align:left;">注册地：</span>&nbsp;<b class="location" style="max-width:100%;"></b>
-            </p>
-            <p class="infor-4 inforLine">
+
+            <p class="infor-4 inforLine" style="min-width:56%;">
                 <span>成立时间：</span>&nbsp;<b class="type-3"></b>
             </p>
             <p class="infor-5 inforLine">
@@ -187,14 +77,50 @@
             <p class="infor-6 inforLine">
                 <span>注册资本：</span>&nbsp;<b class="type-5"></b>
             </p>
-            <p class="isPlatform inforLine" style="display: none;min-width:100%;">
-                <span>工商注册公司名称：</span>&nbsp;<b class="isPlatformName"></b>
+            <p class="infor-1 inforLine" style="max-width:100%;min-width:100%;margin-right:0;">
+                <span style="text-align:left;">注册地：</span>&nbsp;<b class="location" style="max-width:100%;"></b>
             </p>
+            <!-- 暂 注释
             <p class="infor-7 inforLine">
                 <span>旗下产品：</span>&nbsp;<b class="type">无</b>
-            </p>
+            </p> -->
         </div>
     </div>
+
+    <!-- 舆情预警添加风险评价模块 -->
+    <div class="riskValue">
+        <!-- <h3><i class="icon icon-exclamation-sign"></i>&nbsp;风险评价&nbsp;&nbsp;<i class="icon icon-edit comRisk" title="编辑"></i></h3> -->
+        <h3><i class="icon icon-exclamation-sign"></i>&nbsp;风险评价&nbsp;&nbsp;</h3>
+        <div class="riskLeft">
+            <p><span>是否疑似非法集资：</span>&nbsp;<b class="val-1" style="color: #ff9645;"></b></p>
+            <p><span>风险等级：</span>&nbsp;<b class="val-2" style="color: #ff9645;"></b></p>
+            <p><span>影响等级：</span>&nbsp;<b class="val-3" style="color: #ff9645;"></b></p>
+            <p><span>集资模式：</span>&nbsp;<b class="val-4" style="color: #ff9645;"></b></p>
+            <!-- <p><span>是否已判罚：</span>&nbsp;<b class="val-5" style="color: #ff9645;"></b></p> -->
+            <p><span>相关问题：</span>&nbsp;<b class="val-5" style="color: #ff9645;"></b></p>
+        </div>
+        <div class="riskRight">
+            <span>时间：</span>
+            <select class="time">
+                <option value="全部">全部</option>
+                <option value="近一周">近一周</option>
+                <option value="近一个月">近一个月</option>
+                <option value="近三个月">近三个月</option>
+                <option value="近一年">近一年</option>
+            </select>
+            <div class="monitor">
+                <span>模型预警：<b class="mon-2">0</b></span>
+                <span>舆情预警：<b class="mon-1">0</b></span>
+                <!-- <span>舆情预警：<b class="mon-3">54</b></span> -->
+            </div>
+            <div class="riskValueTable" style="margin-top: 10px;">
+                <div id="riskValueTable">
+                    <!-- <p class="load">正在拼命加载中....</p> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="opinionWarning-1">
         <!-- <h3><i class="icon icon-asterisk"></i>&nbsp;舆情文本</h3>
         <div class="warningContent">
@@ -454,6 +380,9 @@
         $('#nav .nav_middle .main_li .li_a').css({color:'white'});
         $('#nav .nav_middle .main_li .li_a i').css({color:'white'});
         $('#nav .nav_right span').css({color:'#fff',background:'#35baee'});
+        $('#nav .nav_right span a').css({color:'#fff',background:'#35baee'});
+        $('#nav .nav_middle .main_li').eq(1).find('a').css({color:'#ff9645'});
+        $('#nav .nav_middle .main_li').eq(1).find('i').css({color:'#ff9645'});
         if ($(document).scrollTop()==0){
             $('#nav').css({backgroundColor:'#fff'});
             $('#nav .nav_left h3').css({color:'black'});
@@ -462,6 +391,9 @@
             $('#nav .nav_middle .main_li .li_a').css({color:'black'});
             $('#nav .nav_middle .main_li .li_a i').css({color:'black'});
             $('#nav .nav_right span').css({color:'#0e0e0e',background:'white'});
+            $('#nav .nav_right span a').css({color:'#0e0e0e',background:'white'});
+            $('#nav .nav_middle .main_li').eq(1).find('a').css({color:'#08F'});
+            $('#nav .nav_middle .main_li').eq(1).find('i').css({color:'#08F'});
         }
     };
 </script>

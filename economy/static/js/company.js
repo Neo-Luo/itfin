@@ -156,7 +156,12 @@ var monitor_status_1;
         $('.val-4').text(item.operation_mode||''); //集资模式
         // $('.val-4').text(operationMode); //集资模式
 
-        if (item.penalty_status==1){t6='是';} //是否已判罚
+        // if (item.penalty_status==1){t6='是';} //是否已判罚
+        if (item.problem == null ){ //是否已判罚
+            t6='暂无';
+        }else {
+            t6 = item.problem;
+        }
         $('.val-5').text(t6);
 
         // 股东信息
@@ -1606,7 +1611,7 @@ var monitor_status_1;
                         }
 
                         var avg_return;//披露收益率
-                        if(row.avg_return == '-' || row.avg_return == 'null' || row.avg_return == null){
+                        if(row.avg_return == '-' || row.avg_return == 'null' || row.avg_return == null ||  row.avg_return == '-%'){
                             avg_return = '未知';
                         }else{
                             avg_return = row.avg_return;
