@@ -30,10 +30,12 @@ def duplicate(items):
         if flag:
             item['duplicate'] = False
             # item['same_from'] = item['_id']
+            item['same_count'] = 0
             not_same_items.append(item)
         else:
             item['duplicate'] = True
             # item['same_from'] = not_same_items[idx]['_id']
+            not_same_items[idx]['same_count'] += 1
             duplicate_items.append(item)
 
     # return not_same_items + duplicate_items
@@ -100,12 +102,12 @@ def max_same_rate_shingle(items, item, rate_threshold=0.3):
         sl.cal_jaccard()
         if sl.jaccard >= rate_threshold:
             max_rate = sl.jaccard
-            flag = False
+            flag = False            #False表示相似
             break
 
         idx += 1
 
-    if flag == True:
+    if flag == True:                #如果上一步没有找到相似的
         idx = 0
         max_rate = 0
         for i in items:
