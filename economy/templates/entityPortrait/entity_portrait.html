@@ -1,92 +1,154 @@
 {% extends "publicNav.html" %}
 {% block title %}<title>实体画像</title>{% endblock %}
 {% block my_css %}
-<link rel="stylesheet" href="/static/css/modalANDtable.css">
-<link rel="stylesheet" href="/static/css/jquery.fullPage.css">
-<link rel="stylesheet" href="/static/css/entity_portrait.css">
-<style>
-    #nav {top:0;}
-    #nav .nav_middle .main_li:nth-of-type(3) {
-        -webkit-transform: scale(1.3);
-        -moz-transform: scale(1.3);
-        -ms-transform: scale(1.3);
-        -o-transform: scale(1.3);
-        transform: scale(1.3);
-    }
-    #nav .nav_middle .main_li:nth-of-type(3) a {
-        color:#ff9645;
-    }
-    #fullPage-nav li .active span, .fullPage-slidesNav .active span {background: transparent;}
-    #fullPage-nav span, .fullPage-slidesNav span {
-        width: 10px;
-        height: 10px;
-        border: 1px solid #fcf8e3;
-    }
-    #fullPage-nav li, .fullPage-slidesNav li {margin: 12px 7px;}
-    #nav {background: rgba(60, 118, 130, 0.52)}
-    #nav .nav_middle, #nav .nav_right {display: block;}
-    /**/
-    .timeDate {
-        display:none;
-        margin: 10px 0!important;
-    }
-    #sureTime {
-        padding:1px 6px;
-        color: white;
-        font-size: 12px;
-        border: 1px solid silver;
-        border-radius: 5px;
-        background:transparent;
-        cursor: pointer;
-    }
-    #sureTime:hover {background: rgba(8,23,44,0.65)}
-    .contentTable .fixed-table-toolbar,.contentTable .fixed-table-pagination .page-list {
-        display: none;
-    }
+    <!-- 【【【bootCDN】】】 -->
+    <link href="https://cdn.bootcss.com/bootstrap-select/1.13.0-beta/css/bootstrap-select.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/fullPage.js/1.7/jquery.fullPage.min.css" rel="stylesheet">
+    <!-- 【【【bootCDN】】】 -->
 
-    .bootstrap-table .table>thead>tr>th{
-        width: 5%;
-    }
+    <link rel="stylesheet" href="/static/css/modalANDtable.css">
+    <!-- <link rel="stylesheet" href="/static/css/jquery.fullPage.css"> -->
+    <link rel="stylesheet" href="/static/css/entity_portrait.css">
+    <style>
+        #nav {top:0;}
+        #nav .nav_middle .main_li:nth-of-type(3) {
+            -webkit-transform: scale(1.3);
+            -moz-transform: scale(1.3);
+            -ms-transform: scale(1.3);
+            -o-transform: scale(1.3);
+            transform: scale(1.3);
+        }
+        #nav .nav_middle .main_li:nth-of-type(3) a {
+            color:#ff9645;
+        }
+        #fullPage-nav li .active span, .fullPage-slidesNav .active span {background: transparent;}
+        #fullPage-nav span, .fullPage-slidesNav span {
+            width: 10px;
+            height: 10px;
+            border: 1px solid #fcf8e3;
+        }
+        #fullPage-nav li, .fullPage-slidesNav li {margin: 12px 7px;}
+        #nav {background: rgba(60, 118, 130, 0.52)}
+        #nav .nav_middle, #nav .nav_right {display: block;}
+        /**/
+        .timeDate {
+            display:none;
+            margin: 10px 0!important;
+        }
+        #sureTime {
+            padding:1px 6px;
+            color: white;
+            font-size: 12px;
+            border: 1px solid silver;
+            border-radius: 5px;
+            background:transparent;
+            cursor: pointer;
+        }
+        #sureTime:hover {background: rgba(8,23,44,0.65)}
+        .contentTable .fixed-table-toolbar,.contentTable .fixed-table-pagination .page-list {
+            display: none;
+        }
 
-    /* ====lvlei===2018-1-2 */
-    /* 提示信息 */
-    .load {
-        text-align:center;
-        color:#fff;
-        font-size:18px;
-        margin-top:20px;
-    }
-    /* 画像搜索表格 */
-    #contentTable thead th{
-        border-top:none;
-    }
-    /* 显示搜索框 */
-        .contentTable .fixed-table-toolbar{
-            display:block;
+        .bootstrap-table .table>thead>tr>th{
+            width: 5%;
         }
-        .contentTable .fixed-table-toolbar .search {
-            width:20%;
-            position:absolute;
-            top:4px;
-            right:100px;
-            margin:0;
+
+        /* ====lvlei===2018-1-2 */
+        /* 提示信息 */
+        .load {
+            text-align:center;
+            color:#fff;
+            font-size:18px;
+            margin-top:20px;
         }
-        .contentTable .fixed-table-toolbar .search input{
-            height:30px;
-            padding: 3px 6px;
+        /* 画像搜索表格 */
+        #contentTable thead th{
+            border-top:none;
+        }
+        /* 显示搜索框 */
+            .contentTable .fixed-table-toolbar{
+                display:block;
+            }
+            .contentTable .fixed-table-toolbar .search {
+                width:20%;
+                position:absolute;
+                top:4px;
+                right:100px;
+                margin:0;
+            }
+            .contentTable .fixed-table-toolbar .search input{
+                height:30px;
+                padding: 3px 6px;
+                background: transparent;
+                border: 1px solid silver;
+                border-radius: 5px;
+                text-align: center;
+                font-size: 14px;
+                vertical-align: middle;
+            }
+            .contentTable .fixed-table-toolbar .search input:focus{
+                background: #f8f8f8;
+                color: #3c3c3c;
+            }
+        /* 输入 预警审核理由     停止监测 */
+        #reason .modal-body textarea , #MonitorStatus_off .modal-body textarea {
+            max-width: 100%;
+            min-width:100%;
             background: transparent;
             border: 1px solid silver;
             border-radius: 5px;
+            padding: 3px 7px;
+            color: white;
+            text-align: left;
+            min-height:80px;
+        }
+        #reason .modal-body textarea:focus,#MonitorStatus_off .modal-body textarea:focus,
+        #problemEdit .modal-body textarea:focus {
+            color:black;
+            background: #FFFFFF;
+        }
+        /* 编辑问题平台     预警审核理由 */
+        #problemEdit .example ,
+        #reason .example {
+            margin-top: 20px;
+            /* text-align: center; */
+            text-align: left;
+            padding-left:5%;
+        }
+        #problemEdit .example .editTitle,
+        #reason .example .editTitle{
+            display: inline-block;
+            /* width: 100px; */
+            width: 25%;
             text-align: center;
-            font-size: 14px;
-            vertical-align: middle;
         }
-        .contentTable .fixed-table-toolbar .search input:focus{
-            background: #f8f8f8;
-            color: #3c3c3c;
-        }
+        #problemEdit .example select ,
+        #reason .example select {
 
-</style>
+            /* width: 250px; */
+            width: 50%;
+            background: transparent;
+            border: 1px solid silver;
+            border-radius: 5px;
+            padding: 3px 7px;
+            /* color: white; */
+            text-align: center;
+        }
+        #problemEdit .modal-body textarea,
+        #reason .modal-body textarea{
+            max-width: 60%;
+            min-width:60%;
+            background: transparent;
+            border: 1px solid silver;
+            border-radius: 5px;
+            padding: 3px 7px;
+            color: white;
+            text-align: left;
+            min-height:80px;
+        }
+        /* 编辑问题平台 */
+
+    </style>
 {% endblock %}
 {% block main %}
 <div id="container" class="fullpage">
@@ -112,7 +174,7 @@
             </div>
 
             <div class="content" style="display: none;margin-left: 40px;">
-                <div class="content-1 conLeft" style="margin-top:20px;">
+                <!-- <div class="content-1 conLeft" style="margin-top:20px;">
                     <span class="ct-tit">预警时间：</span>
                     <select id="select-1" class="selectLab">
                         <option value="7">近一周</option>
@@ -120,25 +182,23 @@
                         <option value="90">近三个月</option>
                         <option value="365">近一年</option>
                     </select>
-                </div>
-                <div class="content-2 conLeft">
-                    <span class="ct-tit">运营模式：</span>
+                </div> -->
+                <div class="content-2 conLeft" style="margin-top:20px;">
+                    <span class="ct-tit">业态类型：</span>
                     <select id="select-2" class="selectLab">
-                        <option value="0" selected>全部</option>
-                        <!-- <option value="P2P理财">P2P理财</option>
-                        <option value="投资项目">投资项目</option>
-                        <option value="游戏">游戏</option>
-                        <option value="任务奖励">任务奖励</option>
-                        <option value="股权私募基金">股权私募基金</option> -->
+                        <option value="all" selected>全部</option>
                     </select>
                 </div>
                 <div class="content-3 conLeft">
                     <span class="ct-tit">预警类型：</span>
                     <select id="select-3" class="selectLab">
                         <option value="10000" selected>全部</option>
-                        <!-- <option value="舆情预警">舆情预警</option> -->
-                        <!-- <option value="模型预警">模型预警</option>
-                        <option value="指标预警">指标预警</option> -->
+                    </select>
+                </div>
+                <div class="content-4 conLeft">
+                    <span class="ct-tit">问题平台</span>
+                    <select id="select-5" class="selectLab">
+                        <option value="all" selected>全部</option>
                     </select>
                 </div>
                 <div class="content-4 conLeft">
@@ -218,24 +278,6 @@
                     <!-- <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
                     <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
                     <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
-                    <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p>
                     <p><span>湖北嘟嘟有限公司</span><span>指标预警</span></p> -->
                 </div>
             </div>
@@ -246,13 +288,7 @@
                 <div class="scroll-box scroll-2">
          <!--            <p><span>优易网</span><span>模型预警</span></p>
                     <p><span>优易网</span><span>模型预警</span></p>
-                    <p><span>优易网</span><span>模型预警</span></p>
-                    <p><span>优易网</span><span>模型预警</span></p>
-                    <p><span>优易网</span><span>模型预警</span></p>
-                    <p><span>优易网</span><span>模型预警</span></p>
-                    <p><span>优易网</span><span>模型预警</span></p>
-                    <p><span>优易网</span><span>模型预警</span></p>
-                    <p><span>优易网</span><span>模型预警</span></p> -->
+                    <p><span>优易网</span><span>模型预警</span></p>-->
                     <center class="load">正在努力加载中...</center>
                 </div>
             </div>
@@ -265,57 +301,102 @@
                     <!-- <p><span>青云门</span><span>指标预警</span></p>
                     <p><span>青云门</span><span>指标预警</span></p>
                     <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p>
-                    <p><span>青云门</span><span>指标预警</span></p> -->
+                    <p><span>青云门</span><span>指标预警</span></p>-->
                 </div>
             </div>
 
         </div>
     </div>
 </div>
-<div class="modal fade" id="promptInfor" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title"></h4>
-            </div>
-            <div class="modal-body">
-                <div class="coverbody">
-                    <p style="text-align: center;font-size: 18px;color: #fff;font-weight: 900;"></p>
+
+<!-- 删除 成功、 提示信息 -->
+    <div class="modal fade" id="Success" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width:30%;font-size:16px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" >提示信息：</h4>
+                </div>
+                <div class="modal-body">
+                    <center>删除成功</center>
+                </div>
+
+                <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-default" data-dismiss="modal" id="">取消</button> -->
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="">确定</button>
+                    <!-- <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> -->
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+
+<!-- 停止/恢复监测 模态框 -->
+    <div class="modal fade " id="MonitorStatus_off" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">停止监测</h4>
+                </div>
+                <div class="modal-body">
+                    <!-- <input type="text" name="" placeholder="请输入修改理由"> -->
+                    <textarea id="MonitorStatus_reason_text" style="vertical-align:middle;" placeholder="请输入修改理由（必填）" autofocus required></textarea>
+
+                    <p style="text-align:center;">
+                        <span style="color:red;" class="MonitorStatus_reason_tit">请输入修改理由<i class="icon-asterisk" style="color:red;vertical-align:middle;margin-left:10px;"></i></span>
+                    </p>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="sure_4">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- 编辑 问题平台 -->
+    <div class="modal fade " id="problemEdit" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">编辑问题平台</h4>
+                </div>
+                <div class="modal-body">
+                    <div class=" example">
+                        <span class="editTitle"><i class="icon-asterisk" style="color:red;vertical-align:middle;margin-right:5px;"></i>问题平台：</span>
+                        <select id="select-problem" class="selectpicker" data-live-search="true">
+
+                        </select>
+
+                    </div>
+                    <div class="example">
+                        <span class="editTitle"">信息来源：</span>
+                        <textarea id="problem_reason_text" style="vertical-align:middle;" placeholder="请输入相关网址（选填）" autofocus required></textarea>
+                        <!-- <span style="color:red;">请输入修改理由</span> -->
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="sure_problemEdit">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
 
 {% block my_js %}
-<script src="/static/js/jquery.fullPage.min.js"></script>
+<!-- 【【【bootCDN】】】 -->
+<script src="https://cdn.bootcss.com/bootstrap-select/1.13.0-beta/js/bootstrap-select.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-select/1.13.0-beta/js/i18n/defaults-zh_CN.js"></script>
+<script src="https://cdn.bootcss.com/fullPage.js/1.7/jquery.fullPage.min.js"></script>
+<!-- 【【【bootCDN】】】 -->
+
+<!-- <script src="/static/js/jquery.fullPage.min.js"></script> -->
 <script>
     $('.fullpage').fullpage({
         'verticalCentered': false,
@@ -327,20 +408,21 @@
         'navigationTooltips': ['画像搜索','预警信息'],
         'fixedElements':'#nav'
     });
-    var show=0;
+    var flag=0;
     $('.firstScreen .search .moreSitu').on('click',function () {
+        console.log(flag);
         $(this).children('i').toggleClass('icon-minus');  //切换图标
         $(this).children('i').toggleClass('icon-plus');  //切换图标
-        // if (show==0){
-        //     $('#container .content').slideDown(130);
-        //     show=1;
-        // }else {
-        //     $('#container .content').slideUp(60);
-        //     show=0;
-        // }
-        $('#container .content').slideToggle(130);
+        if (flag==0){
+            $('#container .content').slideDown(130);
+            $(this).attr('title','收起');
+            flag=1;
+        }else {
+            $('#container .content').slideUp(60);
+            $(this).attr('title','显示更多筛选条件');
+            flag=0;
+        }
     });
-
 </script>
 <script src="/static/js/entity_portrait-1.js"></script>
 

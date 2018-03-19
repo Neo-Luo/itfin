@@ -18,22 +18,27 @@
     cursor: pointer;
 }
 /**/
-#container .firstScreen .topTitle {
+#container .firstScreen .topTitle,
+#container ._firstScreen .topTitle
+{
     text-align: center;
 }
-#container .firstScreen .topTitle dl{
+#container .firstScreen .topTitle dl,
+#container ._firstScreen .topTitle dl{
     display: inline-block;
     margin: 10px 35px 0;
     // margin: 10px 20px 0;
     font-size: 22px;
     color: white;
 }
-#container .firstScreen .topTitle dl dd {
+#container .firstScreen .topTitle dl dd,
+#container ._firstScreen .topTitle dl dd {
     font-size: 28px;
     font-weight: 800;
     color: #ff9645;
 }
 #container .firstScreen .search .searchWord,
+#container ._firstScreen .search .searchWord,
 #container .secondScreen .search-2 .searchWord-2 {
     padding: 3px 6px;
     background: transparent;
@@ -43,7 +48,8 @@
     font-size: 14px;
     vertical-align: middle;
 }
-#container .firstScreen .search{
+#container .firstScreen .search,
+#container ._firstScreen .search{
     float: right;
 }
 #container .secondScreen .search-2,#container .secondScreen .search-2-2 {
@@ -51,27 +57,36 @@
     margin-left: 20px;
 }
 #container .firstScreen .search .searchWord:focus,
+#container ._firstScreen .search .searchWord:focus,
 #container .secondScreen .search-2 .searchWord-2:focus {
     background: #f8f8f8;
     color: #3c3c3c;
 }
-#container .content,#container .content-2,#container .content-2-2 {
+#container .content,
+#container ._content,
+#container .content-2,#container .content-2-2 {
     position: relative;
 }
-#container .content .conLeft,#container .content-2 .conLeft,#container .content-2-2 .conLeft {
+#container .content .conLeft,
+#container ._content .conLeft,
+#container .content-2 .conLeft,#container .content-2-2 .conLeft {
     display: inline-block;
     margin-right: 20px;
 }
 #container .content-2 .conLeft, #container .content-2-2 .conLeft{
     margin:10px 0 0 0;
 }
-#container .content .ct-tit,#container .content-2 .ct-tit,#container .initials .ct-tit {
+#container .content .ct-tit,
+#container ._content .ct-tit,
+#container .content-2 .ct-tit,#container .initials .ct-tit {
     display: inline-block;
     font-size: 16px;
     font-weight: 700;
     color: white;
 }
-#container .content .selectLab,#container .content-2 .selectLab,
+#container .content .selectLab,
+#container ._content .selectLab,
+#container .content-2 .selectLab,
 #container .thirdScreen ._time,#container .sixScreen ._time1,#container .sixScreen ._time2,
 #container .content-2-2 .selectLab{
     display: inline-block;
@@ -91,3 +106,61 @@
     color: white;
 }
 /**/
+
+/* ====lvlei===2018-1-2 */
+/* 提示信息 */
+.load {
+    text-align:center;
+    color:#fff;
+    font-size:18px;
+    margin-top:20px;
+}
+/* 预警记录表格      预警分布表格*/
+#recordingTable thead th,
+#_recordingTable thead th,
+#placeRank thead th{
+    border-top:none;
+}
+#recordingTable,
+#_recordingTable,
+#placeRank {
+    border-bottom:none;
+}
+/* 显示搜索框 */
+.recordingTable .fixed-table-toolbar{
+    display:block;
+}
+.recordingTable .fixed-table-toolbar .search {
+    width:20%;
+    position:absolute;
+    top:4px;
+    right:100px;
+    margin:0;
+}
+.recordingTable .fixed-table-toolbar .search input{
+    height:30px;
+    padding: 3px 6px;
+    background: transparent;
+    border: 1px solid silver;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 14px;
+    vertical-align: middle;
+}
+.recordingTable .fixed-table-toolbar .search input:focus{
+    background: #f8f8f8;
+    color: #3c3c3c;
+}
+
+/* 解决表格无数据时缩水 */
+#recordingTable thead tr th,
+#_recordingTable thead tr th
+ {
+    width:5%;
+}
+/* 加载提示框背景色 */
+.fixed-table-loading {
+    display:none !important;
+    background-color: transparent;
+    color:#fff;
+}

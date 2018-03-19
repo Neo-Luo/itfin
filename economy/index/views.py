@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #encoding: utf-8
 
-from flask import Flask, render_template, request, jsonify, Blueprint, send_from_directory, url_for
+from flask import Flask, render_template, request, jsonify, Blueprint, send_from_directory, url_for, session
 from economy.db import *
 from . import index
 import json
@@ -11,35 +11,47 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-plat_field = ['id','entity_type','pd_entity_name','company','entity_source','link_entity_id','in_type','in_time','monitor_status','operation_mode','problem','pd.id','entity_id','entity_name','company_2','date','operation_mode_2','illegal_type','risk_level','impact_level','penalty_status','related_company','related_plat','related_person','follower','bg','avg_return','vol','investor','problem','debt_num','daily_input','daily_balance','inv_period','imprs','gs_id','firm_name','entity_id','gs_date','province','city','district','regist_address','up1_level_num','up2_level_num','up3_level_num','down1_level_num','down2_level_num','down3_level_num','admin_suit_num','civil_suit_num','crime_suit_num','other_suit_num','uncontact_abnormal_num','fake_abnormal_num','daily_report_abnormal_num','other_abnormal_num','people_change_num','operation_change_num','capital_change_num','other_change_num','legal_person','capital','holder_detail','set_time','m_id','m_entity_id','m_entity_name','m_entity_type','m_date','m_illegal_type','m_except_type','illegal_score','m_risk_level','m_risk_level_2','m_impact_level','m_operation_mode','m_support_num','m_against_num']
-#com_field = ['id','entity_type','cd_entity_name','start_time','entity_source','link_entity_id','in_type','in_time','monitor_status','cd.id','entity_id','entity_name','date','monitor_status','operation_mode','illegal_type','risk_level','impact_level','penalty_status','related_company','related_plat','related_person','gs_id','firm_name','entity_id','gs_date','province','city','district','regist_address','up1_level_num','up2_level_num','up3_level_num','down1_level_num','down2_level_num','down3_level_num','admin_suit_num','civil_suit_num','crime_suit_num','other_suit_num','uncontact_abnormal_num','fake_abnormal_num','daily_report_abnormal_num','other_abnormal_num','people_change_num','operation_change_num','capital_change_num','other_change_num','legal_person','capital','holder_detail','set_time']
-#pro_field = ['id','entity_type','p_entity_name','start_time','entity_source','link_entity_id','in_type','in_time','monitor_status','p.id','entity_id','entity_name','date','operation_mode','illegal_type','risk_level','impact_level','penalty_status','related_company','related_plat','related_person','gs_id','firm_name','entity_id','gs_date','province','city','district','regist_address','up1_level_num','up2_level_num','up3_level_num','down1_level_num','down2_level_num','down3_level_num','admin_suit_num','civil_suit_num','crime_suit_num','other_suit_num','uncontact_abnormal_num','fake_abnormal_num','daily_report_abnormal_num','other_abnormal_num','people_change_num','operation_change_num','capital_change_num','other_change_num','legal_person','capital','holder_detail','set_time']
-
-ad_field = ['id','entity_id','entity_name','date','ad0_bbs','ad0_forum','ad0_webo','ad0_wechat','ad1_bbs','ad1_forum','ad1_webo','ad1_wechat','inf1_bbs','inf1_forum','inf1_webo','inf1_wechat','inf2_bbs','inf2_forum','inf2_webo','inf2_wechat','inf3_bbs','inf3_forum','inf3_webo','inf3_wechat','ad0_zhihu','ad1_zhihu','inf1_zhihu','inf2_zhihu','inf3_zhihu']
-comment_field = ['id','entity_id','entity_name','date','em0_word_bbs','em0_word_forum','em0_word_webo','em0_word_wechat','em0_text_bbs','em0_text_forum','em0_text_webo','em0_text_wechat','em1_word_bbs','em1_word_forum','em1_word_webo','em1_word_wechat','em0_word_zhihu','em0_text_zhihu','em1_word_zhihu','em1_text_bbs','em1_text_forum','em1_text_webo','em1_text_wechat','em1_text_zhihu']
-gongshang_field = ['id','firm_name','entity_id','date','province','city','district','location','up1_level_num','up2_level_num','up3_level_num','down1_level_num','down2_level_num','down3_level_num','admin_suit_num','civil_suit_num','crime_suit_num','other_suit_num','uncontact_abnormal_num','fake_abnormal_num','daily_report_abnormal_num','other_abnormal_num','people_change_num','poertaion_change_num','capital_change_num','other_change_num']
-guarantee_promise_field = ['id','entity_id','entity_name','date','promise_type','promise_num','related_text','index_name','text_id','rule_id']
-return_rate_field = ['id','entity_id','entity_name','date','return_type','return_rate','related_text','index_name','text_id','rule_id','avg_return']
-
-table_field = ['date','illegal_type']
-
 @index.route('/platform/')
 def platform():
-    return render_template('index/platform.html')
+    if session:
+        username = session['username']
+        role_id = session['role']
+        uid = session['uid']
+    else:
+        username = ""
+        role_id = ""
+        uid = ""
+    return render_template('index/platform.html',username=username,role_id=role_id,uid=uid)
 
 @index.route('/monitor/')
 def monitor():
     name = request.args.get('name','')
     flag = request.args.get('flag','')
     pid = request.args.get('pid','')
-    return render_template('index/monitorDetails.html',name=name,flag=flag,pid=pid)
+    if session:
+        username = session['username']
+        role_id = session['role']
+        uid = session['uid']
+    else:
+        username = ""
+        role_id = ""
+        uid = ""
+    return render_template('index/monitorDetails.html',name=name,flag=flag,pid=pid,username=username,role_id=role_id,uid=uid)
 
 @index.route('/company/')
 def company():
     name = request.args.get('name','')
     flag = request.args.get('flag','')
     pid = request.args.get('pid','')
-    return render_template('index/company.html',name=name,flag=flag,pid=pid)
+    if session:
+        username = session['username']
+        role_id = session['role']
+        uid = session['uid']
+    else:
+        username = ""
+        role_id = ""
+        uid = ""
+    return render_template('index/company.html',name=name,flag=flag,pid=pid,username=username,role_id=role_id,uid=uid)
 
 # 画像页复制本
 @index.route('/company_monitor/')
@@ -47,61 +59,65 @@ def company_monitor():
     name = request.args.get('name','')
     flag = request.args.get('flag','')
     pid = request.args.get('pid','')
-    return render_template('index/company_monitor.html',name=name,flag=flag,pid=pid)
+    if session:
+        username = session['username']
+        role_id = session['role']
+        uid = session['uid']
+    else:
+        username = ""
+        role_id = ""
+        uid = ""
+    return render_template('index/company_monitor.html',name=name,flag=flag,pid=pid,username=username,role_id=role_id,uid=uid)
 
 @index.route('/project/')
 def project():
     name = request.args.get('name','')
     flag = request.args.get('flag','')
-    return render_template('index/project.html',name=name,flag=flag)
+    if session:
+        username = session['username']
+        role_id = session['role']
+        uid = session['uid']
+    else:
+        username = ""
+        role_id = ""
+        uid = ""
+    return render_template('index/project.html',name=name,flag=flag,username=username,role_id=role_id,uid=uid)
 
 @index.route('/entityType/')
 def entity_type():
     id = int(request.args.get('id',''))
-    #type = int(request.args.get('type',''))
-    #if type == 1:
-    result = platform_detail(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_GONGSHANG,TABLE_MONITOR,id,plat_field)
-    #elif type == 2:
-    #    result = company_detail(TABLE_ENTITY_LIST,TABLE_COMPANY_DETAIL,TABLE_GONGSHANG,id,com_field)
-    #elif type == 3:
-    #    result = project_detail(TABLE_ENTITY_LIST,TABLE_PROJECT_DETAIL,TABLE_GONGSHANG,id,pro_field)
+    result = platform_detail(TABLE_ENTITY_LIST,TABLE_PLAT_DETAIL,TABLE_GONGSHANG,TABLE_MONITOR,id)
     return json.dumps(result,ensure_ascii=False)
 
 
 @index.route('/ad/')
 def adData():
     id = int(request.args.get('id',''))
-    result = get_ad(TABLE_AD_STATIS,id,ad_field)
+    result = get_ad(TABLE_AD_STATIS,id)
     return json.dumps(result,ensure_ascii=False)
 
 @index.route('/comment/')
 def commentData():
     id = int(request.args.get('id',''))
-    result = get_comment(TABLE_COMMENT_STATIS,id,comment_field)
+    result = get_comment(TABLE_COMMENT_STATIS,id)
     return json.dumps(result,ensure_ascii=False)
 
 @index.route('/gongshang/')
 def gongshangData():
     id = int(request.args.get('id',''))
-    result = get_gongshang(TABLE_GONGSHANG,id,gongshang_field)
+    result = get_gongshang(TABLE_GONGSHANG,id)
     return json.dumps(result,ensure_ascii=False)
 
 @index.route('/guarantee/')
 def guaranteeData():
     id = int(request.args.get('id',''))
-    result = get_guarantee(TABLE_GUARANTEE_PROMISE,id,guarantee_promise_field)
+    result = get_guarantee(TABLE_GUARANTEE_PROMISE,id)
     return json.dumps(result,ensure_ascii=False)
 
 @index.route('/returnRate/')
 def returnRateData():
-    #type = int(request.args.get('type',''))
     id = int(request.args.get('id',''))
-    #if type == 1:
-    result = get_return_rate(TABLE_RETURN_RATE,TABLE_PLAT_DETAIL,id,return_rate_field)
-    # elif type == 2:
-    #     result = get_return_rate(TABLE_RETURN_RATE,TABLE_COMPANY_DETAIL,id,return_rate_field)
-    # elif type == 3:
-    #     result = get_return_rate(TABLE_RETURN_RATE,TABLE_PROJECT_DETAIL,id,return_rate_field)
+    result = get_return_rate(TABLE_RETURN_RATE,TABLE_PLAT_DETAIL,id)
     return json.dumps(result,ensure_ascii=False)
 
 
@@ -123,53 +139,111 @@ def promiseContent():
 @index.route('/ad_content/')
 def adContent():
     results = []
-    entity_name = request.args.get('entity_name','')
-    for each in TYPE.items():
-        index_name = each[0]
-        type = each[1]
-        result = get_adContent(entity_name, 0.5, index_name, type)
+    entity_name_list = request.args.get('entity_name','').split('(')
+    if len(entity_name_list) == 1:
+        entity_name_list = request.args.get('entity_name').split('（')
+    entity_name = entity_name_list[0]
+    source = request.args.get('source','')
+    date = int(request.args.get('date',''))
+    ad123 = int(request.args.get('ad123',''))
+    if source == 'all':
+        for each in TYPE.items():
+            index_name = each[0]
+            type = each[1]
+            result = get_adContent(entity_name, 0.5, index_name, type, date, ad123, ad_date)
+            for each in result:
+                results.append(each)
+    else:
+        index_name = source
+        type = TYPE[index_name]
+        result = get_adContent(entity_name, 0.5, index_name, type, date, ad123, ad_date)
         for each in result:
             results.append(each)
     results.sort(key=lambda x:x['publish_time'],reverse=True)
     return json.dumps(results[0:50],ensure_ascii=False)
 
+
+@index.route('/editAd/')
+def edit_ad():
+    id = request.args.get('_id','')
+    index_name = request.args.get('source','')
+    type = TYPE[index_name]
+    ad123 = int(request.args.get('ad123',''))
+    result = editAd(id, index_name, type, ad123)
+    return json.dumps(result,ensure_ascii=False)
+
+
 @index.route('/comment_content/')
 def commentContent():
     results = []
-    entity_name = request.args.get('entity_name','')
-    for each in TYPE.items():
-        index_name = each[0]
-        type = each[1]
-        result = get_commentContent(entity_name, 0.5, index_name, type)
+    entity_name_list = request.args.get('entity_name','').split('(')
+    if len(entity_name_list) == 1:
+        entity_name_list = request.args.get('entity_name').split('（')
+    entity_name = entity_name_list[0]
+    source = request.args.get('source','')
+    date = int(request.args.get('date',''))
+    em = int(request.args.get('em',''))
+    if source == 'all':
+        for each in TYPE.items():
+            index_name = each[0]
+            type = each[1]
+            result = get_commentContent(entity_name, 0, index_name, type, date, em, comment_date)
+            for each in result:
+                results.append(each)
+    else:
+        index_name = source
+        type = TYPE[index_name]
+        result = get_commentContent(entity_name, 0, index_name, type, date, em, comment_date)
         for each in result:
             results.append(each)
+    #如果检索一般负面的数据，则存在em1=1的数据不显示
+    if em == 0:
+        result0 = []
+        for dict in results:
+            if not 'em1' in dict:
+                result0.append(dict)
+            else:
+                if dict['em1'] == 0:
+                    result0.append(dict)
+        result0.sort(key=lambda x:x['publish_time'],reverse=True)
+        return json.dumps(result0[0:50],ensure_ascii=False)
     results.sort(key=lambda x:x['publish_time'],reverse=True)
     return json.dumps(results[0:50],ensure_ascii=False)
+
+
+@index.route('/editComment/')
+def edit_comment():
+    id = request.args.get('_id','')
+    index_name = request.args.get('source','')
+    type = TYPE[index_name]
+    em = int(request.args.get('em',''))
+    result = editComment(id, index_name, type, em)
+    return json.dumps(result,ensure_ascii=False)
 
 
 @index.route('/abnormal_info/')
 def abnormalInfo():
     firm_name = request.args.get('firm_name','')
-    result = get_ab_info('gongshang','abnormal_info',firm_name)
+    result = get_ab_info(INDEX_GONGSHANG,'abnormal_info',firm_name)
     return json.dumps(result,ensure_ascii=False)
 
 @index.route('/change_info/')
 def changelInfo():
     firm_name = request.args.get('firm_name','')
-    result = get_ch_info('gongshang','change_info',firm_name)
+    result = get_ch_info(INDEX_GONGSHANG,'change_info',firm_name)
     return json.dumps(result,ensure_ascii=False)
 
 @index.route('/law_info/')
 def lawInfo():
     firm_name = request.args.get('firm_name','')
-    result = get_law_info('gongshang','law_info',firm_name)
+    result = get_law_info(INDEX_GONGSHANG,'law_info',firm_name)
     return json.dumps(result,ensure_ascii=False)
 
 
 @index.route('/sub_firm/')
 def subfirmContent():
     results = []
-    index_name = 'gongshang'
+    index_name = INDEX_GONGSHANG
     firm_name = request.args.get('firm_name', '')
     # print firm_name
     level1_subfirms = get_subfirmContent(firm_name,index_name)
@@ -205,7 +279,7 @@ def subfirmContent():
 @index.route('/holder/')
 def holderContent():
     results = []
-    index_name = 'gongshang'
+    index_name = INDEX_GONGSHANG
     firm_name = request.args.get('firm_name', '')
     # print firm_name
     level1_holders = get_holderContent(firm_name, index_name)
@@ -241,20 +315,15 @@ def holderContent():
 @index.route('/riskCommentTable/')
 def risk_comment_table():
     entity_id = int(request.args.get('entity_id',''))
-    result = get_risk_comment_table(TABLE_MONITOR,entity_id,table_field,ILLEGAL_TYPE,ILLEGAL_SCORE)
+    result = get_risk_comment_table(TABLE_MONITOR,entity_id,ILLEGAL_TYPE,ILLEGAL_SCORE)
     return json.dumps(result,ensure_ascii=False)
 
 
 @index.route('/EditDetail/',methods=['POST'])
 def edit_detail():
-    dict = request.get_json()[0]
-    #if dict['type'] == 1:
-    status = EditDetail(TABLE_PLAT_DETAIL,TABLE_GONGSHANG,dict)
-    # elif dict['type'] == 2:
-    #     status = EditDetail(TABLE_COMPANY_DETAIL,TABLE_GONGSHANG,dict)
-    # elif dict['type'] == 3:
-    #     status = EditDetail(TABLE_PROJECT_DETAIL,TABLE_GONGSHANG,dict)
-    return json.dumps(status,ensure_ascii=False)
+	dict = request.get_json()[0]
+	status = EditDetail(TABLE_ENTITY_LIST, TABLE_PLAT_DETAIL, TABLE_GONGSHANG, dict)
+	return json.dumps(status,ensure_ascii=False)
 
 @index.route('/EditReturnRate/',methods=['POST'])
 def edit_return_rate():
@@ -265,30 +334,18 @@ def edit_return_rate():
 
 @index.route('/EditRelatedPlat/',methods=['POST'])
 def edit_related_plat():
-    #entity_type = int(request.args.get('entity_type',''))
     entity_id = int(request.args.get('entity_id',''))
     related_plat = request.args.get('related_plat','')
     date = request.args.get('date','')
-    #if entity_type == 1:
     status = EditRelatedPlat(TABLE_PLAT_DETAIL,entity_id,related_plat,date)
-    # elif entity_type == 2:
-    #     status = EditRelatedPlat(TABLE_COMPANY_DETAIL,entity_id,related_plat,date)
-    # elif entity_type == 3:
-    #     status = EditRelatedPlat(TABLE_PROJECT_DETAIL,entity_id,related_plat,date)
     return json.dumps(status,ensure_ascii=False)
 
 @index.route('/EditRelatedCompany/',methods=['POST'])
 def edit_related_company():
-    #entity_type = int(request.args.get('entity_type',''))
     entity_id = int(request.args.get('entity_id',''))
     related_company = request.args.get('related_company','')
     date = request.args.get('date','')
-    #if entity_type == 1:
     status = EditRelatedCompany(TABLE_PLAT_DETAIL,entity_id,related_company,date)
-    # elif entity_type == 2:
-    #     status = EditRelatedCompany(TABLE_COMPANY_DETAIL,entity_id,related_company,date)
-    # elif entity_type == 3:
-    #     status = EditRelatedCompany(TABLE_PROJECT_DETAIL,entity_id,related_company,date)
     return json.dumps(status,ensure_ascii=False)
 
 @index.route('/MonitorStatus/')
@@ -296,5 +353,43 @@ def monitor_status():
     entity_name = request.args.get('entity_name','')
     log_type = int(request.args.get('log_type',''))
     remark = request.args.get('remark','')
-    status = MonitorStatus(TABLE_ENTITY_LIST, TABLE_LOG, entity_name, log_type, remark)
+    uid = int(request.args.get('uid',''))
+    entity_id = int(request.args.get('entity_id',''))
+    date = request.args.get('date','')
+    username = request.args.get('username','')
+    status = MonitorStatus(TABLE_ENTITY_LIST, TABLE_LOGS, entity_name, log_type, remark, uid, entity_id, date, username)
     return json.dumps(status,ensure_ascii=False)
+
+@index.route('/quantile/')
+def Quantile():
+    entity_id = int(request.args.get('entity_id',''))
+    result = getQuantile(TABLE_INDEX_QUANTILE, entity_id)
+    return json.dumps(result,ensure_ascii=False)
+
+@index.route('/editProblem/')
+def edit_problem():
+    entity_id = int(request.args.get('entity_id',''))
+    uid = int(request.args.get('uid',''))
+    entity_name = request.args.get('entity_name','')
+    remark = request.args.get('remark','')
+    oldValue = request.args.get('oldValue','')
+    newValue = request.args.get('newValue','')
+    date = request.args.get('date','')
+    username = request.args.get('username','')
+    result = editProblem(TABLE_ENTITY_LIST, TABLE_LOGS, entity_id, uid, entity_name, remark, date, oldValue, newValue, username)
+    return json.dumps(result,ensure_ascii=False)
+
+@index.route('/addProblem/')
+def add_problem():
+    problem = request.args.get('problem','')
+    uid = int(request.args.get('uid',''))
+    username = request.args.get('username','')
+    result = addProblem(TABLE_PROBLEM_LIST, TABLE_LOGS, problem, uid, username)
+    return json.dumps(result,ensure_ascii=False)
+
+
+
+
+
+
+

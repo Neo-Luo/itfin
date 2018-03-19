@@ -21,10 +21,13 @@
             border: 1px solid #fcf8e3;
         }
         #fullPage-nav li, .fullPage-slidesNav li {margin: 12px 7px;}
-        #nav {background: rgba(60, 118, 130, 0.52)}
+        #nav {background: rgba(60, 118, 130, 0.52);}
         #nav .nav_middle, #nav .nav_right {display: block;}
         .userGroup .fixed-table-toolbar,.userGroup .fixed-table-pagination .page-list {
             display: none;
+        }
+        .bootstrap-table .table>thead>tr>th{
+            width:5%;
         }
         /*.userGroup .fixed-table-container thead th:first-child {width: 2% !important;}*/
         /*.userGroup .fixed-table-container .bs-checkbox {vertical-align: middle;}*/
@@ -45,6 +48,8 @@
         </div>
     </div>
 </div>
+
+<!-- 添加用户 -->
 <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -52,37 +57,137 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">添加用户</h4>
             </div>
+            <!-- 表单 -->
+            <form id="addform" action="/manage/addUser" method="post" name="add_user_form" accept-charset="utf-8">
+                <div class="modal-body">
+                    <!-- 提示信息 -->
+                    <p class="hint-information clearfix" style="display:none;">
+                        <span style="color:#fff;text-align:center;width:80%;display:inline-block;"></span><i class="icon-asterisk" style="color:red;vertical-align:middle;"></i>
+                    </p>
+
+                    <div class="user-1 example">
+                        <label for="username">
+                            <span>账户名称</span>
+                        </label>
+                        <input type="text" class="u1_Val" id="username" name="username">
+                    </div>
+                    <div class="user-2 example">
+                        <label for="password">
+                            <span>账户密码</span>
+                        </label>
+                        <input type="text" class="u2_Val" id="password" name="password">
+                    </div>
+                    <!-- <div class="user-3 example">
+                        <span>用户邮箱</span><input type="text" class="u3_Val">
+                    </div> -->
+                    <div class="user-4 example">
+                        <span>用户角色</span>
+                        <select class="u4_Val" name="role_id">
+                            <option value="2">业务员</option>
+                            <option value="1">管理员</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <!-- <button type="button">确定</button> -->
+                    <input type="submit" id="submit" name="submit" value="确定" class="btn btn-primary" />
+                </div>
+             </form>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑用户 -->
+<div class="modal fade" id="editUsermodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">添加用户</h4>
+            </div>
+            <!-- 表单 -->
+            <form id="editform" action="/manage/EditUser" method="post" name="edit_user_form" accept-charset="utf-8">
+                <div class="modal-body">
+                    <!-- 提示信息 -->
+                    <p class="_hint-information clearfix" style="display:none;">
+                        <span style="color:#fff;text-align:center;width:80%;display:inline-block;"></span><i class="icon-asterisk" style="color:red;vertical-align:middle;"></i>
+                    </p>
+
+                    <div class="user-1 example">
+                        <label for="username">
+                            <span>账户名称</span>
+                        </label>
+                        <input type="text" class="edit_Val_1" id="edit_username" name="username">
+                    </div>
+                    <div class="user-2 example">
+                        <label for="password">
+                            <span>账户密码</span>
+                        </label>
+                        <input type="text" class="u2_Val" id="edit_password" name="password">
+                        <input type="text" class="edit_Val_uid" id="" name="uid">
+                    </div>
+                    <div class="user-4 example">
+                        <span>用户角色</span>
+                        <select class="edit_Val_2" name="role_id">
+                            <option value="2">业务员</option>
+                            <option value="1">管理员</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <!-- <button type="button">确定</button> -->
+                    <input type="submit" id="edit_submit" name="submit" value="确定" class="btn btn-primary" />
+                </div>
+             </form>
+        </div>
+    </div>
+</div>
+
+<!-- 删除 二次确定 -->
+<div class="modal fade" id="sure_box" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width:30%;font-size:16px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >确认删除吗？</h4>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="">取消</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="sure">确定</button>
+                <!-- <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 操作成功提示信息 -->
+<div class="modal fade" id="success" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+            </div>
             <div class="modal-body">
-                <div class="user-1 example">
-                    <span>账户名称</span><input type="text" class="u1_Val">
-                </div>
-                <div class="user-2 example">
-                    <span>账户密码</span><input type="text" class="u2_Val">
-                </div>
-                <div class="user-3 example">
-                    <span>用户邮箱</span><input type="text" class="u3_Val">
-                </div>
-                <div class="user-4 example">
-                    <span>用户角色</span>
-                    <select class="u4_Val">
-                        <option value="普通用户">普通用户</option>
-                        <option value="高级用户">高级用户</option>
-                        <option value="管理员">管理员</option>
-                    </select>
-                </div>
+                <center>删除成功</center>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <!-- <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> -->
                 <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block my_js %}
 <script src="/static/js/userManage-1.js"></script>
 <script>
+    $('#container').height($(window).height());
     $(document).ready(function() {
         // 通过该方法来为每次弹出的模态框设置最新的zIndex值，从而使最新的modal显示在最前面
         $(document).on('show.bs.modal', '.modal', function() {
@@ -92,7 +197,56 @@
                 $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
             }, 0);
         });
+
+        // 添加用户  表单提交事件触发时
+        $('#addform').submit(function(){
+            if($('#username').val() == ''){
+                $('.hint-information').show();
+                $('.hint-information span').text('用户名不得为空！');
+                return false;
+            }
+            if($('#password').val() == ''){
+                $('.hint-information').show();
+                $('.hint-information span').text('密码不得为空！');
+                return false;
+            }
+        })
+        $('#username').focus(function(){
+            $('.hint-information').hide();
+        })
+        $('#password').focus(function(){
+            $('.hint-information').hide();
+        })
+
+
+
+        var error = '{{error}}';
+        if(error){
+            // 后台判断是否存在用户
+            $('#editUsermodal').modal('show');
+
+            $('._hint-information').show();
+            $('._hint-information span').text(error);
+        }
+        //编辑用户  表单提交事件触发时
+        $('#editform').submit(function(){
+
+            if($('#edit_username').val() == ''){
+                $('._hint-information').show();
+                $('._hint-information span').text('用户名不得为空！');
+                return false;
+            }
+            // if($('#edit_password').val() == ''){
+            //     $('.hint-information').show();
+            //     $('.hint-information span').text('密码不得为空！');
+            //     return false;
+            // }
+        })
+        $('#edit_username').focus(function(){
+            $('._hint-information').hide();
+        })
+
     });
-    $('#container').height($(window).height()+100);
+
 </script>
 {% endblock %}
