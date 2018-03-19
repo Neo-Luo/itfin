@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # coding:utf-8
+from economy.db import *
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -22,22 +23,35 @@ TABLE_LOG = 'logs'
 TABLE_CITY_RANK = 'city_rank_daily'
 TABLE_PROVINCE_RANK = 'province_rank_daily'
 TABLE_USERINFO = 'user_info'
+TABLE_PROBLEM_LIST = 'problem_list'
+TABLE_DATE_LIST = 'date_list'
+TABLE_INDEX_QUANTILE = 'index_quantile_daily'
+TABLE_LOGS_TYPE = 'logs_type'
+TABLE_LOGS = 'logs'
+TABLE_CHECK_LOGS = 'check_logs'
+TABLE_INDUSTRY_LIST = 'industry_list'
+TABLE_FUNDMODE_LIST = 'fundmode_list'
 
 #es
-ES_HOST = '219.224.134.214'
-ES_PORT = 9202
+ES_HOST = '10.110.0.106'
+ES_PORT = 9200
 INDEX_NAME = {"bbs":"bbs","weibo":"weibo","zhihu":"zhihu","forum":"forum","wechat":"wechat"}
 TYPE = {"bbs":"type1","webo":"type1","zhihu":"type1","forum":"type1","wechat":"type1"}
 
 #db
-HOST = "219.224.134.214"
+HOST = "10.110.0.104"
 USER = "root"
 PASSWORD = ""
-DEFAULT_DB = "itfin-20180124"
+DEFAULT_DB = "itfin_on"
 CHARSET = "utf8"
 TEST_DB = "zyz"
 
 #para
-RISK_LEVEL = 98
-ILLEGAL_SCORE = 0
+RISK_LEVEL = -1
+ILLEGAL_SCORE = 50
 ILLEGAL_TYPE = 0
+
+#index_name
+INDEX_GONGSHANG = 'gongshang_1'
+
+

@@ -12,16 +12,19 @@
 #container .firstScreen .userGroup {
     margin-top: 30px;
 }
-#userModal .example {
+#userModal .example ,
+#editUsermodal .example {
     margin-top: 20px;
     text-align: center;
 }
-#userModal .example span {
+#userModal .example span ,
+#editUsermodal .example span {
     display: inline-block;
     width: 100px;
     text-align: center;
 }
-#userModal .example input,#userModal .user-4 .u4_Val{
+#userModal .example input,#userModal .user-4 .u4_Val,
+#editUsermodal .example input,#editUsermodal .user-4 .edit_Val_2{
     width: 250px;
     background: transparent;
     border: 1px solid silver;
@@ -30,7 +33,8 @@
     color: white;
     text-align: center;
 }
-#userModal .example input:focus,#userModal .user-4 .u4_Val:focus {
+#userModal .example input:focus,#userModal .user-4 .u4_Val:focus ,
+#editUsermodal .example input:focus,#editUsermodal .user-4 .edit_Val_2:focus {
     color:black;
     background: #FFFFFF;
 }

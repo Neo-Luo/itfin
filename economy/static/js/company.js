@@ -1,37 +1,35 @@
 
-/* 时间戳转换时间  放在publicNav 里去了
-    Date.prototype.Format = function (fmt) { //author: meizz
-        var o = {
-            "M+": this.getMonth() + 1, //月份
-            "d+": this.getDate(), //日
-            "H+": this.getHours(), //小时
-            "m+": this.getMinutes(), //分
-            "s+": this.getSeconds(), //秒
-            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-            "S": this.getMilliseconds() //毫秒
-        };
-        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-        for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-        return fmt;
+// 判断登录状态 =============
+    if(role_id != 1 && role_id != 2){//未登录
+        // 隐藏页面编辑功能
+        $('#card-edit').hide();       //基本信息 编辑按钮
+        $('#income-edit').hide();   //收益率及其分布 编辑按钮
+        $('#problem-edit').hide();   //问题平台 编辑按钮
+        $('.status-1').hide();      //停止监测按钮
+
+        // 内容生成后再判断
+        // $('#billing tbody tr td .inforContent .main .option .icon-edit').hide(); //广告内容编辑
+        // $('#commentinforContent tbody tr td .inforContent .main .option .icon-edit').hide(); //舆情内容编辑
+
+    }else{
+        $('#card-edit').show();
+        $('#income-edit').show();
+        $('#problem-edit').show();
+        $('.status-1').show();
+
+        // $('#billing tbody tr td .inforContent .main .option .icon-edit').show(); //广告内容编辑
+        // $('#commentinforContent tbody tr td .inforContent .main .option .icon-edit').show(); //舆情内容编辑
     }
-    //时间戳转时间【年月日】
-    function getLocalTime_1(nS) {
-        // return new Date(parseInt(nS) * 1000).toLocaleDateString().replace(/年|月/g, "-");
-        // return new Date(parseInt(nS) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
-        return new Date(parseInt(nS) * 1000).Format("yyyy-MM-dd");//年月日
-        // return new Date(parseInt(nS) * 1000).Format("yyyy-MM-dd HH:mm:ss");//年月日 时分秒
-    }
-    // 【年月日时分秒】
-    function getLocalTime_2(nS) {
-        return new Date(parseInt(nS) * 1000).Format("yyyy-MM-dd HH:mm:ss");//年月日 时分秒
-    }
- */
+// 判断登录状态 =============
+
+
+var name = unescape(name);//高亮显示用
+// console.log(name);
 
 var entity_name ,firm_name;
 
 // 备 编辑基本信息用
-var operation_mode_1 = 0;
+var operation_mode_1 = 0;//改为文字了
 var date_1,entity_id_1,gs_date_1,entity_type_1;
 
 // 备 恢复/停止监测用
@@ -42,217 +40,426 @@ var monitor_status_1;
     // var basicInfor_url='/index/entityType/?id=5120&type=1';//测试股东信息
     public_ajax.call_request('get',basicInfor_url,basicInfor);
     function basicInfor(data){
-        // console.log(data);
-        var item=data[0];
+        if(data.length != 0){
+            // console.log(data);
+            var item=data[0];
 
-        // 判断监测状态
-        monitor_status_1 = item.monitor_status;//保存当前状态
-        if(item.monitor_status == 1){//正在监测状态
-            $('.nameStatus').text('正在监测');
-            $('.status-1').html('<i class="icon icon-retweet"></i>&nbsp;停止监测');
-        }else if(item.monitor_status == 2){//（状态）已停止监测
-            $('.nameStatus').text('已停止监测');
-            $('.status-1').html('<i class="icon icon-retweet"></i>&nbsp;恢复监测');
-        }
+            // 判断监测状态
+            monitor_status_1 = item.monitor_status;//保存当前状态
+            if(item.monitor_status == 1){//正在监测状态
+                $('.nameStatus').text('正在监测');
+                $('.status-1').html('<i class="icon icon-retweet"></i>&nbsp;停止监测');
+            }else if(item.monitor_status == 2){//（状态）已停止监测
+                $('.nameStatus').text('已停止监测');
+                $('.status-1').html('<i class="icon icon-retweet"></i>&nbsp;恢复监测');
+            }
 
-        var t1='未知',t2='未知',t3='否',t4='0',t5='0',t6='否';
-        var operationMode = '互联网金融';
-        var legalPerson = '未知';
-        var capital = '未知';
-        var company = '未知';
-        var risk_level = '未知';
-        if (item.entity_type==1){t1='平台';}else if (item.entity_type==2){t1='公司';}else if (item.entity_type==1){t1='项目';}else {t1='未知'}
-        if (item.set_time){t2=item.set_time;}//成立时间
-        $('.location').text(item.regist_address||''); //注册地
-        if (item.operation_mode==1){
-            operationMode = '互联网金融';
-        }else{
-            // operationMode = item.operation_mode;
-            operationMode = '互联网金融';
-        }
-        if(item.legal_person){legalPerson = item.legal_person};
-        if(item.capital && item.capital!= ''){capital = item.capital+'万元'}
-        if(item.company && item.company!= ''){company = item.company}
-        $('.type-1').text(operationMode);//运营模式
-        $('.type-2').text(t1);//实体类型
-        $('.type-3').text(t2);//成立时间
-        $('.type-4').text(legalPerson);//法人代表
-        $('.type-5').text(capital);//注册资本
-        $('.isPlatformName').text(company);//工商注册公司名称：
+            var t1='未知',t2='未知',t3='否',t4='0',t5='0',t6='否';
+            var operationMode = '互联网金融';
+            var legalPerson = '未知';
+            var capital = '未知';
+            var company = '未知';
+            var risk_level = '未知';
+            var registAddress = '未知';
+            if (item.entity_type==1){t1='平台';}else if (item.entity_type==2){t1='公司';}else if (item.entity_type==3){t1='项目';}else {t1='未知'}
+            if (item.set_time){t2=item.set_time;}//成立时间
 
-        //风险评价
-        if (item.illegal_type > 0){//是否疑似非法集资
-            t3='是';
-        }else if(item.illegal_type < 0){
-            t3='数据缺失';
-            //隐藏下面的内容和右边表格
-            $('.val-2').parents('p').css('display','none');
-            $('.val-3').parents('p').css('display','none');
-            $('.val-4').parents('p').css('display','none');
-            $('.val-5').parents('p').css('display','none');
-            $('.riskRight').css('display','none');
-        }else {
-            t3 = '否';
-            //隐藏下面的内容和右边表格
-            $('.val-2').parents('p').css('display','none');
-            $('.val-3').parents('p').css('display','none');
-            $('.val-4').parents('p').css('display','none');
-            $('.val-5').parents('p').css('display','none');
-            $('.riskRight').css('display','none');
-        }
-        $('.val-1').text(t3);
+            if (item.operation_mode){
+                operationMode = item.operation_mode;
+            }else{
+                operationMode = '未知';
+            }
 
-        var illegal_type_1 = parseInt(item.illegal_type);
-        var risk_level_1 = parseInt(item.risk_level);
-        if(illegal_type_1 == 1){
-            if(risk_level_1 >= 99){
+            if(item.legal_person){legalPerson = item.legal_person};
+            if(item.capital && item.capital!= ''){capital = item.capital+'万元'}
+            if(item.company && item.company!= ''){company = item.company}
+                if(item.regist_address && item.regist_address!= ''){
+                registAddress = item.regist_address
+            }
+            $('.type-1').text(operationMode).attr('title',operationMode);//运营模式  业态类型
+            $('.type-2').text(t1);//实体类型
+            $('.type-3').text(t2);//成立时间
+            $('.type-4').text(legalPerson);//法人代表
+            $('.type-5').text(capital);//注册资本
+            $('.isPlatformName').text(company);//工商注册公司名称：
+            $('.location').text(registAddress); //注册地
+
+            // 诉讼记录数量
+            var lawsuitNum = parseInt(item.admin_suit_num) + parseInt(item.civil_suit_num) + parseInt(item.crime_suit_num) + parseInt(item.other_suit_num);
+            //风险评价
+            if (item.illegal_score >= 50){//是否疑似非法集资
+                t3='是';
+
+                // 经营异常数量
+                // var abnorNnum;
+                // abnorNnum = item.uncontact_abnormal_num + item.fake_abnormal_num + item.daily_report_abnormal_num + item.other_abnormal_num;
+
+                //风险评价异常指标：
+                var quantile_url='/index/quantile/?entity_id='+pid;
+                public_ajax.call_request('get',quantile_url,quantile);
+                function quantile(data){
+                    $('.abnormalIndex .loading').hide();
+
+                    //负面舆情数量
+                        var commentNum ;
+                        var trend_url='/index/comment/?id='+pid;
+                        public_ajax.call_request_1('get',trend_url,line_2);
+                        function line_2(data){
+                            if(data && data.length!=0){
+                                for(var i=0;i<data.length;i++){
+                                    if(data[i].em0_text_webo == 0 && data[i].em0_text_bbs == 0 && data[i].em0_text_zhihu == 0 && data[i].em0_text_forum == 0 && data[i].em0_text_wechat == 0 && data[i].em1_text_webo == 0 && data[i].em1_text_bbs == 0 && data[i].em1_text_zhihu == 0 && data[i].em1_text_forum == 0 && data[i].em1_text_wechat == 0){
+                                        commentNum = 0;
+                                    }else{
+                                        // 负面舆情数量 为 数据 最后一天的数量
+                                        commentNum = data[i].em0_text_webo+data[i].em0_text_bbs+data[i].em0_text_zhihu+data[i].em0_text_forum+data[i].em0_text_wechat;
+                                        commentNum += data[i].em1_text_webo+data[i].em1_text_bbs+data[i].em1_text_zhihu+data[i].em1_text_forum+data[i].em1_text_wechat;
+                                    }
+                                }
+                            }
+                            // console.log("负面舆情数量---commentNum---"+commentNum);
+                        }
+
+                    // 收益率数值 （取两个数中的最大值）
+                        var return_rankNum;
+                        var incomeTable_url='/index/returnRate/?id='+pid+'&type='+type;
+                        public_ajax.call_request_1('get',incomeTable_url,incomeTable);
+                        function incomeTable(data) {
+                            var item = data[0];
+                            var returnRate = item.return_rate*100 ;
+                            var avgReturn = parseFloat(item.avg_return);
+                            console.log(returnRate);
+                            console.log(avgReturn);
+                            if(returnRate > avgReturn){
+                                // return_rankNum = 100 - returnRate;
+                                // if(return_rankNum == 0){
+                                //     return_rankNum = 10;
+                                // }
+
+                                return_rankNum = returnRate;
+                                return_rankNum += '%';
+
+                            }else if(avgReturn > returnRate){
+                                // return_rankNum = 100 - avgReturn;
+                                // if(return_rankNum == 0){
+                                //     return_rankNum = 10;
+                                // }
+
+                                return_rankNum = avgReturn;
+                                return_rankNum += '%';
+                            // }else if(avgReturn == NaN){
+                            }else {
+                                return_rankNum = returnRate;
+                                return_rankNum += '%';
+                            }
+                        }
+
+                    // 煽动性广告数量
+                        var adNum;
+                        var publicityTable_url='/index/ad/?id='+pid;
+                        public_ajax.call_request_1('get',publicityTable_url,publicityTable);
+                        function publicityTable(data){
+                            if(data.length !=0){
+                                // var item = data[0];
+                                // adNum = item.inf2_wechat + item.inf2_zhihu + item.inf2_bbs + item.inf2_webo + item.inf2_forum;
+                                // adNum += item.inf3_wechat + item.inf3_zhihu + item.inf3_bbs + item.inf3_webo + item.inf3_forum;
+                                for(var i=0;i<data.length;i++){     // 煽动性广告 数量 为 数据 最后一天的数量
+                                    adNum = data[i].inf2_wechat + data[i].inf2_zhihu + data[i].inf2_bbs + data[i].inf2_webo + data[i].inf2_forum;
+                                    adNum += data[i].inf3_wechat + data[i].inf3_zhihu + data[i].inf3_bbs + data[i].inf3_webo + data[i].inf2_forum;
+                                }
+                            }
+                        }
+
+                    // 保存担保承诺的值 备风险评价的异常指标用。
+                        var promise_type;
+                        public_ajax.call_request_1('get',guarantee_url,_guarantee);
+                        function _guarantee(data){
+                            if(data){
+                                var item = data[0];
+                                promise_type = item.promise_type;
+                                console.log(promise_type);
+                                if(promise_type ==1){
+                                    $('.guarantee_rank').show().css('display','block');
+                                    $('.guarantee_rank #_guarantee_rank').show().text('本息类担保');
+                                    $('.nothing').hide();
+                                }else if(promise_type ==2){
+                                    $('.guarantee_rank').show().css('display','block');
+                                    $('.guarantee_rank #_guarantee_rank').show().text('非本息类担保');
+                                    $('.nothing').hide();
+                                }
+                                // else  {
+                                //     // 异常指标 暂无
+                                //     $('.nothing').show().css('display','block');
+                                //     console.log("暂无显示");
+                                // }
+                            }
+                        }
+
+                    if(data.length!=0){
+                        var item = data[0];
+                        if(item.comment_rank > 75){//舆情
+                            $('.comment_rank').show().css('display','block');
+                            $('.comment_rank #comment_rank_num').show().text(commentNum);
+                            // $('#comment_rank_num').text(168);
+                            // console.log(commentNum);
+                            // console.log("舆情设置完成");
+                            $('.comment_rank #_commentRank').show().text(commentRank_data);
+                            // $('.nothing').hide();
+                        }
+                        if(item.suit_rank > 75){//诉讼
+                            $('.suit_rank').show().css('display','block');
+
+                            $('.suit_rank #suit_rank_num').show().text(lawsuitNum);
+                            $('.suit_rank #_suit_rank').show().text(suitRank_data);
+                            // $('.nothing').hide();
+                        }
+                        if(item.ad_rank > 75){//广告
+                            $('.ad_rank').show().css('display','block');
+
+                            $('.ad_rank #ad_rank_num').show().text(adNum);
+                            $('.ad_rank #_ad_rank').show().text(adRank_data);
+                            // $('.nothing').hide();
+                        }
+                        if(item.return_rank > 75){//收益率
+                            $('.return_rank').show().css('display','block');
+
+                            $('.return_rank #return_rank_num').show().text(return_rankNum);
+                            console.log('收益率为--->'+return_rankNum);
+                            $('.return_rank #_return_rank').show().text(returnRank_data);
+                            // $('.nothing').hide();
+                        }
+                        if(item.abnor_rank > 75){//经营异常
+                            $('.abnor_rank').show().css('display','block');
+
+                            $('.abnor_rank #abnor_num').show().text(abnorNnum);
+                            $('.abnor_rank #_abnor_rank').show().text(abnorRank_data);
+                            // $('.nothing').hide();
+                        }
+
+                        if(promise_type ==1){
+                            $('.guarantee_rank').show().css('display','block');
+                            $('.guarantee_rank #_guarantee_rank').show().text('本息类担保');
+                            // $('.nothing').hide();
+                        }else if(promise_type ==2){
+                            $('.guarantee_rank').show().css('display','block');
+                            $('.guarantee_rank #_guarantee_rank').show().text('非本息类担保');
+                            // $('.nothing').hide();
+                        }
+
+                        if(item.comment_rank <= 75 && item.suit_rank <= 75 && item.ad_rank <= 75 && item.return_rank <= 75 && item.abnor_rank <= 75 && promise_type!=1 && promise_type!=2){
+                            $('.nothing').show().css('display','block');
+                            console.log("暂无显示");
+                        }
+                    }else {
+
+                        if(promise_type ==1){
+                            $('.guarantee_rank').show().css('display','block');
+                            $('.guarantee_rank #_guarantee_rank').show().text('本息类担保');
+                        }else if(promise_type ==2){
+                            $('.guarantee_rank').show();
+                            $('.guarantee_rank #_guarantee_rank').show().text('非本息类担保');
+                        }else  {
+                            // 异常指标 暂无
+                            $('.nothing').show().css('display','block');
+                            console.log("暂无显示");
+                        }
+
+                    }
+                }
+            }else if(item.illegal_score < 0){
+                t3='数据缺失';
+                //隐藏下面的内容和右边表格
+                $('.val-2').parents('p').css('display','none');
+                $('.val-3').parents('p').css('display','none');
+                // $('.val-4').parents('p').css('display','none');
+                $('.val-5').parents('p').css('display','none');
+                $('.abnormalIndex').hide();
+                $('.riskRight').css('display','none');
+            }else {
+                t3 = '否';
+                //隐藏下面的内容和右边表格
+                $('.val-2').parents('p').css('display','none');
+                $('.val-3').parents('p').css('display','none');
+                // $('.val-4').parents('p').css('display','none');
+                $('.val-5').parents('p').css('display','none');
+                $('.abnormalIndex').hide();
+                $('.riskRight').css('display','none');
+            }
+            $('.val-1').text(t3);
+
+            var illegal_score_1 = parseInt(item.illegal_score);//---风险等级
+            if(illegal_score_1 >= 75){
+                // risk_level = '重大（' + illegal_score_1 + '）';
                 risk_level = '重大';
-            }else if(risk_level_1 <= 98 && risk_level_1 >=95){
-                risk_level = '大';
-            }else if(risk_level_1 < 95){
+            }else if(illegal_score_1 < 75 && illegal_score_1 >= 50){
+                // risk_level = '大（' + illegal_score_1 + '）';
                 risk_level = '一般';
             }else {
-                risk_level = risk_level_1;
+                risk_level = item.illegal_score
             }
-        }else if(illegal_type_1 == 2){
-            if(risk_level_1 >= 100){
-                risk_level = '重大';
-            }else if(risk_level_1 <= 99 && risk_level_1 >= 85){
-                risk_level = '大';
-            }else if(risk_level_1 < 85){
-                risk_level = '一般';
+            $('.val-2').text(risk_level);//风险等级
+
+            // if (item.impact_level!=''&&item.impact_level!='null'&&item.impact_level!='unknown'&&!!item.impact_level){
+            //     t5=item.impact_level;
+            // }
+            $('.val-3').text(item.impact_level);//影响等级
+            // $('.val-3').text(t5);//影响等级
+
+            // $('.val-4').text(item.operation_mode||''); //集资模式
+
+            // if (item.penalty_status==1){t6='是';} //是否已判罚
+            if (item.problem == null || item.problem == '' || item.problem == 'None' || item.problem == 'null' || item.problem == 'unknown' || !item.problem){ //问题平台
+                t6='无';
             }else {
-                risk_level = risk_level_1;
+                t6 = item.problem;
             }
-        }
-        $('.val-2').text(risk_level);//风险等级
+            $('.val-5').text(t6);
 
-        // if (item.impact_level!=''&&item.impact_level!='null'&&item.impact_level!='unknown'&&!!item.impact_level){
-        //     t5=item.impact_level;
-        // }
-        $('.val-3').text(item.impact_level);//影响等级
-        // $('.val-3').text(t5);//影响等级
-
-        $('.val-4').text(item.operation_mode||''); //集资模式
-        // $('.val-4').text(operationMode); //集资模式
-
-        if (item.penalty_status==1){t6='是';} //是否已判罚
-        $('.val-5').text(t6);
-
-        // 股东信息
-        var holderDetail = [];
-        if(item.holder_detail != ''){
-            holderDetail =  item.holder_detail.split('&');
-            var str = '';
-            for(var i=0;i<holderDetail.length;i++){
-                holderDetail[i] = holderDetail[i].replace(':',"---");
-                str += '<p style="text-align:left;margin:0 0 20px 0;"><span style="">股东名称：'+holderDetail[i]+'万元</span></p>';
+            // 股东信息
+            var holderDetail = [];
+            if(item.holder_detail != ''){
+                holderDetail =  item.holder_detail.split('&');
+                var str = '';
+                for(var i=0;i<holderDetail.length;i++){
+                    holderDetail[i] = holderDetail[i].replace(':',"---");
+                    // str += '<p style="text-align:left;margin:0 0 20px 0;"><span style="">股东名称：'+holderDetail[i]+'万元</span></p>';
+                    str += '<span class="holderDetail" style="display:inline-block;width:50%;text-align:left;margin-bottom:20px;">股东名称：'+holderDetail[i]+'万元</span>';
+                }
+                $('.mid-3').html(str);
+            }else {
+                var str = '<center>暂无记录</center>'
+                $('.mid-3').html(str);
             }
-            $('.mid-3').html(str);
-        }else {
-            var str = '<center>暂无记录</center>'
-            $('.mid-3').html(str);
+
+            // 取出entity_name
+            entity_name = item.entity_name;
+            // console.log(entity_name)
+
+            // 取出公司名称
+            firm_name = item.firm_name;
+
+            operation_mode_1 = item.operation_mode;
+            date_1 = item.date;
+            entity_id_1 = parseInt(item.entity_id);
+            // gs_date_1 = item.gs_date;
+            gs_date_1 = item['gs.date'];
+            entity_type_1 = parseInt(item.entity_type);
+
+            // 子公司分公司情况 (放外面执行 entityType 为 同步执行)
+            var table_1_url = '/index/sub_firm/?firm_name='+firm_name;
+
+            // // 股东情况
+            // var table_2_url = '/index/holder/?firm_name='+firm_name;
+            // // var table_2_url = '/index/holder/?firm_name=广西联银投资有限公司';//测试股东情况
+            // public_ajax.call_request('get',table_2_url,table_2);
+
+            // 经营异常
+            var comment_url = '/index/abnormal_info/?firm_name='+firm_name;
+
+            var uncontact_abnormal_num = item.uncontact_abnormal_num;//无法联系类异常数
+            var fake_abnormal_num = item.fake_abnormal_num;//弄虚作假类异常数
+            var daily_report_abnormal_num = item.daily_report_abnormal_num;//未公布年报类异常数
+            var other_abnormal_num = item.other_abnormal_num;//其他类异常数
+
+            // 经营异常数量
+            var abnorNnum;
+            abnorNnum = parseInt(item.uncontact_abnormal_num) + parseInt(item.fake_abnormal_num) + parseInt(item.daily_report_abnormal_num) + parseInt(item.other_abnormal_num);
+
+            // 信息变更
+            var inforChange_url='/index/change_info/?firm_name='+firm_name;
+            var people_change_num = item.people_change_num;//人员类变更数量
+            var operation_change_num = item.operation_change_num;//经营类变更数量
+            var capital_change_num = item.capital_change_num;//资本类变更数量
+            var other_change_num = item.other_change_num;//其他类变更数量
+
+            // 诉讼记录
+            var lawsuit_url = '/index/law_info/?firm_name='+firm_name;
+            // var lawsuit_url = '/index/law_info/?firm_name=中信银行股份有限公司';//测试
+            var admin_suit_num = item.admin_suit_num;//行政类诉讼数量
+            var civil_suit_num = item.civil_suit_num;//民事诉讼数量
+            var crime_suit_num = item.crime_suit_num;//刑事诉讼数量
+            var other_suit_num = item.other_suit_num;//其他诉讼数量
+
+            // 子公司分公司情况
+            public_ajax.call_request('get',table_1_url,table_1);
+
+            // 经营异常
+            public_ajax.call_request('get',comment_url,commentTable);
+            $('.business_1').text(uncontact_abnormal_num);
+            $('.business_2').text(fake_abnormal_num);
+            $('.business_3').text(daily_report_abnormal_num);
+            $('.business_4').text(other_abnormal_num);
+            // 信息变更
+            public_ajax.call_request('get',inforChange_url,inforChange);
+            $('.inforChange_1').text(people_change_num);
+            $('.inforChange_2').text(operation_change_num);
+            $('.inforChange_3').text(capital_change_num);
+            $('.inforChange_4').text(other_change_num);
+            // 诉讼记录
+            public_ajax.call_request('get',lawsuit_url,lawsuit);
+            $('.lawsuit_1').text(admin_suit_num);
+            $('.lawsuit_2').text(civil_suit_num);
+            $('.lawsuit_3').text(crime_suit_num);
+            $('.lawsuit_4').text(other_suit_num);
+
+
+            // 放外面 试试
+            // 广告内容
+            // var billing_url = '/index/ad_content/?entity_name='+entity_name;
+            // 加筛选条件
+            var billing_url = '/index/ad_content/?entity_name='+entity_name + '&source=all&date=90&ad123=0';
+
+            // 评论信息【舆情信息】
+            // var commentinforContent_url = '/index/comment_content/?entity_name='+entity_name;
+            var commentinforContent_url = '/index/comment_content/?entity_name='+entity_name + '&source=all&date=90&em=100';
+
+            // console.log(billing_url);
+            public_ajax.call_request('get',billing_url,billing_1);
+
+            public_ajax.call_request('get',commentinforContent_url,commentinforContent_1);
+
+
+
+        }else if(data.length == 0){
+            $('.type-1').text('未知');//运营模式
+            $('.type-2').text('未知');//实体类型
+            $('.type-3').text('未知');//成立时间
+            $('.type-4').text('未知');//法人代表
+            $('.type-5').text('未知');//注册资本
+            $('.isPlatformName').text('未知');//工商注册公司名称：
+            $('.location').text('未知'); //注册地
+
+            $('.val-1').text('未知');//是否疑似非法集资
         }
 
-        // 取出entity_name
-        entity_name = item.entity_name;
-        // console.log(entity_name)
-
-        // 取出公司名称
-        firm_name = item.firm_name;
-
-        operation_mode_1 = item.operation_mode;
-        date_1 = item.date;
-        entity_id_1 = parseInt(item.entity_id);
-        gs_date_1 = item.gs_date;
-        entity_type_1 = parseInt(item.entity_type);
-
-        // 子公司分公司情况
-        var table_1_url = '/index/sub_firm/?firm_name='+firm_name;
-        // var table_1_url = '/index/sub_firm/?firm_name=广西联银投资有限公司';//测试子公司分公司情况
-
-        // // 股东情况
-        // var table_2_url = '/index/holder/?firm_name='+firm_name;
-        // // var table_2_url = '/index/holder/?firm_name=广西联银投资有限公司';//测试股东情况
-        // public_ajax.call_request('get',table_2_url,table_2);
-
-        // 经营异常
-        var comment_url = '/index/abnormal_info/?firm_name='+firm_name;
-        // var comment_url = '/index/abnormal_info/?firm_name=信和财富投资管理（北京）有限公司绍兴分公司';//测试
-        var uncontact_abnormal_num = item.uncontact_abnormal_num;//无法联系类异常数
-        var fake_abnormal_num = item.fake_abnormal_num;//弄虚作假类异常数
-        var daily_report_abnormal_num = item.daily_report_abnormal_num;//未公布年报类异常数
-        var other_abnormal_num = item.other_abnormal_num;//其他类异常数
-
-        // 信息变更
-        var inforChange_url='/index/change_info/?firm_name='+firm_name;
-        var people_change_num = item.people_change_num;//人员类变更数量
-        var operation_change_num = item.operation_change_num;//经营类变更数量
-        var capital_change_num = item.capital_change_num;//资本类变更数量
-        var other_change_num = item.other_change_num;//其他类变更数量
-
-        // 诉讼记录
-        var lawsuit_url = '/index/law_info/?firm_name='+firm_name;
-        // var lawsuit_url = '/index/law_info/?firm_name=中信银行股份有限公司';//测试
-        var admin_suit_num = item.admin_suit_num;//行政类诉讼数量
-        var civil_suit_num = item.civil_suit_num;//民事诉讼数量
-        var crime_suit_num = item.crime_suit_num;//刑事诉讼数量
-        var other_suit_num = item.other_suit_num;//其他诉讼数量
-
-        // 子公司分公司情况
-        public_ajax.call_request('get',table_1_url,table_1);
-        // 经营异常
-        public_ajax.call_request('get',comment_url,commentTable);
-        $('.business_1').text(uncontact_abnormal_num);
-        $('.business_2').text(fake_abnormal_num);
-        $('.business_3').text(daily_report_abnormal_num);
-        $('.business_4').text(other_abnormal_num);
-        // 信息变更
-        public_ajax.call_request('get',inforChange_url,inforChange);
-        $('.inforChange_1').text(people_change_num);
-        $('.inforChange_2').text(operation_change_num);
-        $('.inforChange_3').text(capital_change_num);
-        $('.inforChange_4').text(other_change_num);
-        // 诉讼记录
-        public_ajax.call_request('get',lawsuit_url,lawsuit);
-        $('.lawsuit_1').text(admin_suit_num);
-        $('.lawsuit_2').text(civil_suit_num);
-        $('.lawsuit_3').text(crime_suit_num);
-        $('.lawsuit_4').text(other_suit_num);
-
-        // 广告内容
-        var billing_url = '/index/ad_content/?entity_name='+entity_name;
-
-        // 评论信息【舆情信息】
-        var commentinforContent_url = '/index/comment_content/?entity_name='+entity_name;
-
-        // console.log(billing_url);
-        public_ajax.call_request('get',billing_url,billing_1);
-
-        public_ajax.call_request('get',commentinforContent_url,commentinforContent_1);
     }
 
 // 编辑基本信息
     // 值 渲染到input
-    var select_url = '/detection/OperationModeBox/';    //运营模式
-    public_ajax.call_request('get',select_url,slectUrl);
-    function slectUrl(data){
-        if(data){
-            var str = '';
-            for(var i=0;i<data.length;i++){
-                str += '<option value="'+data[i].id+'">'+data[i].operation+'</option>'
+        var select_url = '/detection/OperationModeBox/';    //运营模式
+        public_ajax.call_request('get',select_url,slectUrl);
+        function slectUrl(data){
+            if(data){
+                var str = '';
+                for(var i=0;i<data.length;i++){
+                    str += '<option value="'+data[i].operation+'">'+data[i].operation+'</option>'
+                }
+                // $('#editCard .user-1 .u1_Val').append(str);
+
+                $('#editCard .user-1 select').append(str);
+                $('#editCard .user-1 select').selectpicker('refresh');
+                // $('#editCard .user-1 select').addClass("selectpicker");
             }
-            $('#editCard .user-1 .u1_Val').append(str);
-            // console.log(operation_mode_1);
-            // $("#editCard .user-1 select option[value='"+operation_mode_1+"']").attr('selected',"selected");
         }
-    }
+
+
     $('#card-edit').on('click',function(){
         $('#editCard').modal('show');
 
-        $("#editCard .user-1 select").val(operation_mode_1);
-        // console.log(operation_mode_1);
-        // $("#editCard .user-1 select option[value='"+operation_mode_1+"']").attr('selected',"selected");
+
+        var operation_mode_arr = operation_mode_1.split(',');
+        // $("#editCard .user-1 select").val(operation_mode_1); //原来的值赋值到下拉框
+        $('#editCard .user-1 select').selectpicker('val', operation_mode_arr);// bootstrap-select 多选下拉框赋值
+
         // 注册地
         $('#editCard .user-2 input').val($('.location').text());
         // 成立时间
@@ -269,7 +476,7 @@ var monitor_status_1;
         // $('#editCard .user-4 input').attr('value',$('.type-4').text());
 
         // 确定提交修改的信息
-        $('#sure').on('click',function(){
+        $('#sure').one('click',function(){
             var libaryList=[]; //用于传给后台的数据
 
             // 注册资本  去掉万元
@@ -285,7 +492,8 @@ var monitor_status_1;
             var set_time_val = $('#editCard .user-3 input').val();//成立时间
             var legal_person_val = $('#editCard .user-4 input').val();//法人代表
             var regist_address_val = $('#editCard .user-2 input').val();//注册地
-            var operation_mode_val = parseInt($('#editCard .user-1 select').val());//运营模式
+            // var operation_mode_val = parseInt($('#editCard .user-1 select').val());//运营模式
+            var operation_mode_val = $('#editCard .user-1 select').val().toString();//运营模式
 
             libaryList.push({
                 capital:capital_val,
@@ -301,7 +509,7 @@ var monitor_status_1;
                 regist_address:regist_address_val,
                 set_time:set_time_val
             });
-            console.log(libaryList);
+            // console.log(libaryList);
             var EditDetail_url = '/index/EditDetail/';
             $.ajax({
                 url:EditDetail_url,
@@ -352,10 +560,10 @@ var monitor_status_1;
             var MonitorStatus_off_url;
             $('#MonitorStatus_off .modal-body span').hide();
             if(monitor_status_1 == 1){//正在监测状态 点击停止监测
-                MonitorStatus_off_url = '/index/MonitorStatus/?entity_name='+entity_name+'&log_type=1&remark='+remark_text;
+                MonitorStatus_off_url = '/index/MonitorStatus/?entity_name='+entity_name+'&log_type=1&remark='+remark_text+'&uid='+uid+'&entity_id='+pid+'&date='+''+'&username='+username;
                 public_ajax.call_request('get',MonitorStatus_off_url,MonitorStatusOff);
             }else if(monitor_status_1 == 2){//(状态)已停止监测 点击恢复监测
-                MonitorStatus_off_url = '/index/MonitorStatus/?entity_name='+entity_name+'&log_type=2&remark='+remark_text;
+                MonitorStatus_off_url = '/index/MonitorStatus/?entity_name='+entity_name+'&log_type=2&remark='+remark_text+'&uid='+uid+'&entity_id='+pid+'&date='+''+'&username='+username;
                 public_ajax.call_request('get',MonitorStatus_off_url,MonitorStatusOff);
             }
         }
@@ -370,21 +578,144 @@ var monitor_status_1;
         }
     }
 
+// 编辑问题平台
+    // 值 渲染到 select
+        var selectProblem_url = '/detection/ProblemBox/';    //问题平台
+        public_ajax.call_request('get',selectProblem_url,selectProblem);
+
+        var selectProblemstr = '';
+        function selectProblem(data){
+            if(data){
+                selectProblemstr = '';
+                for(var i=0;i<data.length;i++){
+                    selectProblemstr += '<option value="'+data[i].problem+'">'+data[i].problem+'</option>'
+                }
+                $("#select-problem").html('');
+                $('#select-problem').append(selectProblemstr);
+                // console.log(selectProblemstr);
+                $('#select-problem').selectpicker('refresh');
+            }
+        }
+
+        // 下拉框展开事件
+        $("#select-problem").on('shown.bs.select',function(e){
+
+            // 展开时显示默认的 选项
+            public_ajax.call_request('get',selectProblem_url,selectProblem);//同步的请求
+            // $("#select-problem").html("");
+            // $('#select-problem').append(selectProblemstr);
+            // $('#select-problem').selectpicker('refresh');
+
+            // 添加时去掉默认的选项
+            $('#select-problem').siblings('.dropdown-menu').find(".bs-searchbox").find('input').attr('placeholder',"手动输入问题平台(下次可选)"); //为input增加id属性
+            $('#select-problem').siblings('.dropdown-menu').find(".bs-searchbox").find('input').keyup(function(){
+                $('#select-problem').siblings('.dropdown-menu').find(".bs-searchbox").find('input').attr('id',"deviceInput"); //为input增加id属性
+                // console.log($('#deviceInput').val()); //获取输入框值输出到控制台
+                var deviceInput = $('#deviceInput').val();
+                var deviceStr="<option value='"+deviceInput+"'>"+deviceInput+"</option>" ;
+                // for(var i=0; i<8; i++){
+                //     deviceStr+="<option  data-icon='glyphicon glyphicon-heart' data-tokens='"+i+"'> 设备"+i+"</option>";
+                // }
+                $("#select-problem").html("");
+                $('#select-problem').append(deviceStr);
+                $('#select-problem').selectpicker('refresh');
+
+                // 如果删除完 输入框 显示默认选项
+                if($('#deviceInput').val() == ''){
+
+                    $("#select-problem").html("");
+                    $('#select-problem').append(selectProblemstr);
+                    $('#select-problem').selectpicker('refresh');
+                }
+            })
+        });
+
+    // 问题平台编辑 显示模态框
+    var _selectPro_val, _problem_remark_text, _oldValue;
+    $('#problem-edit').on('click',function(){
+        $('#problemEdit #problem_reason_text').val('');
+        $('#problemEdit').modal('show');
+        console.log($('.val-5').text());
+        // $('#select-problem').val('平台诈骗')
+        $('#select-problem').selectpicker('val',$('.val-5').text());
+
+        var oldValue = $('.val-5').text();
+        _oldValue = $('.val-5').text();
+        // 点击确定按钮
+        $('#sure_problemEdit').off('click');//防止多次触发
+        $('#sure_problemEdit').one('click',function(){
+            console.log($('#select-problem').val()); //下拉框
+            console.log($('#deviceInput').val());//输入框
+            var selectPro_val = $('#select-problem').val();
+            _selectPro_val = $('#select-problem').val();
+            var inpPro_val = $('#deviceInput').val();
+
+            var problem_remark_text = $('#problem_reason_text').val();
+            _problem_remark_text = $('#problem_reason_text').val();
+
+            var problemEdit_url = '';
+            if(selectPro_val == inpPro_val ){//手动输入 的
+                // 添加问题平台
+                // console.log("添加问题平台");
+                problemEdit_url = '/index/addProblem?problem=' + selectPro_val+'&username='+username+'&uid='+uid;
+                public_ajax.call_request_1('get',problemEdit_url,addselectProblem);//同步的请求
+
+            }else {
+                // console.log("编辑平台问题");
+                console.log(_selectPro_val);
+                problemEdit_url = '/index/editProblem?newValue='+selectPro_val+'&entity_id='+pid+'&uid='+uid+'&entity_name='+entity_name+'&remark='+problem_remark_text+'&oldValue='+oldValue+'&date='+''+'&username='+username;
+                public_ajax.call_request('get',problemEdit_url,editselectProblem);//编辑平台问题
+            }
+
+        })
+    })
+    // 编辑问题平台
+    function editselectProblem(data){
+        if(data.status == 'ok'){
+            $('#saveSuccess').modal('show');
+            // 重新渲染 基本信息
+            $('#saveSuccess').on('hide.bs.modal', function () {
+                var basicInfor_url='/index/entityType/?id='+pid+'&type='+type;
+                public_ajax.call_request('get',basicInfor_url,basicInfor);
+            })
+
+        }else {
+            console.log("编辑问题平台失败");
+        }
+    }
+    // 添加问题平台
+    function addselectProblem(data){
+        console.log(data);
+        if(data.status == 'ok'){
+            // 添加成功后  编辑
+            console.log(_selectPro_val);
+            problemEdit_url = '/index/editProblem?newValue='+_selectPro_val+'&entity_id='+pid+'&uid='+uid+'&entity_name='+entity_name+'&remark='+_problem_remark_text+'&oldValue='+_oldValue+'&date='+''+'&username='+username;
+            // console.log(problemEdit_url);
+            // 编辑问题平台
+            public_ajax.call_request('get',problemEdit_url,editselectProblem);
+        }else {
+            console.log("添加问题平台后编辑问题平台失败");
+        }
+    }
+
+
 //====股东数量====
     var master_url='/index/gongshang/?id='+pid;
     public_ajax.call_request('get',master_url,master);
     function master(data) {
-        // console.log(data)
-        var item=data[0];
-        $('.up-1').text(item.up1_level_num);
-        $('.up-2').text(item.up2_level_num);
-        $('.up-3').text(item.up3_level_num);
-        $('.down-1').text(item.down1_level_num);
-        $('.down-2').text(item.down2_level_num);
-        $('.down-3').text(item.down3_level_num);
-        // $('.mid-1').text();
-        // $('.mid-2').text();
-        // $('.mid-3').text();
+        if(data.length != 0){
+            // console.log(data)
+            var item=data[0];
+            $('.up-1').text(item.up1_level_num);
+            $('.up-2').text(item.up2_level_num);
+            $('.up-3').text(item.up3_level_num);
+            $('.down-1').text(item.down1_level_num);
+            $('.down-2').text(item.down2_level_num);
+            $('.down-3').text(item.down3_level_num);
+            // $('.mid-1').text();
+            // $('.mid-2').text();
+            // $('.mid-3').text();
+        }
     }
 
 //一个月时间
@@ -478,7 +809,19 @@ var monitor_status_1;
                 });
                 $('#riskValueTable p.load').hide();
 
-                $('.mon-2').text(item)
+                // $('.mon-2').text(item);
+                // 判断data[item]中 illegal_type == 1 的数量 为模型预警数
+                var num_1 = 0;//模型预警
+                var num_2 = 0;//舆情预警
+                for(var i=0;i<data[item].length;i++){
+                    if(data[item][i].illegal_type == 1){
+                        num_1+=1;
+                    }else if(data[item][i].illegal_type == 2){
+                        num_2+=1;
+                    }
+                }
+                $('.mon-1').text(num_1);
+                $('.mon-2').text(num_2);
             }
         }
 
@@ -486,44 +829,40 @@ var monitor_status_1;
 
     // =========监测详情===========
     function jumpFrame_2(name,type,id,illegal_type) {
-        // window.localStorage.setItem('monitorFlag',monitorFlag);
-        // window.location.href='../templates/monitorDetails.html';
         var html = '';
         name=escape(name);
-        if(illegal_type == 1){//模型预警 ----> 进入画像页(复制本)预警报告
+        if(illegal_type == 1 || illegal_type == 2){//模型预警 ----> 进入画像页(复制本)预警报告
             // html='/index/company/?name='+name+'&flag='+type+'&pid='+id;
             html='/index/company_monitor/?name='+name+'&flag='+type+'&pid='+id;
-        }else if(illegal_type == 2){//舆情预警 ----> 进入监测详情页
-            html='/index/monitor/?name='+name+'&flag='+type+'&pid='+id;
+        // }else if(illegal_type == 2){//舆情预警 ----> 进入监测详情页
+        //     html='/index/monitor/?name='+name+'&flag='+type+'&pid='+id;
         }else {
             html='/index/company/?name='+name+'&flag='+type+'&pid='+id;
         }
-
-        // window.location.href='/index/monitor/';
-        window.location.href=html;
+        // window.location.href=html;
+        window.open(html);
     }
 
 // ====股东情况(在子公司分公司内部)====
 
 // ====子公司分公司====
     // var table_1_url = '/index/sub_firm/?firm_name='+firm_name;
-    // var table_1_url = '/index/sub_firm/?firm_name=广西联银投资有限公司';
     // public_ajax.call_request('get',table_1_url,table_1);
 
     var _myChart1,_myChart2;
     function table_1(data){
         // console.log(data);
         /*
-        var myChart = echarts.init(document.getElementById('table-1'));
-        myChart.showLoading(
-            {type:'default',
-            opts: {
-              text: '正在加载中...',
-              color: '#c23531',
-              textColor: '#000',
-              maskColor: 'rgba(255, 255, 255, 0.8)',
-              zlevel: 0
-            }
+            var myChart = echarts.init(document.getElementById('table-1'));
+            myChart.showLoading(
+                {type:'default',
+                opts: {
+                  text: '正在加载中...',
+                  color: '#c23531',
+                  textColor: '#000',
+                  maskColor: 'rgba(255, 255, 255, 0.8)',
+                  zlevel: 0
+                }
             });//自定义设置未作用
          */
         var option = {
@@ -956,14 +1295,11 @@ var monitor_status_1;
                 var myChart = echarts.init(document.getElementById('table-1'));
                 myChart.showLoading(
                     {
-                        type:'default',
-                        opts: {
-                          text: '正在加载中...',
-                          color: '#c23531',
-                          textColor: '#000',
-                          maskColor: 'rgba(255, 255, 255, 0.8)',
-                          zlevel: 0
-                        }
+                        text: '正在加载中...',
+                        color: '#c23531',
+                        textColor: '#000',
+                        maskColor: 'rgba(255, 255, 255, 0.8)',
+                        zlevel: 0
                     }
                 );//自定义设置未作用
             }else{
@@ -1009,7 +1345,7 @@ var monitor_status_1;
                         )
                         // 三级子公司（暂无数据）
                         if(data[3][data[2][data[1][comp][i]][j]].length != 0){
-                            for(var n=0;n<datdata[3][data[2][data[1][comp][i]][j]].length;n++){
+                            for(var n=0;n<data[3][data[2][data[1][comp][i]][j]].length;n++){
                                 // option.series[0].data[0].children[1].children[i].children[j].children[n].name = data[3][data[2][data[1][comp][i]][j]][0];
                                 option.series[0].data[0].children[1].children[i].children[j].children.push(
                                     {
@@ -1057,14 +1393,11 @@ var monitor_status_1;
                     var myChart = echarts.init(document.getElementById('table-1'));
                     myChart.showLoading(
                         {
-                            type:'default',
-                            opts: {
-                              text: '正在加载中...',
-                              color: '#c23531',
-                              textColor: '#000',
-                              maskColor: 'rgba(255, 255, 255, 0.8)',
-                              zlevel: 0
-                            }
+                            text: '正在加载中...',
+                            color: '#c23531',
+                            textColor: '#000',
+                            maskColor: 'rgba(255, 255, 255, 0.8)',
+                            zlevel: 0
                         }
                     );//自定义设置未作用
                 }else{
@@ -1140,14 +1473,11 @@ var monitor_status_1;
                 var myChart = echarts.init(document.getElementById('table-1'));
                 myChart.showLoading(
                     {
-                        type:'default',
-                        opts: {
-                          text: '正在加载中...',
-                          color: '#c23531',
-                          textColor: '#000',
-                          maskColor: 'rgba(255, 255, 255, 0.8)',
-                          zlevel: 0
-                        }
+                        text: '正在加载中...',
+                        color: '#c23531',
+                        textColor: '#000',
+                        maskColor: 'rgba(255, 255, 255, 0.8)',
+                        zlevel: 0
                     }
                 );//自定义设置未作用
             };
@@ -1163,35 +1493,6 @@ var monitor_status_1;
 //====宣传行为====
     var publicityTable_url='/index/ad/?id='+pid;
     public_ajax.call_request('get',publicityTable_url,publicityTable);
-    /*
-    function publicityTable(data) {
-        var item = data[0];
-        // 非广告
-        $('#pubTable .ad0_webo').text(item.ad0_webo);
-        $('#pubTable .ad0_forum').text(item.ad0_forum);
-        $('#pubTable .ad0_bbs').text(item.ad0_bbs);
-        $('#pubTable .ad0_wechat').text(item.ad0_wechat);
-        $('#pubTable .ad0_zhihu').text(item.ad0_zhihu);
-        // 无煽动性广告
-        $('#pubTable .inf1_webo').text(item.inf1_webo);
-        $('#pubTable .inf1_forum').text(item.inf1_forum);
-        $('#pubTable .inf1_bbs').text(item.inf1_bbs);
-        $('#pubTable .inf1_wechat').text(item.inf1_wechat);
-        $('#pubTable .inf1_zhihu').text(item.inf1_zhihu);
-
-        $('#pubTable .inf2_webo').text(item.inf2_webo);
-        $('#pubTable .inf2_forum').text(item.inf2_forum);
-        $('#pubTable .inf2_bbs').text(item.inf2_bbs);
-        $('#pubTable .inf2_wechat').text(item.inf2_wechat);
-        $('#pubTable .inf2_zhihu').text(item.inf2_zhihu);
-
-        $('#pubTable .inf3_webo').text(item.inf3_webo);
-        $('#pubTable .inf3_forum').text(item.inf3_forum);
-        $('#pubTable .inf3_bbs').text(item.inf3_bbs);
-        $('#pubTable .inf3_wechat').text(item.inf3_wechat);
-        $('#pubTable .inf3_zhihu').text(item.inf3_zhihu);
-    }
-     */
 
     var data_billing_diagram ;//广告趋势图数据
     function publicityTable(data){
@@ -1202,8 +1503,10 @@ var monitor_status_1;
             var item = data[0];
             var inf1_data = [],inf2_data = [],inf3_data = [];
             inf1_data.push(item.inf1_wechat,item.inf1_zhihu,item.inf1_bbs,item.inf1_webo,item.inf1_forum);
-            inf2_data.push(item.inf2_wechat,item.inf2_zhihu,item.inf2_bbs,item.inf2_webo,item.inf2_forum);
-            inf3_data.push(item.inf3_wechat,item.inf3_zhihu,item.inf3_bbs,item.inf3_webo,item.inf3_forum);
+            // inf2_data.push(item.inf2_wechat,item.inf2_zhihu,item.inf2_bbs,item.inf2_webo,item.inf2_forum);
+            // inf3_data.push(item.inf3_wechat,item.inf3_zhihu,item.inf3_bbs,item.inf3_webo,item.inf3_forum);
+            inf2_data.push(item.inf2_wechat,item.inf2_zhihu,item.inf2_bbs,item.inf2_webo,item.inf2_forum,item.inf3_wechat,item.inf3_zhihu,item.inf3_bbs,item.inf3_webo,item.inf3_forum);
+
             var myChart = echarts.init(document.getElementById('publicityTable'));
             var option = {
                 tooltip : {
@@ -1214,8 +1517,8 @@ var monitor_status_1;
                 },
                 legend: {
                     // data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎','百度','谷歌','必应','其他']
-                    data:['强煽动性广告','一般煽动性广告','无煽动性广告']
-                    // .wechat; .zhihu; .bbs; .webo; .forum;
+                    // data:['强煽动性广告','一般煽动性广告','无煽动性广告']
+                    data:['有煽动性广告','无煽动性广告']
                 },
                 grid: {
                     left: '3%',
@@ -1237,20 +1540,23 @@ var monitor_status_1;
                 ],
                 series : [
                     // {
-                    //     name:'直接访问',
+                    //     name:'强煽动性广告',
                     //     type:'bar',
-                    //     data:[320, 332, 301, 334, 390, 330, 320]
+                    //     barWidth : 55,
+                    //     stack: '广告',
+                    //     // data:[120, 132, 101, 134, 90,]
+                    //     data:inf3_data
+                    // },
+                    // {
+                    //     name:'一般煽动性广告',
+                    //     type:'bar',
+                    //     barWidth : 55,
+                    //     stack: '广告',
+                    //     // data:[220, 182, 191, 234, 290,]
+                    //     data:inf2_data
                     // },
                     {
-                        name:'强煽动性广告',
-                        type:'bar',
-                        barWidth : 55,
-                        stack: '广告',
-                        // data:[120, 132, 101, 134, 90,]
-                        data:inf3_data
-                    },
-                    {
-                        name:'一般煽动性广告',
+                        name:'有煽动性广告',
                         type:'bar',
                         barWidth : 55,
                         stack: '广告',
@@ -1265,48 +1571,6 @@ var monitor_status_1;
                         // data:[150, 232, 201, 154, 190,]
                         data:inf1_data
                     },
-                    /*
-                        {
-                            name:'搜索引擎',
-                            type:'bar',
-                            data:[862, 1018, 964, 1026, 1679, 1600, 1570],
-                            markLine : {
-                                lineStyle: {
-                                    normal: {
-                                        type: 'dashed'
-                                    }
-                                },
-                                data : [
-                                    [{type : 'min'}, {type : 'max'}]
-                                ]
-                            }
-                        },
-                        {
-                            name:'百度',
-                            type:'bar',
-                            barWidth : 5,
-                            stack: '搜索引擎',
-                            data:[620, 732, 701, 734, 1090, 1130, 1120]
-                        },
-                        {
-                            name:'谷歌',
-                            type:'bar',
-                            stack: '搜索引擎',
-                            data:[120, 132, 101, 134, 290, 230, 220]
-                        },
-                        {
-                            name:'必应',
-                            type:'bar',
-                            stack: '搜索引擎',
-                            data:[60, 72, 71, 74, 190, 130, 110]
-                        },
-                        {
-                            name:'其他',
-                            type:'bar',
-                            stack: '搜索引擎',
-                            data:[62, 82, 91, 84, 109, 110, 120]
-                        }
-                    */
                 ]
             };
             myChart.setOption(option);
@@ -1315,22 +1579,36 @@ var monitor_status_1;
         }
     }
 
+//风险评价异常指标数据 做模块标注用。
+    var quantile_url='/index/quantile/?entity_id='+pid;
+    public_ajax.call_request('get',quantile_url,_quantile);
+    var abnorRank_data, suitRank_data, returnRank_data, adRank_data, commentRank_data;
+    function _quantile(data){
+        abnorRank_data = data[0].abnor_rank + '%';//经营异常
+        suitRank_data = data[0].suit_rank + '%';//诉讼记录
+
+        returnRank_data = 100 - data[0].return_rank;
+        if(returnRank_data == 0){
+            returnRank_data = 10;
+        }
+        returnRank_data += '%';//收益率
+
+        adRank_data = data[0].ad_rank + '%';//广告
+        commentRank_data = data[0].comment_rank + '%';//舆情
+    }
+
 //====经营异常
-    var commentData = [
-        {'a':'积极','b':'百度贴吧','c':'2017-12','d':'放款快，审核简单，赶快注册！'},
-    ]
-    // var comment_url = '/index/abnormal_info/?firm_name='+firm_name;
-    // 暂用假的
-    // var comment_url = '/index/abnormal_info/?firm_name=信和财富投资管理（北京）有限公司绍兴分公司';
-    // setTimeout(function(){
-    //     public_ajax.call_request('get',comment_url,commentTable);
-    // },1000)
+
     function commentTable(data) {
         // console.log(data)
         if(data.length == 0){
             $('.business_title').hide();
             $('#business p.load').text('暂无记录');
         }else {
+            // 模块标注
+            $('.abnorRank').show();
+            $('#abnorRank').text(abnorRank_data);
+
             $('#business').bootstrapTable('load', data);
             $('#business').bootstrapTable({
                 data:data,
@@ -1358,7 +1636,13 @@ var monitor_status_1;
                         align: "center",//水平
                         valign: "middle",//垂直
                         formatter: function (value, row, index) {
-                            var time = getLocalTime_1(row.in_date);
+                            var time;
+                            if (row.in_date==''||row.entity_name=='null'||row.entity_name=='unknown'||!row.entity_name){
+                                time = '未知';
+                            }else {
+                                time = getLocalTime_1(row.in_date);
+                            }
+
                             return '<div class="inforContent" style="text-align: left;">' +
                                 '            <div class="main">' +
                                 '                <span style="margin-right:20px;">异常类型：<b style="color: #ff6d70">'+row.abnormal_type+'</b></span>'+
@@ -1378,15 +1662,6 @@ var monitor_status_1;
     // commentTable(commentData)
 
 //====信息变更====
-    var indsa=[{'a':'2017-11-11','b':'名称','c':'1111','d':'2222'},{'a':'2017-11-11','b':'名称','c':'1111','d':'2222'},
-        {'a':'2017-11-11','b':'名称','c':'1111','d':'2222'},{'a':'2017-11-11','b':'名称','c':'1111','d':'2222'},
-        {'a':'2017-11-11','b':'名称','c':'1111','d':'2222'},{'a':'2017-11-11','b':'名称','c':'1111','d':'2222'},
-        {'a':'2017-11-11','b':'名称','c':'1111','d':'2222'},{'a':'2017-11-11','b':'名称','c':'1111','d':'2222'},
-        {'a':'2017-11-11','b':'名称','c':'1111','d':'2222'},{'a':'2017-11-11','b':'名称','c':'1111','d':'2222'},
-        {'a':'2017-11-11','b':'名称','c':'1111','d':'2222'},{'a':'2017-11-11','b':'名称','c':'1111','d':'2222'}]
-    // var inforChange_url='/index/change_info/?firm_name='+firm_name;
-    // var inforChange_url='/index/change_info/?firm_name=广西联银投资有限公司';
-    // public_ajax.call_request('get',inforChange_url,inforChange);
     function inforChange(data) {
         // console.log(data)
         if(data.length == 0){
@@ -1483,15 +1758,17 @@ var monitor_status_1;
     // inforChange(indsa);
 
 //====诉讼记录====
-    var kajsdj=[{'a':'2017-11-11','b':'testtesttesttesttesttesttesttest'},]
-    // var lawsuit_url = '/index/law_info/?firm_name='+firm_name;
-    // var lawsuit_url = '/index/law_info/?firm_name=中信银行股份有限公司';
-    // public_ajax.call_request('get',lawsuit_url,lawsuit);
+    var lawsuitList = {};//存储所有数据
     function lawsuit(data) {
         if(data.length == 0){
             $('.lawsuit_title').hide();
             $('#lawsuit p.load').text('暂无记录');
         }else {
+            // 模块标注
+            $('.suitRank').show();
+            $('#suitRank').text(suitRank_data);
+
+            var tag='#billing'.toString().substring(1);
             $('#lawsuit').bootstrapTable('load', data);
             $('#lawsuit').bootstrapTable({
                 data:data,
@@ -1530,7 +1807,8 @@ var monitor_status_1;
                         }
                     },
                     {
-                        title: "记录",//标题
+                        // title: "记录",//标题
+                        title: "裁决文书",//标题
                         field: "title",//键名
                         sortable: true,//是否可排序
                         order: "desc",//默认排序方式
@@ -1544,21 +1822,89 @@ var monitor_status_1;
                             };
                         }
                     },
+                    {
+                        title: "案由",//标题
+                        field: "casereason",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.casereason==''||row.casereason=='null'||row.casereason=='unknown'||!row.casereason){
+                                return '未知';
+                            }else {
+                                return row.casereason;
+                            };
+                        }
+                    },
+                    {
+                        title: "案件身份",//标题
+                        field: "content",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+
+                            var contentClip;
+                            if (row.content==''||row.content=='null'||row.content=='unknown'||!row.content){
+                                return '未知';
+                            }else if(row.content.length >= 200){
+                                contentClip = row.content.slice(0,100)+'  ...' + '<button onclick="getAllLawsuit(\''+tag+'_'+index+'\')" artical=\"'+tag+'_'+index+'\" class="original btn-primary btn-xs">查看全文</button>';
+                                // articalList_part[tag+'_'+index] = contentClip;
+                            }else{
+                                contentClip = row.content;
+                                // articalList_part[tag+'_'+index] = contentClip;
+                            }
+                            // 所有的数据
+                            lawsuitList[tag+'_'+index] = row.content;
+                            return contentClip;
+
+                            // if (row.content==''||row.content=='null'||row.content=='unknown'||!row.content){
+                            //     return '未知';
+                            // }else {
+                            //     return row.content;
+                            // };
+                        }
+                    },
+                    {
+                        title: "案件号",//标题
+                        field: "case_id",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.case_id==''||row.case_id=='null'||row.case_id=='unknown'||!row.case_id){
+                                return '未知';
+                            }else {
+                                return row.case_id;
+                            };
+                        }
+                    },
                 ],
             });
             $('#lawsuit p.load').hide();
         }
-
     };
     // lawsuit(kajsdj);
+    // 案件身份点击查看全文
+    function getAllLawsuit(_id){
+        $('#allLawsuit').modal('show');
+        $('#allLawsuit #allLawsuit-content').empty().text(lawsuitList[_id]);
+    }
 
 //====收益率及其分布====
-    var serds = [
-        {'a':'积极','b':'百度贴吧','c':'2017-12','d':'放款快，审核简单，赶快注册！'},
-    ]
     var incomeTable_url='/index/returnRate/?id='+pid+'&type='+type;
     public_ajax.call_request('get',incomeTable_url,incomeTable);
     function incomeTable(data) {
+        // 模块标注
+        var item = data[0];
+        if(item.avg_return != '-' && item.avg_return != 'null' && item.avg_return != null &&  item.avg_return != '-%'){//收益率不为未知 显示模块标注
+            $('.returnRank').show();
+            $('#returnRank').text(returnRank_data);
+        }
+
         // console.log(data)
         $('#incomeTable').bootstrapTable('load', data);
         $('#incomeTable').bootstrapTable({
@@ -1588,14 +1934,22 @@ var monitor_status_1;
                     valign: "middle",//垂直
                     formatter: function (value, row, index) {
                         var returnRate = row.return_rate*100;
+                        returnRate = returnRate.toFixed(2);
                         if(returnRate == 0){
                             returnRate = '未知';
                         }else {
                             returnRate+= '%'
                         }
 
-                        var avg_return;//披露收益率
-                        if(row.avg_return == '-' || row.avg_return == 'null'){
+                        // 高亮显示实体名称
+                        // console.log(name);
+                        var s = name;
+                        var reg = new RegExp("(" + s + ")", "g");
+                        var relatedText = row.related_text;
+                        relatedText = relatedText.replace(reg, "<strong style='color:#ff6633;'>$1</strong>");
+
+                        var avg_return = '未知';//披露收益率
+                        if(row.avg_return == '' || row.avg_return == '-' || row.avg_return == 'null' || row.avg_return == null ||  row.avg_return == '-%'){
                             avg_return = '未知';
                         }else{
                             avg_return = row.avg_return;
@@ -1607,7 +1961,7 @@ var monitor_status_1;
                             '                        <span>宣传收益率：<b id="show_return_rate" style="color: #ff6d70;font-size:16px">'+returnRate+'</b></span>'+
                             '                        <button class="original btn-primary btn-xs" onclick="incomeTable_more(\''+row.index_name+'\',\''+row.text_id+'\')">查看全文</button>'+
                             '                    </p>'+
-                            '                    <p class="context">'+row.related_text+'</p>'+
+                            '                    <p class="context">'+relatedText+'</p>'+
                             '                </div>'+
                             '            </div>'+
                             '<div class="inforContent_2">'+
@@ -1633,7 +1987,8 @@ var monitor_status_1;
             // console.log(incomeTable_more_url);
             public_ajax.call_request('get',incomeTable_more_url,incomeTablemore);
         }else{
-            console.log('====暂无更多内容====')
+            // console.log('====暂无更多内容====');
+            $('#_moreInfo').modal('show');
         }
 
     }
@@ -1659,7 +2014,13 @@ var monitor_status_1;
             }else{
                 $('#moreInfo #usn').text('未知');//作者
             }
-            $('#moreInfo #words').text(data.content);//内容
+            // 高亮显示实体名称
+            // console.log(name);
+            var s = name;
+            var reg = new RegExp("(" + s + ")", "g");
+            var data_content = data.content;
+            data_content = data_content.replace(reg, "<strong style='color:#ff6633;'>$1</strong>");
+            $('#moreInfo #words').html(data_content);//内容
             // 原网页链接
             var url;
             if(data.url){
@@ -1752,6 +2113,13 @@ var monitor_status_1;
                                 }else {
                                     promiseType = '无匹配结果'
                                 }
+
+                                // 高亮显示实体名称
+                                // console.log(name);
+                                var s = name;
+                                var reg = new RegExp("(" + s + ")", "g");
+                                var relatedText = row.related_text;
+                                relatedText = relatedText.replace(reg, "<strong style='color:#ff6633;'>$1</strong>");
                                 return '<div class="promiseCon">'+
                                     '            <div class="inforContent">'+
                                     '                <div class="main">'+
@@ -1760,7 +2128,7 @@ var monitor_status_1;
                                     '                        <span>承诺类型：<b style="color: #ff6d70;font-size:16px;">'+promiseType+'</b></span>'+
                                     '                        <button class="original btn-primary btn-xs" onclick="guarantee_more(\''+row.index_name+'\',\''+row.text_id+'\')">查看全文</button>'+
                                     '                    </p>'+
-                                    '                    <p class="context">'+row.related_text+'</p>'+
+                                    '                    <p class="context">'+relatedText+'</p>'+
                                     '                </div>'+
                                     '            </div>'+
                                     '        </div>';
@@ -1801,13 +2169,19 @@ var monitor_status_1;
             }else {
                 $('#moreInfo #usn').text('暂无');//用户
             }
-            $('#moreInfo #words').text(data.content);//内容
+            // 高亮显示实体名称
+            // console.log(name);
+            var s = name;
+            var reg = new RegExp("(" + s + ")", "g");
+            var data_content = data.content;
+            data_content = data_content.replace(reg, "<strong style='color:#ff6633;'>$1</strong>");
+            $('#moreInfo #words').html(data_content);//内容
             // 原网页链接
             var url;
-            if(row.url){
-                url = row.url;
+            if(data.url){
+                url = data.url;
             }else{
-                url = row.u;
+                url = data.u;
             }
             $('#moreInfo #url a').text('原网页链接').attr({'href':url,'target':'_blank','title':'原网页链接'});//原文链接
 
@@ -1816,107 +2190,30 @@ var monitor_status_1;
     }
 
 //====广告内容====
-    /*
-    var data_0,data_1,data_2,data_3,data_4;
-    function billing_1(data){
-        // console.log(data)
-        data_0 = data[0].wechat;
-        data_1 = data[1].zhihu;
-        data_2 = data[2].bbs;
-        data_3 = data[3].webo;
-        data_4 = data[4].forum;
-
-        billing(data_0,'#billing_0','微信');
-        billing(data_1,'#billing_1','知乎');
-        billing(data_2,'#billing_2','论坛');
-        billing(data_3,'#billing_3','微博');
-        billing(data_4,'#billing_4','贴吧');
-    }
-    */
 
     // 所有的数据
     var articalList={};
     // 部分数据
     var articalList_part={};
-    /*
-    function billing(data,el,channel) {
-        if(data.length == 0){
-            $(el).hide();
-        }else {
-            var tag=el.toString().substring(1)
-            $(el).bootstrapTable('load', data);
-            $(el).bootstrapTable({
-                data:data,
-                search: false,//是否搜索
-                pagination: true,//是否分页
-                pageSize: 3,//单页记录数
-                pageList: [15,20,25],//分页步进值
-                sidePagination: "client",//服务端分页
-                searchAlign: "left",
-                searchOnEnterKey: false,//回车搜索
-                showRefresh: false,//刷新按钮
-                showColumns: false,//列选择按钮
-                buttonsAlign: "right",//按钮对齐方式
-                locale: "zh-CN",//中文支持
-                detailView: false,
-                showToggle:false,
-                sortName:'bci',
-                sortOrder:"desc",
-                columns: [
-                    {
-                        title: "",//标题
-                        field: "",//键名
-                        sortable: true,//是否可排序
-                        order: "desc",//默认排序方式
-                        align: "center",//水平
-                        valign: "middle",//垂直
-                        formatter: function (value, row, index) {
-                            var publisTime = getLocalTime(row.publish_time);
-                            var contentClip;
-                            if(row.content.length >= 200){
-                                contentClip = row.content.slice(0,200)+'  ...';
-                                articalList_part[tag+'_'+index] = contentClip;
-                            }else{
-                                contentClip = row.content;
-                                articalList_part[tag+'_'+index] = contentClip;
-                            }
-                            // 所有的数据
-                            articalList[tag+'_'+index] = row.content;
-                            // 煽动性
-                            var inflammatory;
-                            if(row.ad123 == 1){
-                                inflammatory = '无';
-                            }else if(row.ad123 ==2){
-                                inflammatory = '一般';
-                            }else if(row.ad123 ==3){
-                                inflammatory = '强';
-                            }
-                            return '<div class="inforContent">'+
-                                '            <div class="main">'+
-                                '                <img src="/static/images/textIcon.png" class="textFlag" style="top: 8px;">'+
-                                '                <p class="option">'+
-                                '                    <span>煽动性：<b style="color: #ff6d70">'+inflammatory+'</b></span>'+
-                                '                    <span>广告渠道：<b style="color: #ff6d70">'+channel+'</b></span>'+
-                                '                    <span>发布时间：<b style="color: #ff6d70">'+publisTime+'</b></span>'+
-                                '   <button onclick="getAllArtical(\''+tag+'_'+index+'\')" artical=\"'+tag+'_'+index+'\" class="original btn-primary btn-xs">查看全文</button>'+
-                                '                </p>'+
-                                '                <p class="context">'+contentClip+'</p>'+
-                                '                <a href="'+row.url+'" title="原网页链接" target="_blank">原网页链接</a>            '+
-                                '            </div>'+
-                                '        </div>';
-                        }
-                    },
-                ],
-            });
-            $(el+' p.load').hide();
-        }
-    };
-    */
+
     function billing_1(data) {
         if(data.length == 0){
+            // 显示筛选按钮 下拉框选项
+            // 广告内容下拉框筛选
+            $('.ad_moreSitu').show();
+
             $('#billing p.load').text('暂无记录');
+            // $('#billing').bootstrapTable('load', data);
         }else {
-            var tag='#billing'.toString().substring(1)
+            // 模块标注
+            $('.adRank').show();
+            $('#adRank').text(adRank_data);
+
+            // 显示筛选按钮 下拉框选项
+            // 广告内容下拉框筛选
+            $('.ad_moreSitu').show();
+
+            var tag='#billing'.toString().substring(1);
             $('#billing').bootstrapTable('load', data);
             $('#billing').bootstrapTable({
                 data:data,
@@ -1955,17 +2252,29 @@ var monitor_status_1;
                             }
                             // 所有的数据
                             articalList[tag+'_'+index] = row.content;
+                            /*
+                                // 煽动性
+                                var inflammatory;
+                                if(row.ad123 == 1){
+                                    inflammatory = '无';
+                                }else if(row.ad123 ==2){
+                                    inflammatory = '一般';
+                                }else if(row.ad123 ==3){
+                                    inflammatory = '强';
+                                }else{
+                                    inflammatory = '未知';
+                                }
+                             */
                             // 煽动性
                             var inflammatory;
                             if(row.ad123 == 1){
                                 inflammatory = '无';
-                            }else if(row.ad123 ==2){
-                                inflammatory = '一般';
-                            }else if(row.ad123 ==3){
-                                inflammatory = '强';
+                            }else if(row.ad123 ==2 || row.ad123 ==3){
+                                inflammatory = '有';
                             }else{
                                 inflammatory = '未知';
                             }
+
                             // 渠道
                             var source;
                             if(row.source == 'wechat'){
@@ -1990,14 +2299,41 @@ var monitor_status_1;
                                 url = row.u;
                             }
 
+                            // 标题
+                            var title = '无';
+                            if(row.title){
+                                title = row.title;
+                            }
+
+                            // 网站名称
+                            var site_name = '无';
+                            if(row.site_name){
+                                site_name = row.site_name;
+                            }
+
+
+                            // 高亮显示实体名称
+                            // console.log(name);
+                            var s = name;
+                            var reg = new RegExp("(" + s + ")", "g");
+                            contentClip = contentClip.replace(reg, "<strong style='color:#ff6633;'>$1</strong>");
+
                             return '<div class="inforContent">'+
                                 '            <div class="main">'+
                                 '                <img src="/static/images/textIcon.png" class="textFlag" style="top: 8px;">'+
                                 '                <p class="option">'+
-                                '                    <span>煽动性：<b style="color: #ff6d70;font-size:16px;">'+inflammatory+'</b></span>'+
+
+                                '                    <span>煽动性：<b style="color: #ff6d70;font-size:16px;">'+inflammatory+'</b>'+
+                                '                       <i class="icon icon-edit comBisic" title="编辑" onclick="adEdit(\''+row._id+'\',\''+row.source+'\',\''+row.ad123+'\')"></i></span>'+
                                 '                    <span>广告渠道：<b style="color: #ff6d70;font-size:16px;">'+source+'</b></span>'+
                                 '                    <span>发布时间：<b style="color: #ff6d70;font-size:16px;">'+publisTime+'</b></span>'+
+                                '                    <span>相似文本数：<b style="color: #ff6d70;font-size:16px;">'+  row.same_count +'</b></span>'+
                                 '   <button onclick="getAllArtical(\''+tag+'_'+index+'\')" artical=\"'+tag+'_'+index+'\" class="original btn-primary btn-xs">查看全文</button>'+
+                                '                </p>'+
+
+                                '                <p class="option">'+
+                                '                    <span style="width:60%;;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="'+title+'">标题：<b style="color: #ff6d70;font-size:16px;">'+title+'</b></span>'+
+                                '                    <span style="width:30%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="'+site_name+'">网站名称：<b style="color: #ff6d70;font-size:16px;">'+site_name+'</b></span>'+
                                 '                </p>'+
                                 '                <p class="context">'+contentClip+'</p>'+
                                 '                <a href="'+url+'" title="原网页链接" target="_blank">原网页链接</a>            '+
@@ -2008,23 +2344,113 @@ var monitor_status_1;
                 ],
             });
             $('#billing p.load').hide();
+
+
+            // 判断登录状态
+                if(role_id != 1 && role_id != 2){//未登录
+                    $('#billing tbody tr td .inforContent .main .option .icon-edit').hide(); //广告内容编辑
+                }else {
+                    $('#billing tbody tr td .inforContent .main .option .icon-edit').show(); //广告内容编辑
+                }
+            // 判断登录状态
+
         }
     };
 
     // 切换全文和部分数据
     function getAllArtical (_id) {
+        for(var i in articalList){
+            // 高亮显示实体名称
+            var s = name;
+            var reg = new RegExp("(" + s + ")", "g");
+            articalList[i] = articalList[i].replace(reg, "<strong style='color:#ff6633;'>$1</strong>");
+            articalList_part[i] = articalList_part[i].replace(reg, "<strong style='color:#ff6633;'>$1</strong>");
+        }
+
         var nowText = $("button[artical = "+ _id +"]").text();
         // console.log(articalList[_id]);
-        $("button[artical = "+ _id +"]").parents('.main').find('.context').text(articalList[_id]);
+
+        $("button[artical = "+ _id +"]").parents('.main').find('.context').empty().html(articalList[_id]);
+
         $("button[artical = "+ _id +"]").text('收起');
         if(nowText == '收起'){
-            $("button[artical = "+ _id +"]").parents('.main').find('.context').text(articalList_part[_id]);
+            $("button[artical = "+ _id +"]").parents('.main').find('.context').empty().html(articalList_part[_id]);
             $("button[artical = "+ _id +"]").text('查看全文');
         }
     }
     // billing(serds);
+    // 更新下拉框
+        // ===时间选项===
+        $('#select-1').change(function(){
+            console.log("广告内容切换时间=====");
+            // 时间
+            var selectTime = $(this).val();
+            // 煽动性
+            var select_ad123 = $(this).parents('.content').find('#select-2').val();
+            // 通道
+            var select_source = $(this).parents('.content').find('#select-3').val();
 
-    // 加一个折线图  ===广告趋势图===
+            var billing_url = '/index/ad_content/?entity_name='+entity_name + '&source=' + select_source + '&date=' + selectTime + '&ad123=' + select_ad123;
+
+            // console.log(billing_url);
+            public_ajax.call_request('get',billing_url,billing_1);
+        })
+        // 煽动性
+        $('#select-2').change(function(){
+            // 时间
+            var selectTime = $(this).parents('.content').find('#select-1').val();
+            // 煽动性
+            var select_ad123 = $(this).val();
+            // 通道
+            var select_source = $(this).parents('.content').find('#select-3').val();
+
+            var billing_url = '/index/ad_content/?entity_name='+entity_name + '&source=' + select_source + '&date=' + selectTime + '&ad123=' + select_ad123;
+
+            // console.log(billing_url);
+            public_ajax.call_request('get',billing_url,billing_1);
+        })
+        // 通道
+        $('#select-3').change(function(){
+            // 时间
+            var selectTime = $(this).parents('.content').find('#select-1').val();
+            // 煽动性
+            var select_ad123 = $(this).parents('.content').find('#select-2').val();
+            // 通道
+            var select_source = $(this).val();
+
+            var billing_url = '/index/ad_content/?entity_name='+entity_name + '&source=' + select_source + '&date=' + selectTime + '&ad123=' + select_ad123;
+
+            // console.log(billing_url);
+            public_ajax.call_request('get',billing_url,billing_1);
+        })
+
+    // 广告煽动性编辑
+        function adEdit(_id,source,ad123){
+            $('#adEdit').modal('show');
+
+            $('#adEdit .modal-body #select-ad').val(ad123)
+
+            $('#sure_adEdit').one('click',function(){
+                var ad123val = $('#select-ad').val();
+
+                var adEdit_url = '/index/editAd?_id=' + _id + '&source=' + source + '&ad123=' + ad123val;
+                public_ajax.call_request('get',adEdit_url,adEdit_1);
+            })
+        }
+        function adEdit_1(data){
+            if(data.status == 'ok'){
+                $('#saveSuccess').modal('show');
+                // 重新渲染广告内容
+                var billing_url = '/index/ad_content/?entity_name='+entity_name + '&source=all&date=0&ad123=0';
+
+                // console.log(billing_url);
+                public_ajax.call_request('get',billing_url,billing_1);
+            }
+        }
+
+
+// 广告发布趋势
+    // 加一个折线图  ===广告趋势图===  用的宣传行为 的数据
     function billing_diagram (data){
         // console.log(data)
         if(data.length!=0){
@@ -2034,8 +2460,9 @@ var monitor_status_1;
             var date = [];
             for(var i=0;i < data.length;i++){
                 inf1_data.push(data[i].inf1_wechat+data[i].inf1_zhihu+data[i].inf1_bbs+data[i].inf1_webo+data[i].inf1_forum);
-                inf2_data.push(data[i].inf2_wechat+data[i].inf2_zhihu+data[i].inf2_bbs+data[i].inf2_webo+data[i].inf2_forum);
-                inf3_data.push(data[i].inf3_wechat+data[i].inf3_zhihu+data[i].inf3_bbs+data[i].inf3_webo+data[i].inf3_forum);
+                // inf2_data.push(data[i].inf2_wechat+data[i].inf2_zhihu+data[i].inf2_bbs+data[i].inf2_webo+data[i].inf2_forum);
+                // inf3_data.push(data[i].inf3_wechat+data[i].inf3_zhihu+data[i].inf3_bbs+data[i].inf3_webo+data[i].inf3_forum);
+                inf2_data.push(data[i].inf2_wechat+data[i].inf2_zhihu+data[i].inf2_bbs+data[i].inf2_webo+data[i].inf2_forum+data[i].inf3_wechat+data[i].inf3_zhihu+data[i].inf3_bbs+data[i].inf3_webo+data[i].inf3_forum);
 
                 date.push(data[i].date);
             }
@@ -2055,7 +2482,8 @@ var monitor_status_1;
                 },
                 legend: {
                     // data:['无煽动性广告数','一般煽动性广告数','强煽动性广告数','广告数']
-                    data:['无煽动性广告数','一般煽动性广告数','强煽动性广告数']
+                    // data:['无煽动性广告数(近90天累计量)','一般煽动性广告数(近90天累计量)','强煽动性广告数(近90天累计量)']
+                    data:['无煽动性广告数(近90天累计量)','有煽动性广告数(近90天累计量)']
                 },
                 toolbox: {
                     feature: {
@@ -2084,268 +2512,39 @@ var monitor_status_1;
                 series : [
 
                     {
-                        name:'无煽动性广告数',
+                        name:'无煽动性广告数(近90天累计量)',
                         type:'line',
                         stack: '总量',
                         areaStyle: {normal: {}},
                         data:inf1_data
                     },
+                    /*
+                        {
+                            name:'一般煽动性广告数(近90天累计量)',
+                            type:'line',
+                            stack: '总量',
+                            areaStyle: {normal: {}},
+                            data:inf2_data
+                        },
+                        {
+                            name:'强煽动性广告数(近90天累计量)',
+                            type:'line',
+                            stack: '总量',
+                            areaStyle: {normal: {}},
+                            data:inf3_data
+                        },
+                     */
                     {
-                        name:'一般煽动性广告数',
+                        name:'有煽动性广告数(近90天累计量)',
                         type:'line',
                         stack: '总量',
                         areaStyle: {normal: {}},
                         data:inf2_data
                     },
-                    {
-                        name:'强煽动性广告数',
-                        type:'line',
-                        stack: '总量',
-                        areaStyle: {normal: {}},
-                        data:inf3_data
-                    },
-                    // {
-                    //     name:'广告数',
-                    //     type:'line',
-                    //     stack: '总量',
-                    //     areaStyle: {normal: {}},
-                    //     data:ad1_data
-                    // },
                 ]
             };
             myChart.setOption(option);
         }
-    }
-
-//====舆情分析====
-    //评论信息
-    /*
-    setTimeout(function(){
-        var commentinforContent_url = '/index/comment_content/?entity_name='+entity_name;
-        public_ajax.call_request('get',commentinforContent_url,commentinforContent_1);
-    },1000);
-     */
-
-    /*
-    var commentData_0,commentData_1,commentData_2,commentData_3,commentData_4;
-    function commentinforContent_1(data){
-        commentData_0 = data[0].wechat;
-        commentData_1 = data[1].zhihu;
-        commentData_2 = data[2].bbs;
-        commentData_3 = data[3].webo;
-        commentData_4 = data[4].forum;
-
-        commentinforContent(commentData_0,'#commentinforContent_0','微信');
-        commentinforContent(commentData_1,'#commentinforContent_1','知乎');
-        commentinforContent(commentData_2,'#commentinforContent_2','论坛');
-        commentinforContent(commentData_3,'#commentinforContent_3','微博');
-        commentinforContent(commentData_4,'#commentinforContent_4','贴吧');
-    }
-    */
-
-    // 所有的数据
-    var commentarticalList={};
-    // 部分数据
-    var commentarticalList_part={};
-    /*
-    function commentinforContent(data,el,channel) {
-        // console.log(data)
-        if(data.length == 0){
-            $(el).hide();
-        }else {
-            var com =el.toString().substring(1);
-            $(el).bootstrapTable('load', data);
-            $(el).bootstrapTable({
-                data:data,
-                search: false,//是否搜索
-                pagination: true,//是否分页
-                pageSize: 3,//单页记录数
-                pageList: [15,20,25],//分页步进值
-                sidePagination: "client",//服务端分页
-                searchAlign: "left",
-                searchOnEnterKey: false,//回车搜索
-                showRefresh: false,//刷新按钮
-                showColumns: false,//列选择按钮
-                buttonsAlign: "right",//按钮对齐方式
-                locale: "zh-CN",//中文支持
-                detailView: false,
-                showToggle:false,
-                sortName:'bci',
-                sortOrder:"desc",
-                columns: [
-                    {
-                        title: "",//标题
-                        field: "",//键名
-                        sortable: true,//是否可排序
-                        order: "desc",//默认排序方式
-                        align: "center",//水平
-                        valign: "middle",//垂直
-                        formatter: function (value, row, index) {
-                            var publishTime = getLocalTime(row.publish_time);
-                            var contentClip;
-                            if(row.content.length >= 200){
-                                contentClip = row.content.slice(0,200)+'  ...';
-                                commentarticalList_part[com+'_'+index] = contentClip;
-                            }else{
-                                contentClip = row.content;
-                                commentarticalList_part[com+'_'+index] = contentClip;
-                            }
-                            // 所有的数据
-                            commentarticalList[com+'_'+index] = row.content;
-                            // 评论倾向
-                            var sent;
-                            if(row.sent == 0){
-                                sent = '消极';
-                            }else if(row.sent == 1){
-                                sent = '中性';
-                            }else if(row.sent == 2){
-                                sent = '积极';
-                            }
-                            return '<div class="inforContent" id="commentinforContent">'+
-                                '                <div class="main">'+
-                                '                    <img src="/static/images/textIcon.png" class="textFlag" style="top:8px;">'+
-                                '                    <p class="option">'+
-                                '                        <span>评论倾向：<b style="color: #ff6d70">'+sent+'</b></span>'+
-                                '                        <span>评论来源：<b style="color: #ff6d70">'+channel+'</b></span>'+
-                                '                        <span>发布时间：<b style="color: #ff6d70">'+publishTime+'</b></span>'+
-                                '                        <button class="originalbtn btn-primary btn-xs" onclick="getAllcommtentartical(\''+com+'_'+index+'\')" artical=\"'+com+'_'+index+'\">查看全文</button>'+
-                                '                    </p>'+
-                                '                    <p class="context">'+contentClip+'</p>'+
-                                '                <a href="'+row.url+'" title="原网页链接" target="_blank">原网页链接</a>            '+
-                                '                </div>'+
-                                '            </div>';
-                        }
-                    },
-                ],
-            });
-            $(el+' p.load').hide();
-        }
-    };
-    */
-    function commentinforContent_1(data,el,channel) {
-        // console.log(data)
-        if(data.length == 0){
-            $('#commentinforContent p.load').text('暂无记录');
-        }else {
-            var com ='#commentinforContent'.toString().substring(1);
-            $('#commentinforContent').bootstrapTable('load', data);
-            $('#commentinforContent').bootstrapTable({
-                data:data,
-                search: false,//是否搜索
-                pagination: true,//是否分页
-                pageSize: 5,//单页记录数
-                pageList: [15,20,25],//分页步进值
-                sidePagination: "client",//服务端分页
-                searchAlign: "left",
-                searchOnEnterKey: false,//回车搜索
-                showRefresh: false,//刷新按钮
-                showColumns: false,//列选择按钮
-                buttonsAlign: "right",//按钮对齐方式
-                locale: "zh-CN",//中文支持
-                detailView: false,
-                showToggle:false,
-                sortName:'bci',
-                sortOrder:"desc",
-                columns: [
-                    {
-                        title: "",//标题
-                        field: "",//键名
-                        sortable: true,//是否可排序
-                        order: "desc",//默认排序方式
-                        align: "center",//水平
-                        valign: "middle",//垂直
-                        formatter: function (value, row, index) {
-                            var publishTime = getLocalTime_2(row.publish_time);
-                            var contentClip;
-                            if(row.content.length >= 200){
-                                contentClip = row.content.slice(0,200)+'  ...';
-                                commentarticalList_part[com+'_'+index] = contentClip;
-                            }else{
-                                contentClip = row.content;
-                                commentarticalList_part[com+'_'+index] = contentClip;
-                            }
-                            // 所有的数据
-                            commentarticalList[com+'_'+index] = row.content;
-                            // 评论倾向
-                            var sent = '负面';
-
-                            // if(row.sent == 0){
-                            //     sent = '消极';
-                            // }else if(row.sent == 1){
-                            //     sent = '中性';
-                            // }else if(row.sent == 2){
-                            //     sent = '积极';
-                            // }else{
-                            //     sent = '未知';
-                            // }
-                            // 评论来源
-                            var source;
-                            if(row.source == 'wechat'){
-                                source = '微信';
-                            }else if(row.source =='zhihu'){
-                                source = '知乎';
-                            }else if(row.source =='bbs'){
-                                source = '论坛';
-                            }else if(row.source =='webo'){
-                                source = '微博';
-                            }else if(row.source =='forum'){
-                                source = '贴吧';
-                            }else{
-                                source = '未知';
-                            }
-
-                            // 原网页链接
-                            var url;
-                            if(row.url){
-                                url = row.url;
-                            }else{
-                                url = row.u;
-                            }
-
-                            return '<div class="inforContent" id="commentinforContent">'+
-                                '                <div class="main">'+
-                                '                    <img src="/static/images/textIcon.png" class="textFlag" style="top:8px;">'+
-                                '                    <p class="option">'+
-                                '                        <span>评论倾向：<b style="color: #ff6d70;font-size:16px;">'+sent+'</b></span>'+
-                                '                        <span>评论来源：<b style="color: #ff6d70;font-size:16px;">'+source+'</b></span>'+
-                                '                        <span>发布时间：<b style="color: #ff6d70;font-size:16px;">'+publishTime+'</b></span>'+
-                                '                        <button class="originalbtn btn-primary btn-xs" onclick="getAllcommtentartical(\''+com+'_'+index+'\')" artical=\"'+com+'_'+index+'\">查看全文</button>'+
-                                '                    </p>'+
-                                '                    <p class="context">'+contentClip+'</p>'+
-                                '                <a href="'+url+'" title="原网页链接" target="_blank">原网页链接</a>            '+
-                                '                </div>'+
-                                '            </div>';
-                        }
-                    },
-                ],
-            });
-            $('#commentinforContent p.load').hide();
-        }
-    };
-
-    function getAllcommtentartical (_id){
-        var nowText = $("button[artical = "+ _id +"]").text();
-        // console.log(articalList[_id]);
-        $("button[artical = "+ _id +"]").parents('.main').find('.context').text(commentarticalList[_id]);
-        $("button[artical = "+ _id +"]").text('收起');
-        if(nowText == '收起'){
-            $("button[artical = "+ _id +"]").parents('.main').find('.context').text(commentarticalList_part[_id]);
-            $("button[artical = "+ _id +"]").text('查看全文');
-        }
-    }
-
-// 12个月
-    var last_year_month = function() {
-        var d = new Date();
-        var result = [];
-        for(var i = 0; i < 12; i++) {
-            d.setMonth(d.getMonth() - 1);
-            var m = d.getMonth() + 1;
-            m = m < 10 ? "0" + m : m;
-            //在这里可以自定义输出的日期格式
-            result.push(d.getFullYear() + "年" + m + '月');
-        }
-        return result;
     }
 
 // 舆情趋势分析
@@ -2387,7 +2586,7 @@ var monitor_status_1;
                         trigger: 'axis'
                     },
                     legend: {
-                        data:['一般负面评论','严重负面评论']
+                        data:['一般负面评论(近90天累计量)','严重负面评论(近90天累计量)']
                     },
                     xAxis:  {
                         type: 'category',
@@ -2403,7 +2602,7 @@ var monitor_status_1;
                     },
                     series: [
                         {
-                            name:'一般负面评论',
+                            name:'一般负面评论(近90天累计量)',
                             type:'line',
                             smooth:true,
                             data:day30Data_0,
@@ -2421,7 +2620,7 @@ var monitor_status_1;
                             }
                         },
                         {
-                            name:'严重负面评论',
+                            name:'严重负面评论(近90天累计量)',
                             type:'line',
                             smooth:true,
                             data:day30Data_1,
@@ -2471,11 +2670,265 @@ var monitor_status_1;
         // day30Data_2.push(item.sent2_webo+item.sent2_bbs+item.sent2_zhihu+item.sent2_forum+item.sent2_wechat);
         // var date = [];
         // date.push(item.date);
-
-
     }
     // line_2();
 
+//====舆情分析(舆情内容)====
+    //评论信息
+    // 所有的数据
+    var commentarticalList={};
+    // 部分数据
+    var commentarticalList_part={};
+
+    function commentinforContent_1(data,el,channel) {
+        // console.log(data)
+        if(data.length == 0){
+            // 显示筛选按钮 下拉框选项
+            // 舆情内容下拉框筛选
+            $('.comment_moreSitu').show();
+
+            $('#commentinforContent p.load').text('暂无记录');
+            // $('#commentinforContent').bootstrapTable('load', data);
+        }else {
+            // 模块标注
+            $('.commentRank').show();
+            $('#commentRank').text(commentRank_data);
+            // $('#_commentRank').text(commentRank_data);
+
+            // 显示筛选按钮 下拉框选项
+            // 舆情内容下拉框筛选
+            $('.comment_moreSitu').show();
+
+            var com ='#commentinforContent'.toString().substring(1);
+            $('#commentinforContent').bootstrapTable('load', data);
+            $('#commentinforContent').bootstrapTable({
+                data:data,
+                search: false,//是否搜索
+                pagination: true,//是否分页
+                pageSize: 5,//单页记录数
+                pageList: [15,20,25],//分页步进值
+                sidePagination: "client",//服务端分页
+                searchAlign: "left",
+                searchOnEnterKey: false,//回车搜索
+                showRefresh: false,//刷新按钮
+                showColumns: false,//列选择按钮
+                buttonsAlign: "right",//按钮对齐方式
+                locale: "zh-CN",//中文支持
+                detailView: false,
+                showToggle:false,
+                sortName:'bci',
+                sortOrder:"desc",
+                columns: [
+                    {
+                        title: "",//标题
+                        field: "",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            var publishTime = getLocalTime_2(row.publish_time);
+                            var contentClip;
+                            if(row.content.length >= 200){
+                                contentClip = row.content.slice(0,200)+'  ...';
+                                commentarticalList_part[com+'_'+index] = contentClip;
+                            }else{
+                                contentClip = row.content;
+                                commentarticalList_part[com+'_'+index] = contentClip;
+                            }
+                            // 所有的数据
+                            commentarticalList[com+'_'+index] = row.content;
+                            // 评论倾向
+                            // var sent = '负面';
+                            var sent = '未知'; //如果em1 和 em0 都有，以em1为准
+                            if(row.em1 && row.em1 == 1){
+                                sent = '严重负面';
+                            }else if(row.em0 && row.em0 ==1 && !row.em1 || row.em1 == 0){
+                                sent = '一般负面';
+                            }else {
+                                sent = '未知';
+                            }
+
+                            // 高亮显示实体名称
+                            // console.log(name);
+                            var s = name;
+                            var reg = new RegExp("(" + s + ")", "g");
+                            contentClip = contentClip.replace(reg, "<strong style='color:#ff6633;'>$1</strong>");
+
+                            // 评论来源
+                            var source;
+                            if(row.source == 'wechat'){
+                                source = '微信';
+                            }else if(row.source =='zhihu'){
+                                source = '知乎';
+                            }else if(row.source =='bbs'){
+                                source = '论坛';
+                            }else if(row.source =='webo'){
+                                source = '微博';
+                            }else if(row.source =='forum'){
+                                source = '贴吧';
+                            }else{
+                                source = '未知';
+                            }
+
+                            // 原网页链接
+                            var url;
+                            if(row.url){
+                                url = row.url;
+                            }else{
+                                url = row.u;
+                            }
+
+                            // 标题
+                            var title = '无';
+                            if(row.title){
+                                title = row.title;
+                            }
+
+                            // 网站名称
+                            var site_name = '无';
+                            if(row.site_name){
+                                site_name = row.site_name;
+                            }
+
+                            return '<div class="inforContent" id="commentinforContent">'+
+                                '                <div class="main">'+
+                                '                    <img src="/static/images/textIcon.png" class="textFlag" style="top:8px;">'+
+
+                                '                    <p class="option">'+
+                                '                        <span>评论倾向：<b style="color: #ff6d70;font-size:16px;">'+sent+'</b>'+
+                                '                       <i class="icon icon-edit comBisic" title="编辑" onclick="commentEdit(\''+row._id+'\',\''+row.source+'\')"></i></span>'+
+                                '                        <span>评论来源：<b style="color: #ff6d70;font-size:16px;">'+source+'</b></span>'+
+                                '                        <span>发布时间：<b style="color: #ff6d70;font-size:16px;">'+publishTime+'</b></span>'+
+                                '                        <span>相似文本数：<b style="color: #ff6d70;font-size:16px;">'+  row.same_count  +'</b></span>'+
+                                '                        <button class="originalbtn btn-primary btn-xs" onclick="getAllcommtentartical(\''+com+'_'+index+'\')" artical=\"'+com+'_'+index+'\">查看全文</button>'+
+                                '                    </p>'+
+
+                                '                    <p class="option">'+
+                                '                        <span style="width:60%;;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="'+title+'">标题：<b style="color: #ff6d70;font-size:16px;">'+title+'</b></span>'+
+                                '                        <span style="width:30%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="'+site_name+'">网站名称：<b style="color: #ff6d70;font-size:16px;">'+site_name+'</b></span>'+
+                                '                    </p>'+
+                                '                    <p class="context">'+contentClip+'</p>'+
+                                '                    <a href="'+url+'" title="原网页链接" target="_blank">原网页链接</a>            '+
+                                '                </div>'+
+                                '            </div>';
+                        }
+                    },
+                ],
+            });
+            $('#commentinforContent p.load').hide();
+
+
+            // 判断登录状态
+                if(role_id != 1 && role_id != 2){//未登录
+                    $('#commentinforContent tbody tr td .inforContent .main .option .icon-edit').hide(); //舆情内容编辑
+                }else {
+                    $('#commentinforContent tbody tr td .inforContent .main .option .icon-edit').show(); //舆情内容编辑
+                }
+            // 判断登录状态
+        }
+    };
+    // 切换全文和部分数据
+    function getAllcommtentartical (_id){
+        for(var i in commentarticalList){
+            // 高亮显示实体名称
+            // console.log(name);
+            var s = name;
+            var reg = new RegExp("(" + s + ")", "g");
+            commentarticalList[i] = commentarticalList[i].replace(reg, "<strong style='color:#ff6633;'>$1</strong>");
+            commentarticalList_part[i] = commentarticalList_part[i].replace(reg, "<strong style='color:#ff6633;'>$1</strong>");
+        }
+
+        var nowText = $("button[artical = "+ _id +"]").text();
+        $("button[artical = "+ _id +"]").parents('.main').find('.context').empty().html(commentarticalList[_id]);
+        $("button[artical = "+ _id +"]").text('收起');
+        if(nowText == '收起'){
+            $("button[artical = "+ _id +"]").parents('.main').find('.context').empty().html(commentarticalList_part[_id]);
+            $("button[artical = "+ _id +"]").text('查看全文');
+        }
+    }
+    // 更新下拉框
+        // ===时间选项===
+        $('#select-1-2').change(function(){
+            // 时间
+            var selectTime = $(this).val();
+            // 评论倾向
+            var select_em = $(this).parents('.content').find('#select-2-2').val();
+            // 通道
+            var select_source = $(this).parents('.content').find('#select-3-2').val();
+
+            // 评论信息【舆情信息】
+            var commentinforContent_url = '/index/comment_content/?entity_name='+ entity_name + '&source=' + select_source + '&date=' + selectTime + '&em=' + select_em;
+
+            public_ajax.call_request('get',commentinforContent_url,commentinforContent_1);
+        })
+        // 煽动性
+        $('#select-2-2').change(function(){
+            // 时间
+            var selectTime =$(this).parents('.content').find('#select-1-2').val();
+            // 评论倾向
+            var select_em = $(this).val();
+            // 通道
+            var select_source = $(this).parents('.content').find('#select-3-2').val();
+
+            // 评论信息【舆情信息】
+            var commentinforContent_url = '/index/comment_content/?entity_name='+ entity_name + '&source=' + select_source + '&date=' + selectTime + '&em=' + select_em;
+
+            public_ajax.call_request('get',commentinforContent_url,commentinforContent_1);
+        })
+        // 通道
+        $('#select-3-2').change(function(){
+            // 时间
+            var selectTime = $(this).parents('.content').find('#select-1-2').val();
+            // 评论倾向
+            var select_em = $(this).parents('.content').find('#select-2-2').val();
+            // 通道
+            var select_source = $(this).val();
+
+            // 评论信息【舆情信息】
+            var commentinforContent_url = '/index/comment_content/?entity_name='+ entity_name + '&source=' + select_source + '&date=' + selectTime + '&em=' + select_em;
+
+            public_ajax.call_request('get',commentinforContent_url,commentinforContent_1);
+        })
+
+    // 舆情 评论倾向 编辑
+        function commentEdit(_id,source,em){
+            $('#commentEdit').modal('show');
+
+            // $('#commentEdit .modal-body #select-comment').val(em)
+
+            $('#sure_commentEdit').one('click',function(){
+                var commentval = $('#select-comment').val();
+
+                var commentEdit_url = '/index/editComment?_id=' + _id + '&source=' + source + '&em=' + commentval;
+                public_ajax.call_request('get',commentEdit_url,commentEdit_1);
+            })
+        }
+        function commentEdit_1(data){
+            if(data.status == 'ok'){
+                $('#saveSuccess').modal('show');
+                // 重新渲染舆情内容
+                var commentinforContent_url = '/index/comment_content/?entity_name='+entity_name + '&source=all&date=0&em=100';
+
+                public_ajax.call_request('get',commentinforContent_url,commentinforContent_1);
+            }
+        }
+
+
+
+// 12个月
+    var last_year_month = function() {
+        var d = new Date();
+        var result = [];
+        for(var i = 0; i < 12; i++) {
+            d.setMonth(d.getMonth() - 1);
+            var m = d.getMonth() + 1;
+            m = m < 10 ? "0" + m : m;
+            //在这里可以自定义输出的日期格式
+            result.push(d.getFullYear() + "年" + m + '月');
+        }
+        return result;
+    }
 
 // 关联产品 编辑
     var show_product;

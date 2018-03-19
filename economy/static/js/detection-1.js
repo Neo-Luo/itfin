@@ -1,12 +1,612 @@
 
+// 判断登录状态 =============
+    if(role_id != 1 && role_id != 2){//未登录 // 只显示第二屏  没有操作列
+
+        $('.fullpage .firstScreen').remove();//删除第一屏
+        $('.fullpage').fullpage({
+            'verticalCentered': false,
+            'css3': true,
+            'anchors': ['page1', 'page2','page3','page4','page5',],
+            'navigation': 'true',
+            'loopBottom':'true',
+            'navigationPosition': 'right',
+            'navigationTooltips': ['预警记录','预警态势及类型','预警分布','运营模式','预警排名'],
+            'fixedElements':'#nav,#Success,#reason,#result,#MonitorStatus_off,#problemEdit',//不跟随滚动的元素
+
+            'normalScrollElements':'#reason .modal-dialog,#perceiveContent .modal-dialog'//鼠标在此元素 不滚屏
+        });
+        // 不显示操作列
+        var _earlyWarning_url='/detection/secondDetectData/?date=7&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all&problem=all&newEntity=0';
+        public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);
+        function _earlyWarning(data) {
+            // console.log(data);
+            $('#_recordingTable p.load').show();
+            // 获取最早预警时间 加入数据中=========
+            var mindate_url = '/detection/minDate';
+            public_ajax.call_request('get',mindate_url,minDate);
+            var data_1 = [];
+            var data_2 = data;
+            function minDate(data){
+                data_1 = data;
+
+                for(var i=0;i<data_2.length;i++){
+                    data_2[i].minDate = data_1[data_2[i].id]
+                }
+                // console.log(data_2);
+                // 获取最早预警时间 加入数据中=========
+
+                // $('#recordingTable').bootstrapTable('destroy');
+                $('#_recordingTable').bootstrapTable('load', data_2);
+                $('#_recordingTable').bootstrapTable({
+                    data:data_2,
+                    search: true,//是否搜索
+                    pagination: true,//是否分页
+                    pageSize: pageData,//单页记录数
+                    pageList: [15,20,25],//分页步进值
+                    sidePagination: "client",//服务端分页
+                    searchAlign: "left",
+                    searchOnEnterKey: false,//回车搜索
+                    showRefresh: false,//刷新按钮
+                    showColumns: false,//列选择按钮
+                    buttonsAlign: "right",//按钮对齐方式
+                    locale: "zh-CN",//中文支持
+                    detailView: false,
+                    showToggle:false,
+                    sortName:'bci',
+                    sortOrder:"desc",
+                    // sortStable:true,
+                    columns: [
+                        {
+                            title: "监测对象",//标题
+                            field: "entity_name",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                if (row.entity_name==''||row.entity_name=='null'||row.entity_name=='unknown'||!row.entity_name){
+                                    return '未知';
+                                }else {
+                                    return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_1(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\')" title="进入画像">'+row.entity_name+'</span>';
+                                };
+                            }
+                        },
+                        {
+                            title: "预警指数",//标题
+                            field: " ",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                if (row.illegal_score==''||row.illegal_score=='null'||row.illegal_score=='unknown'||!row.illegal_score){
+                                    return '未知';
+                                }else {
+                                    return row.illegal_score;
+                                };
+                            }
+                        },
+                        {
+                            title: "注册地",//标题
+                            field: "province",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                var registAddress;
+                                if(row.province == '北京' || row.province == '上海' || row.province == '天津' || row.province == '重庆'){
+                                    registAddress= row.city+row.district;
+                                }else{
+                                    registAddress= row.province+row.city+row.district;
+                                }
+                                if (registAddress.length == 0 || row.province==''||row.province=='null'||row.province=='unknown'||!row.province){
+                                    return '未知';
+                                }else {
+                                    return '<span style="cursor:pointer;color:white;" title="注册地">'+registAddress+'</span>';
+                                };
+                            }
+                        },
+                        {
+                            title: "实体来源",//标题
+                            field: "entity_source ",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                var entitySource;
+                                if(row.entity_source == 1){
+                                    entitySource = '网贷之家';
+                                }else if(row.entity_source == 2){
+                                    entitySource = '人工导入';
+                                }else if( row.entity_source == 3){
+                                    entitySource = '数据库';
+                                }else if(row.entity_source == 4 ){
+                                    entitySource = '系统感知';
+                                }else if (row.entity_source==''||row.entity_source=='null'||row.entity_source=='unknown'||!row.entity_source){
+                                    entitySource = '未知';
+                                }else {
+                                    entitySource = entity_source;
+                                }
+                                return entitySource;
+                            }
+                        },
+                        {
+                            title: "此次预警时间",//标题
+                            field: "date",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                if (row.date==''||row.date=='null'||row.date=='unknown'||!row.date){
+                                    return '未知';
+                                }else {
+                                    return '<span style="cursor:pointer;color:white;" title="此次预警时间">'+row.date+'</span>';
+                                };
+                            }
+                        },
+                        {
+                            title: "最早预警时间",//标题
+                            field: "minDate",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                if (row.minDate==''||row.minDate=='null'||row.minDate=='unknown'||!row.minDate){
+                                    return '未知';
+                                }else {
+                                    return '<span style="cursor:pointer;color:white;" title="最早预警时间">'+row.minDate+'</span>';
+                                };
+                            }
+                        },
+                        {
+                            title: "预警理由",//标题
+                            field: "illegal_type",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                var warningReasons = '';
+
+                                if(row.comment_rank > 75){
+                                    warningReasons += '负面舆情多;<br>';
+                                }
+                                if(row.suit_rank > 75){
+                                    warningReasons += '诉讼记录多;<br>';
+                                }
+
+                                if(row.ad_rank > 75){
+                                    warningReasons += '煽动性广告多;<br>';
+                                }
+                                if(row.return_rank > 75){
+                                    warningReasons += '收益率过高;<br>';
+                                }
+                                if(row.abnor_rank > 75){
+                                    warningReasons += '经营异常多;<br>';
+                                }
+                                if(row.promise_type ==1 || row.promise_type ==2){
+                                    warningReasons += '存在担保承诺;<br>';
+                                }
+                                if(!row.comment_rank && !row.suit_rank && !row.ad_rank && !row.return_rank && !row.abnor_rank && !row.promise_type){
+                                    warningReasons = '暂无'
+                                }
+                                if(row.comment_rank <= 75 && row.suit_rank <= 75 && row.ad_rank <= 75  && row.return_rank <= 75 && row.abnor_rank <= 75 && row.promise_type != 1 && row.promise_type != 2){
+                                    warningReasons = '暂无'
+                                }
+
+
+                                return '<span style="cursor:pointer;color:white;" title="预警理由">'+warningReasons+'</span>';
+                            }
+                        },
+                        {
+                            title: "业态类型",//标题
+                            field: "operation_mode",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                if (row.operation_mode==''||row.operation_mode=='null' || row.operation_mode==null ||row.operation_mode=='unknown'||!row.operation_mode){
+                                    // return '互联网金融';
+                                    return '未知';
+                                }else {
+
+                                    // return '互联网金融'; // ====先写死====
+                                    return row.operation_mode;
+                                };
+                            }
+                        },
+                        {
+                            title: "问题平台",//标题
+                            field: "problem",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                if (row.problem==''||row.problem=='null'|| row.problem==null || row.problem=='unknown'||!row.problem){
+                                    return '无';
+                                }else {
+                                    return row.problem;
+                                };
+                            }
+                        },
+                        {
+                            title: "监测详情",//标题
+                            field: "f",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_2(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\',\''+row.illegal_type+'\')" title="查看详情"><i class="icon icon-file-alt"></i></span>';
+                            }
+                        },
+                        // 未登录 不显示操作列
+                    ],
+                });
+                $('#_recordingTable p.load').hide();
+                $('._firstScreen .recordingTable .fixed-table-toolbar .search input').attr('placeholder','请输入查询内容');
+            }
+        };
+
+    }else{                      // 登录 后  显示第一屏。  一屏复制版表格 加回操作列
+        $('.fullpage').fullpage({
+            'verticalCentered': false,
+            'css3': true,
+            'anchors': ['page1', 'page2','page3','page4','page5','page6'],
+            'navigation': 'true',
+            'loopBottom':'true',
+            'navigationPosition': 'right',
+            'navigationTooltips': ['预警记录','预警记录','预警态势及类型','预警分布','运营模式','预警排名'],
+
+            'fixedElements':'#nav,#Success,#reason,#result,#MonitorStatus_off,#problemEdit',//不跟随滚动的元素
+
+            'normalScrollElements':'#reason .modal-dialog,#perceiveContent .modal-dialog'//鼠标在此元素 不滚屏
+        });
+        // 全部显示
+        // 一屏复制版表格 加回操作列
+        var _earlyWarning_url='/detection/secondDetectData/?date=7&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all&problem=all&newEntity=0';
+        public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);
+        function _earlyWarning(data) {
+            // console.log(data);
+            $('#_recordingTable p.load').show();
+            // 获取最早预警时间 加入数据中=========
+            var mindate_url = '/detection/minDate';
+            public_ajax.call_request('get',mindate_url,minDate);
+            var data_1 = [];
+            var data_2 = data;
+            function minDate(data){
+                data_1 = data;
+
+                for(var i=0;i<data_2.length;i++){
+                    data_2[i].minDate = data_1[data_2[i].id]
+                }
+                // console.log(data_2);
+                // 获取最早预警时间 加入数据中=========
+
+                // $('#recordingTable').bootstrapTable('destroy');
+                $('#_recordingTable').bootstrapTable('load', data_2);
+                $('#_recordingTable').bootstrapTable({
+                    data:data_2,
+                    search: true,//是否搜索
+                    pagination: true,//是否分页
+                    pageSize: pageData,//单页记录数
+                    pageList: [15,20,25],//分页步进值
+                    sidePagination: "client",//服务端分页
+                    searchAlign: "left",
+                    searchOnEnterKey: false,//回车搜索
+                    showRefresh: false,//刷新按钮
+                    showColumns: false,//列选择按钮
+                    buttonsAlign: "right",//按钮对齐方式
+                    locale: "zh-CN",//中文支持
+                    detailView: false,
+                    showToggle:false,
+                    sortName:'bci',
+                    sortOrder:"desc",
+                    // sortStable:true,
+                    columns: [
+                        {
+                            title: "监测对象",//标题
+                            field: "entity_name",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                if (row.entity_name==''||row.entity_name=='null'||row.entity_name=='unknown'||!row.entity_name){
+                                    return '未知';
+                                }else {
+                                    return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_1(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\')" title="进入画像">'+row.entity_name+'</span>';
+                                };
+                            }
+                        },
+                        {
+                            title: "预警指数",//标题
+                            field: " ",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                if (row.illegal_score==''||row.illegal_score=='null'||row.illegal_score=='unknown'||!row.illegal_score){
+                                    return '未知';
+                                }else {
+                                    return row.illegal_score;
+                                };
+                            }
+                        },
+                        {
+                            title: "注册地",//标题
+                            field: "province",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                var registAddress;
+                                if(row.province == '北京' || row.province == '上海' || row.province == '天津' || row.province == '重庆'){
+                                    registAddress= row.city+row.district;
+                                }else{
+                                    registAddress= row.province+row.city+row.district;
+                                }
+                                if (registAddress.length == 0 || row.province==''||row.province=='null'||row.province=='unknown'||!row.province){
+                                    return '未知';
+                                }else {
+                                    return '<span style="cursor:pointer;color:white;" title="注册地">'+registAddress+'</span>';
+                                };
+                            }
+                        },
+                        {
+                            title: "实体来源",//标题
+                            field: "entity_source ",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                var entitySource;
+                                if(row.entity_source == 1){
+                                    entitySource = '网贷之家';
+                                }else if(row.entity_source == 2){
+                                    entitySource = '人工导入';
+                                }else if( row.entity_source == 3){
+                                    entitySource = '数据库';
+                                }else if(row.entity_source == 4 ){
+                                    entitySource = '系统感知';
+                                }else if (row.entity_source==''||row.entity_source=='null'||row.entity_source=='unknown'||!row.entity_source){
+                                    entitySource = '未知';
+                                }else {
+                                    entitySource = entity_source;
+                                }
+                                return entitySource;
+                            }
+                        },
+                        {
+                            title: "此次预警时间",//标题
+                            field: "date",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                if (row.date==''||row.date=='null'||row.date=='unknown'||!row.date){
+                                    return '未知';
+                                }else {
+                                    return '<span style="cursor:pointer;color:white;" title="此次预警时间">'+row.date+'</span>';
+                                };
+                            }
+                        },
+                        {
+                            title: "最早预警时间",//标题
+                            field: "minDate",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                if (row.minDate==''||row.minDate=='null'||row.minDate=='unknown'||!row.minDate){
+                                    return '未知';
+                                }else {
+                                    return '<span style="cursor:pointer;color:white;" title="最早预警时间">'+row.minDate+'</span>';
+                                };
+                            }
+                        },
+                        {
+                            title: "预警理由",//标题
+                            field: "illegal_type",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                var warningReasons = '';
+                                /*
+                                    var illegal_type_str = row.illegal_type.toString();
+                                    if(row.illegal_type==1){
+                                        warningReasons = '模型预警';
+                                    }else if(row.illegal_type==2){
+                                        warningReasons = '舆情预警';
+                                    }else if(row.illegal_type==3){
+                                        warningReasons = '指标预警';
+                                    }else if(illegal_type_str == "1,2" || illegal_type_str == "2,1"){
+                                        warningReasons = '模型预警/舆情预警';
+                                    }else if(illegal_type_str == "1,3" || illegal_type_str == "3,1"){
+                                        warningReasons = '模型预警/指标预警';
+                                    }else if(illegal_type_str == "2,3" || illegal_type_str == "3,2"){
+                                        warningReasons = '舆情预警/指标预警';
+                                    }else if(illegal_type_str == "1,2,3" || illegal_type_str == "1,3,2" || illegal_type_str == "2,1,3" || illegal_type_str == "2,3,1" || illegal_type_str == "3,1,2" || illegal_type_str == "3,2,1"){
+                                        warningReasons = '模型预警/舆情预警/指标预警';
+                                    }
+                                    if (row.illegal_type==''||row.illegal_type=='null'||row.illegal_type=='unknown'||!row.illegal_type){
+                                        return '未知';
+                                    }else{
+                                        return '<span style="cursor:pointer;color:white;" title="预警理由">'+warningReasons+'</span>';
+                                    };
+                                 */
+
+                                if(row.comment_rank > 75){
+                                    warningReasons += '负面舆情多;<br>';
+                                }
+                                if(row.suit_rank > 75){
+                                    warningReasons += '诉讼记录多;<br>';
+                                }
+
+                                if(row.ad_rank > 75){
+                                    warningReasons += '煽动性广告多;<br>';
+                                }
+                                if(row.return_rank > 75){
+                                    warningReasons += '收益率过高;<br>';
+                                }
+                                if(row.abnor_rank > 75){
+                                    warningReasons += '经营异常多;<br>';
+                                }
+                                if(row.promise_type ==1 || row.promise_type ==2){
+                                    warningReasons += '存在担保承诺;<br>';
+                                }
+                                if(!row.comment_rank && !row.suit_rank && !row.ad_rank && !row.return_rank && !row.abnor_rank && !row.promise_type){
+                                    warningReasons = '暂无'
+                                }
+                                if(row.comment_rank <= 75 && row.suit_rank <= 75 && row.ad_rank <= 75  && row.return_rank <= 75 && row.abnor_rank <= 75 && row.promise_type != 1 && row.promise_type != 2){
+                                    warningReasons = '暂无'
+                                }
+
+
+                                return '<span style="cursor:pointer;color:white;" title="预警理由">'+warningReasons+'</span>';
+                            }
+                        },
+                        {
+                            title: "业态类型",//标题
+                            field: "operation_mode",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                if (row.operation_mode==''||row.operation_mode=='null' || row.operation_mode==null ||row.operation_mode=='unknown'||!row.operation_mode){
+                                    // return '互联网金融';
+                                    return '未知';
+                                }else {
+
+                                    // return '互联网金融'; // ====先写死====
+                                    return row.operation_mode;
+                                };
+                            }
+                        },
+                        {
+                            title: "问题平台",//标题
+                            field: "problem",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                if (row.problem==''||row.problem=='null'|| row.problem==null || row.problem=='unknown'||!row.problem){
+                                    return '无';
+                                }else {
+                                    return row.problem;
+                                };
+                            }
+                        },
+                        {
+                            title: "监测详情",//标题
+                            field: "f",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_2(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\',\''+row.illegal_type+'\')" title="查看详情"><i class="icon icon-file-alt"></i></span>';
+                            }
+                        },
+                        {
+                            title: "一键取证",//标题
+                            field: "",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                return '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="一键取证"><i class="icon icon-signin"></i></span>';
+                            }
+                        },
+                        {
+                            title: "预警结果审核",//标题  (与 一屏 用一个的函数 根据screen参数区分)
+                            field: "support_num",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',1,\''+row.illegal_type+'\',\''+row.entity_name+'\',\''+row.support_num+'\',\''+row.problem+'\',\''+'_first'+'\')" title="赞成预警"><i class="icon icon-thumbs-up"></i>('+row.support_num+')</span>'+
+
+                                    '<span style="cursor:pointer;color:white;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',0,\''+row.illegal_type+'\',\''+row.entity_name+'\',\''+row.against_num+'\',\''+row.problem+'\',\''+'_first'+'\')" title="反对预警"><i class="icon icon-thumbs-down"></i>('+row.against_num+')</span>';
+                                return str;
+                            }
+                        },
+                        {
+                            title: "审核详情",//标题 （与一屏表格用一个函数）
+                            field: "",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_3(\''+row.id+'\')" title="查看审核详情"><i class="icon icon-hand-up"></i></span>';
+                            }
+                        },
+                        {
+                            title: "操作",//标题
+                            field: "",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="jumpFrame_edit(\''+row.id+'\',\''+row.entity_name+'\',\''+row.date+'\',\''+row.problem+'\',\''+'_first'+'\')" title="编辑问题平台"><i class="icon icon-edit"></i></span>';
+
+                                var title = '';
+                                if(row.monitor_status == 1){//正在监测状态
+                                    title = '停止监测';
+                                    style = 'color:#0088ff;'
+                                }else if(row.monitor_status == 2){//已停止监测
+                                    title = '恢复监测';
+                                    style = 'color:#fff;'
+                                }
+                                // console.log(row.monitor_status);
+
+                                str += '<span style="cursor:pointer;color:white;" onclick="jumpFrame_stop(\''+row.monitor_status+'\',\''+row.entity_name+'\',\''+row.id+'\',\''+row.date+'\',\''+'_first'+'\')" title=\''+title+'\'><i class="icon icon-retweet" style=\''+style+'\'></i></span>';
+
+                                return str;
+                            }
+                        },
+                    ],
+                });
+                $('#_recordingTable p.load').hide();
+                $('._firstScreen .recordingTable .fixed-table-toolbar .search input').attr('placeholder','请输入查询内容');
+            }
+        };
+
+    }
+// 判断登录状态 =============
+
 // ====预警数====
-    var warnCount_url = '/detection/warnCount/';
+    // var warnCount_url = '/detection/warnCount/';
+    var warnCount_url = '/detection/newWarnEntity/';
     public_ajax.call_request('get',warnCount_url,warnCount);
     function warnCount(data){
         if(data){
-            $('.topTitle .com-3').text(data.seven + '次');
-            $('.topTitle .com-2').text(data.thirty + '次');
-            $('.topTitle .com-1').text(data.ninty + '次');
+            // $('.firstScreen .topTitle .com-3').text(data.seven + '次');
+            // $('.firstScreen .topTitle .com-2').text(data.thirty + '次');
+            // $('.firstScreen .topTitle .com-1').text(data.ninty + '次');
+
+            $('.firstScreen .topTitle .com-3').text('新增'+data.count7 + '家');
+            $('.firstScreen .topTitle .com-2').text('新增'+data.count30 + '家');
+            $('.firstScreen .topTitle .com-1').text('新增'+data.count90 + '家');
         }
     }
     // 预警平台数
@@ -14,9 +614,35 @@
     public_ajax.call_request('get',warnCount_url_1,warnCount_1);
     function warnCount_1(data){
         if(data){
-            $('.topTitle .com-4').text(data.seven + '家');
-            $('.topTitle .com-5').text(data.thirty + '家');
-            $('.topTitle .com-6').text(data.ninty + '家');
+            $('.firstScreen .topTitle .com-4').text(data.seven + '家');
+            $('.firstScreen .topTitle .com-5').text(data.thirty + '家');
+            $('.firstScreen .topTitle .com-6').text(data.ninty + '家');
+        }
+    }
+
+    // 二屏._firstScreen
+    // var _warnCount_url = '/detection/secondWarnCount/';
+    var _warnCount_url = '/detection/secondNewWarnEntity/';
+    public_ajax.call_request('get',_warnCount_url,_warnCount);
+    function _warnCount(data){
+        if(data){
+            // $('._firstScreen .topTitle .com-3').text(data.seven + '次');
+            // $('._firstScreen .topTitle .com-2').text(data.thirty + '次');
+            // $('._firstScreen .topTitle .com-1').text(data.ninty + '次');
+
+            $('._firstScreen .topTitle .com-3').text('新增'+data.count7 + '家');
+            $('._firstScreen .topTitle .com-2').text('新增'+data.count30 + '家');
+            $('._firstScreen .topTitle .com-1').text('新增'+data.count90 + '家');
+        }
+    }
+    // 预警平台数
+    var _warnCount_url_1 = '/detection/secondWarnEntityCount/';
+    public_ajax.call_request('get',_warnCount_url_1,_warnCount_1);
+    function _warnCount_1(data){
+        if(data){
+            $('._firstScreen .topTitle .com-4').text(data.seven + '家');
+            $('._firstScreen .topTitle .com-5').text(data.thirty + '家');
+            $('._firstScreen .topTitle .com-6').text(data.ninty + '家');
         }
     }
 
@@ -27,9 +653,10 @@
         if(data){
             var str = '';
             for(var i=0;i<data.length;i++){
-                str += '<option value="'+data[i].id+'">'+data[i].operation+'</option>'
+                str += '<option value="'+data[i].operation+'">'+data[i].operation+'</option>'
             }
             $('#select-2').append(str);
+            $('#_select-2').append(str);
             $('#second_select-2').append(str);
             $('#second_select-2-2').append(str);
         }
@@ -44,8 +671,24 @@
                 str2 += '<option value="'+data[i].id+'">'+data[i].illegal_name+'</option>'
             }
             $('#select-3').append(str2);
+            $('#_select-3').append(str2);
             $('#second_select-3').append(str2);
             $('#second_select-3-2').append(str2);
+        }
+    }
+
+    // 问题平台（相关问题）下拉框
+    var select_url_3 = '/detection/ProblemBox/';    //相关问题
+    public_ajax.call_request('get',select_url_3,selectUrl_3);
+    function selectUrl_3(data){
+        // console.log(data);
+        if(data){
+            var str3 = '';
+            for(var i=0;i<data.length;i++){
+                str3 += '<option value="'+data[i].problem+'">'+data[i].problem+'</option>'
+            }
+            $('#select-5').append(str3);
+            $('#_select-5').append(str3);
         }
     }
 
@@ -55,404 +698,588 @@
     public_ajax.call_request('get',monitorCount_url,monitorCount);
     function monitorCount(data){
         if(data){
-            $('.monitoring-all').text(data.all)
+            $('.firstScreen .monitoring-all,._firstScreen .monitoring-all').text(data.all);
         }
     }
 
 // 适配分辨率
-    var pageData=6;
+    var pageData=5;
     if (screen.width <= 1440){
-        pageData=6;
+        pageData=5;
     }else {
-        pageData=10;
+        pageData=8;
     }
 
 //====预警记录====
+
     // 前台分页
-    // var earlyWarning_url='/detection/detectData/?date=7&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all';
-    var earlyWarning_url='/detection/totalDetectData/?date=7&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all';
+    var earlyWarning_url='/detection/totalDetectData/?date=7&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all&problem=all&newEntity=0';
     public_ajax.call_request('get',earlyWarning_url,earlyWarning);
     function earlyWarning(data) {
         $('#recordingTable p.load').show();
-        // $('#recordingTable').bootstrapTable('destroy');
-        $('#recordingTable').bootstrapTable('load', data);
-        $('#recordingTable').bootstrapTable({
-            data:data,
-            search: true,//是否搜索
-            pagination: true,//是否分页
-            pageSize: pageData,//单页记录数
-            pageList: [15,20,25],//分页步进值
-            sidePagination: "client",//服务端分页
-            searchAlign: "left",
-            searchOnEnterKey: false,//回车搜索
-            showRefresh: false,//刷新按钮
-            showColumns: false,//列选择按钮
-            buttonsAlign: "right",//按钮对齐方式
-            locale: "zh-CN",//中文支持
-            detailView: false,
-            showToggle:false,
-            sortName:'bci',
-            sortOrder:"desc",
-            columns: [
-                {
-                    title: "监测对象",//标题
-                    field: "entity_name",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        if (row.entity_name==''||row.entity_name=='null'||row.entity_name=='unknown'||!row.entity_name){
-                            return '未知';
-                        }else {
-                            return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_1(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\')" title="进入画像">'+row.entity_name+'</span>';
-                        };
-                    }
-                },
-                {
-                    title: "注册地",//标题
-                    field: "province",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        var registAddress;
-                        if(row.province == '北京' || row.province == '上海' || row.province == '天津' || row.province == '重庆'){
-                            registAddress= row.city+row.district;
-                        }else{
-                            registAddress= row.province+row.city+row.district;
+        // console.log(data);
+
+        // 获取最早预警时间 加入数据中=========
+        var mindate_url = '/detection/minDate';
+        public_ajax.call_request('get',mindate_url,minDate);
+        var data_1 = [];
+        var data_2 = data;
+        function minDate(data){
+            data_1 = data;
+
+            // console.log(data_1);
+            // console.log(data_2);
+
+            // for(var i=0;i<data_2.length;i++){
+            //     for(var j=0;j<data_1.length;j++){
+            //         if(data_2[i].id === data_1[j].id){
+            //             data_2[i].minDate = data_1[j].minDate;
+            //             break;
+            //         }
+            //     }
+            // }
+
+            for(var i=0;i<data_2.length;i++){
+                data_2[i].minDate = data_1[data_2[i].id]
+            }
+            // console.log(data_2);
+            // 获取最早预警时间 加入数据中=========
+
+            // $('#recordingTable').bootstrapTable('destroy');
+            $('#recordingTable').bootstrapTable('load', data_2);
+            $('#recordingTable').bootstrapTable({
+                data:data_2,
+                search: true,//是否搜索
+                pagination: true,//是否分页
+                pageSize: pageData,//单页记录数
+                pageList: [15,20,25],//分页步进值
+                sidePagination: "client",//服务端分页
+                searchAlign: "left",
+                searchOnEnterKey: false,//回车搜索
+                showRefresh: false,//刷新按钮
+                showColumns: false,//列选择按钮
+                buttonsAlign: "right",//按钮对齐方式
+                locale: "zh-CN",//中文支持
+                detailView: false,
+                showToggle:false,
+                sortName:'bci',
+                sortOrder:"desc",
+                // sortStable:true,
+                columns: [
+                    {
+                        title: "监测对象",//标题
+                        field: "entity_name",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.entity_name==''||row.entity_name=='null'||row.entity_name=='unknown'||!row.entity_name){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_1(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\')" title="进入画像">'+row.entity_name+'</span>';
+                            };
                         }
-                        if (registAddress.length == 0 || row.province==''||row.province=='null'||row.province=='unknown'||!row.province){
-                            return '未知';
-                        }else {
-                            return '<span style="cursor:pointer;color:white;" title="注册地">'+registAddress+'</span>';
-                        };
-                    }
-                },
-                {
-                    title: "时间",//标题
-                    field: "date",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        if (row.date==''||row.date=='null'||row.date=='unknown'||!row.date){
-                            return '未知';
-                        }else {
-                            return '<span style="cursor:pointer;color:white;" title="时间">'+row.date+'</span>';
-                        };
-                    }
-                },
-                {
-                    title: "预警理由",//标题
-                    field: "illegal_type",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        var warningReasons;
-                        if(row.illegal_type==1){
-                            warningReasons = '模型预警';
-                        }else if(row.illegal_type==2){
-                            warningReasons = '舆情预警';
-                        }else if(row.illegal_type==3){
-                            warningReasons = '指标预警';
+                    },
+                    {
+                        title: "预警指数",//标题
+                        field: "illegal_score",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.illegal_score==''||row.illegal_score=='null'||row.illegal_score=='unknown'||!row.illegal_score){
+                                return '未知';
+                            }else {
+                                return row.illegal_score;
+                            };
                         }
-                        if (row.illegal_type==''||row.illegal_type=='null'||row.illegal_type=='unknown'||!row.illegal_type){
-                            return '未知';
-                        }else{
+                    },
+                    {
+                        title: "注册地",//标题
+                        field: "province",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            var registAddress;
+                            if(row.province == '北京' || row.province == '上海' || row.province == '天津' || row.province == '重庆'){
+                                registAddress= row.city+row.district;
+                            }else{
+                                registAddress= row.province+row.city+row.district;
+                            }
+                            if (registAddress.length == 0 || row.province==''||row.province=='null'||row.province=='unknown'||!row.province){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" title="注册地">'+registAddress+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "实体来源",//标题
+                        field: "entity_source",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            var entitySource;
+                            if(row.entity_source == 1){
+                                entitySource = '网贷之家';
+                            }else if(row.entity_source == 2){
+                                entitySource = '人工导入';
+                            }else if( row.entity_source == 3){
+                                entitySource = '数据库';
+                            }else if(row.entity_source == 4 ){
+                                entitySource = '系统感知';
+                            }else if (row.entity_source==''||row.entity_source=='null'||row.entity_source=='unknown'||!row.entity_source){
+                                entitySource = '未知';
+                            }else {
+                                entitySource = entity_source;
+                            }
+                            return entitySource;
+                        }
+                    },
+                    {
+                        title: "此次预警时间",//标题
+                        field: "date",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.date==''||row.date=='null'||row.date=='unknown'||!row.date){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" title="此次预警时间">'+row.date+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "最早预警时间",//标题
+                        field: "minDate",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.minDate==''||row.minDate=='null'||row.minDate=='unknown'||!row.minDate){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" title="最早预警时间">'+row.minDate+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "预警理由",//标题
+                        field: "illegal_type",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            var warningReasons = '';
+
+                            // var illegal_type_str = row.illegal_type.toString();
+                            // if(row.illegal_type==1){
+                            //     warningReasons = '模型预警';
+                            // }else if(row.illegal_type==2){
+                            //     warningReasons = '舆情预警';
+                            // }else if(row.illegal_type==3){
+                            //     warningReasons = '指标预警';
+                            // }else if(illegal_type_str == "1,2" || illegal_type_str == "2,1"){
+                            //     warningReasons = '模型预警/舆情预警';
+                            // }else if(illegal_type_str == "1,3" || illegal_type_str == "3,1"){
+                            //     warningReasons = '模型预警/指标预警';
+                            // }else if(illegal_type_str == "2,3" || illegal_type_str == "3,2"){
+                            //     warningReasons = '舆情预警/指标预警';
+                            // }else if(illegal_type_str == "1,2,3" || illegal_type_str == "1,3,2" || illegal_type_str == "2,1,3" || illegal_type_str == "2,3,1" || illegal_type_str == "3,1,2" || illegal_type_str == "3,2,1"){
+                            //     warningReasons = '模型预警/舆情预警/指标预警';
+                            // }
+
+                            // if (row.illegal_type==''||row.illegal_type=='null'||row.illegal_type=='unknown'||!row.illegal_type){
+                            //     return '未知';
+                            // }else{
+                            //     return '<span style="cursor:pointer;color:white;" title="预警理由">'+warningReasons+'</span>';
+                            // };
+
+                            if(row.comment_rank > 75){
+                                warningReasons += '负面舆情多;<br>';
+                            }
+                            if(row.suit_rank > 75){
+                                warningReasons += '诉讼记录多;<br>';
+                            }
+
+                            if(row.ad_rank > 75){
+                                warningReasons += '煽动性广告多;<br>';
+                            }
+                            if(row.return_rank > 75){
+                                warningReasons += '收益率过高;<br>';
+                            }
+                            if(row.abnor_rank > 75){
+                                warningReasons += '经营异常多;<br>';
+                            }
+                            if(row.promise_type ==1 || row.promise_type ==2){
+                                warningReasons += '存在担保承诺;<br>';
+                            }
+                            if(!row.comment_rank && !row.suit_rank && !row.ad_rank && !row.return_rank && !row.abnor_rank && !row.promise_type){
+                                warningReasons = '暂无'
+                            }
+                            if(row.comment_rank <= 75 && row.suit_rank <= 75 && row.ad_rank <= 75  && row.return_rank <= 75 && row.abnor_rank <= 75 && row.promise_type != 1 && row.promise_type != 2){
+                                warningReasons = '暂无'
+                            }
+
+
                             return '<span style="cursor:pointer;color:white;" title="预警理由">'+warningReasons+'</span>';
-                        };
-                    }
-                },
-                {
-                    title: "运营模式",//标题
-                    field: "e",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        if (row.operation_mode==''||row.operation_mode=='null'||row.operation_mode=='unknown'||!row.operation_mode){
-                            return '互联网金融';
-                        }else {
-                            // return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_1(\''+row.entity_name+'\')" title="进入画像">'+row.entity_name+'</span>';
 
-                            return '互联网金融'; // ====先写死====
-                        };
-                    }
-                },
-                {
-                    title: "监测详情",//标题
-                    field: "f",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_2(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\',\''+row.illegal_type+'\')" title="查看详情"><i class="icon icon-file-alt"></i></span>';
-                    }
-                },
-                {
-                    title: "一键取证",//标题
-                    field: "",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        return '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="一键取证"><i class="icon icon-signin"></i></span>';
-                    }
-                },
-                {
-                    title: "预警结果审核",//标题
-                    field: "h",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',1,\''+row.illegal_type+'\')" title="赞成预警"><i class="icon icon-thumbs-up"></i>('+row.support_num+')</span>'+
-                            '<span style="cursor:pointer;color:white;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',0,\''+row.illegal_type+'\')" title="反对预警"><i class="icon icon-thumbs-down"></i>('+row.against_num+')</span>';
-                        return str;
-                    }
-                },
-            ],
-        });
-        $('#recordingTable p.load').hide();
-        $('.recordingTable .fixed-table-toolbar .search input').attr('placeholder','请输入查询内容');
-    };
-
-
-    // 后端分页
-    /*
-
-
-    var detectionCount_url='/detection/detectionCount/?date=7&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all';
-    public_ajax.call_request('get',detectionCount_url,earlyWarning_ser);//先请求到总页数
-    function earlyWarning_ser(total) {
-        console.log(total);
-        // $('#recordingTable').bootstrapTable('load', data);
-        $('#recordingTable').bootstrapTable('destroy');//'destroy' 是必须要加的==作用是加载服务器数据，初始化表格的内容Destroy the bootstrap table.
-        $('#recordingTable').bootstrapTable({
-            method:'get',
-            striped: false,  //是否显示行间隔色
-            cache: false,    //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
-            dataField: "rows",//这是返回的json数组的key.默认好像是"rows".这里只有前后端约定好就行
-            // data:data,
-            search: true,//是否搜索
-            pagination: true,//是否分页
-            pageNumber:1,//如果设置了分页，首页页码
-            pageSize: pageData,//单页记录数
-
-            pageList: [15,20,25],//分页步进值
-            sidePagination: "server",//服务端分页------
-            dataType:'json',
-
-            searchAlign: "left",
-            searchOnEnterKey: false,//回车搜索
-            showRefresh: false,//刷新按钮
-            showColumns: false,//列选择按钮
-            buttonsAlign: "right",//按钮对齐方式
-            locale: "zh-CN",//中文支持
-            detailView: false,
-            showToggle:false,
-            sortName:'bci',
-            sortOrder:"desc",
-            // url: "/detection/detectData/?date=7&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all&detectionCount=" + total,
-            url: "/detection/detectData/?detectionCount=" + total,
-            queryParams : function(params) {
-                console.log(params);
-                // var subcompany = $('#subcompany option:selected').val();
-                // var name = $('#name').val();
-                // 时间
-                var selectTime = $('#select-1').val();//这就是selected的值
-                // 运营模式
-                var select_operation_mode = $('#select-2').val();
-                // 预警类型
-                var select_illegal_type = $('#select-3').val();
-                // 实体类型
-                var select_entity_type = $('#select-4').val();
-                // 预警分布
-                var select_warn_distribute = $('#city34').val();
-                return {
-                        page_number: (params.offset)/params.limit+1,//如果设置了分页，页面数据条数  页码
-                        page_size: params.limit, //如果设置了分页，设置可供选择的页面数据条数。设置为 All 或者 Unlimited，则显示所有记录。   每页条数
-                        // companyId:subcompany,
-                        // name:name
-                        date: selectTime,
-                        operation_mode: select_operation_mode,
-                        illegal_type: select_illegal_type,
-                        entity_type: select_entity_type,
-                        warn_distribute: select_warn_distribute
-                    };
-            },
-            // responseHandler:responseHandler,//请求数据成功后，渲染表格前的方法
-            columns: [
-                {
-                    title: "监测对象",//标题
-                    field: "entity_name",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        if (row.entity_name==''||row.entity_name=='null'||row.entity_name=='unknown'||!row.entity_name){
-                            return '未知';
-                        }else {
-                            return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_1(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\')" title="进入画像">'+row.entity_name+'</span>';
-                        };
-                    }
-                },
-                {
-                    title: "注册地",//标题
-                    field: "province",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        var registAddress;
-                        if(row.province == '北京' || row.province == '上海' || row.province == '天津' || row.province == '重庆'){
-                            registAddress= row.city+row.district;
-                        }else{
-                            registAddress= row.province+row.city+row.district;
                         }
-                        if (registAddress.length == 0 || row.province==''||row.province=='null'||row.province=='unknown'||!row.province){
-                            return '未知';
-                        }else {
-                            return '<span style="cursor:pointer;color:white;" title="注册地">'+registAddress+'</span>';
-                        };
-                    }
-                },
-                {
-                    title: "时间",//标题
-                    field: "date",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        if (row.date==''||row.date=='null'||row.date=='unknown'||!row.date){
-                            return '未知';
-                        }else {
-                            return '<span style="cursor:pointer;color:white;" title="时间">'+row.date+'</span>';
-                        };
-                    }
-                },
-                {
-                    title: "预警理由",//标题
-                    field: "illegal_type",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        var warningReasons;
-                        if(row.illegal_type==1){
-                            warningReasons = '模型预警';
-                        }else if(row.illegal_type==2){
-                            warningReasons = '舆情预警';
-                        }else if(row.illegal_type==3){
-                            warningReasons = '指标预警';
+                    },
+                    {
+                        title: "业态类型",//标题
+                        field: "operation_mode",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.operation_mode==''||row.operation_mode=='null' || row.operation_mode==null ||row.operation_mode=='unknown'||!row.operation_mode){
+                                // return '互联网金融';
+                                return '未知';
+                            }else {
+
+                                // return '互联网金融'; // ====先写死====
+                                return row.operation_mode;
+                            };
                         }
-                        if (row.illegal_type==''||row.illegal_type=='null'||row.illegal_type=='unknown'||!row.illegal_type){
-                            return '未知';
-                        }else{
-                            return '<span style="cursor:pointer;color:white;" title="预警理由">'+warningReasons+'</span>';
-                        };
-                    }
-                },
-                {
-                    title: "运营模式",//标题
-                    field: "e",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        if (row.operation_mode==''||row.operation_mode=='null'||row.operation_mode=='unknown'||!row.operation_mode){
-                            return '互联网金融';
-                        }else {
-                            // return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_1(\''+row.entity_name+'\')" title="进入画像">'+row.entity_name+'</span>';
+                    },
+                    {
+                        title: "问题平台",//标题
+                        field: "problem",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.problem==''||row.problem=='null'|| row.problem==null || row.problem=='unknown'||!row.problem){
+                                return '无';
+                            }else {
+                                return row.problem;
+                            };
+                        }
+                    },
+                    {
+                        title: "监测详情",//标题
+                        field: "f",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_2(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\',\''+row.illegal_type+'\')" title="查看详情"><i class="icon icon-file-alt"></i></span>';
+                        }
+                    },
+                    {
+                        title: "一键取证",//标题
+                        field: "",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            return '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="一键取证"><i class="icon icon-signin"></i></span>';
+                        }
+                    },
+                    {
+                        title: "预警结果审核",//标题
+                        field: "support_num",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',1,\''+row.illegal_type+'\',\''+row.entity_name+'\',\''+row.support_num+'\',\''+row.problem+'\',\''+'first'+'\',\''+row.risk_rank+'\',\''+row.industry+'\',\''+row.fund_mode+'\')" title="赞成预警"><i class="icon icon-thumbs-up"></i>('+row.support_num+')</span>'+
 
-                            return '互联网金融'; // ====先写死====
-                        };
-                    }
-                },
-                {
-                    title: "监测详情",//标题
-                    field: "f",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_2(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\',\''+row.illegal_type+'\')" title="查看详情"><i class="icon icon-file-alt"></i></span>';
-                    }
-                },
-                {
-                    title: "一键取证",//标题
-                    field: "g",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        return '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="一键取证"><i class="icon icon-signin"></i></span>';
-                    }
-                },
-                {
-                    title: "预警结果审核",//标题
-                    field: "h",//键名
-                    sortable: true,//是否可排序
-                    order: "desc",//默认排序方式
-                    align: "center",//水平
-                    valign: "middle",//垂直
-                    formatter: function (value, row, index) {
-                        var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',)" title="审核通过"><i class="icon icon-thumbs-up"></i>(0)</span>'+
-                            '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="审核失败"><i class="icon icon-thumbs-down"></i>(0)</span>';
-                        return str;
-                    }
-                },
-            ],
-        });
-        $('#recordingTable p.load').hide();
-        $('.recordingTable .fixed-table-toolbar .search input').attr('placeholder','请输入查询内容');
+                                '<span style="cursor:pointer;color:white;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',0,\''+row.illegal_type+'\',\''+row.entity_name+'\',\''+row.against_num+'\',\''+row.problem+'\',\''+'first'+'\',\''+row.risk_rank+'\',\''+row.industry+'\',\''+row.fund_mode+'\')" title="反对预警"><i class="icon icon-thumbs-down"></i>('+row.against_num+')</span>';
+                            return str;
+                        }
+                    },
+                    {
+                        title: "审核详情",//标题
+                        field: "",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_3(\''+row.id+'\')" title="查看审核详情"><i class="icon icon-hand-up"></i></span>';
+                        }
+                    },
+                    {
+                        title: "操作",//标题
+                        field: "",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="jumpFrame_edit(\''+row.id+'\',\''+row.entity_name+'\',\''+row.date+'\',\''+row.problem+'\',\''+'first'+'\')" title="编辑问题平台"><i class="icon icon-edit"></i></span>';
 
-        // 点击搜索框 启用前端分页
-        $('.recordingTable .fixed-table-toolbar .search input').click(function(event) {
-            public_ajax.call_request('get',earlyWarning_url,earlyWarning);
-        });
+                            var title = '';
+                            if(row.monitor_status == 1){//正在监测状态
+                                title = '停止监测';
+                                style = 'color:#0088ff;'
+                            }else if(row.monitor_status == 2){//已停止监测
+                                title = '恢复监测';
+                                style = 'color:#fff;'
+                            }
+                            // console.log(row.monitor_status);
+
+                            str += '<span style="cursor:pointer;color:white;" onclick="jumpFrame_stop(\''+row.monitor_status+'\',\''+row.entity_name+'\',\''+row.id+'\',\''+row.date+'\',\''+'first'+'\')" title=\''+title+'\'><i class="icon icon-retweet" style=\''+style+'\'></i></span>';
+
+                            return str;
+                        }
+                    },
+                ],
+            });
+            $('#recordingTable p.load').hide();
+            $('.recordingTable .fixed-table-toolbar .search input').attr('placeholder','请输入查询内容');
+        }
+
     };
-    // earlyWarning_ser()
+    // 更新下拉框 加载时显示加载信息【暂未启用】
+        function up_earlyWarning(data){
+            $('#recordingTable p.load').show();
+            // $('#recordingTable').bootstrapTable('destroy');
+            $('#recordingTable').bootstrapTable('load', data);
+            $('#recordingTable p.load').hide();
+        }
 
-    //请求成功方法  （暂无用）
-    function responseHandler(result){
-        // var json = {};
-        // json.rows = result;
-        // console.log(result);
-        // var errcode = result.errcode;//在此做了错误代码的判断
-        // if(errcode != 0){
-        //     alert("错误代码" + errcode);
-        //     return;
-        // }
-        // //如果没有错误则返回数据，渲染表格
-        // return {
-        //     total : result.dataLength, //总页数,前面的key必须为"total"
-        //     data : result.rowDatas //行数据，前面的key要与之前设置的dataField的值一致.
-        // };
+    // 后端分页 【暂弃用】
+        /*
+        var detectionCount_url='/detection/detectionCount/?date=7&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all';
+        public_ajax.call_request('get',detectionCount_url,earlyWarning_ser);//先请求到总页数
+        function earlyWarning_ser(total) {
+            console.log(total);
+            // $('#recordingTable').bootstrapTable('load', data);
+            $('#recordingTable').bootstrapTable('destroy');//'destroy' 是必须要加的==作用是加载服务器数据，初始化表格的内容Destroy the bootstrap table.
+            $('#recordingTable').bootstrapTable({
+                method:'get',
+                striped: false,  //是否显示行间隔色
+                cache: false,    //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                dataField: "rows",//这是返回的json数组的key.默认好像是"rows".这里只有前后端约定好就行
+                // data:data,
+                search: true,//是否搜索
+                pagination: true,//是否分页
+                pageNumber:1,//如果设置了分页，首页页码
+                pageSize: pageData,//单页记录数
 
-        // console.log(json);
-        return {
-            total:total,
-            rows:result
+                pageList: [15,20,25],//分页步进值
+                sidePagination: "server",//服务端分页------
+                dataType:'json',
+
+                searchAlign: "left",
+                searchOnEnterKey: false,//回车搜索
+                showRefresh: false,//刷新按钮
+                showColumns: false,//列选择按钮
+                buttonsAlign: "right",//按钮对齐方式
+                locale: "zh-CN",//中文支持
+                detailView: false,
+                showToggle:false,
+                sortName:'bci',
+                sortOrder:"desc",
+                // url: "/detection/detectData/?date=7&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all&detectionCount=" + total,
+                url: "/detection/detectData/?detectionCount=" + total,
+                queryParams : function(params) {
+                    console.log(params);
+                    // var subcompany = $('#subcompany option:selected').val();
+                    // var name = $('#name').val();
+                    // 时间
+                    var selectTime = $('#select-1').val();//这就是selected的值
+                    // 运营模式
+                    var select_operation_mode = $('#select-2').val();
+                    // 预警类型
+                    var select_illegal_type = $('#select-3').val();
+                    // 实体类型
+                    var select_entity_type = $('#select-4').val();
+                    // 预警分布
+                    var select_warn_distribute = $('#city34').val();
+                    return {
+                            page_number: (params.offset)/params.limit+1,//如果设置了分页，页面数据条数  页码
+                            page_size: params.limit, //如果设置了分页，设置可供选择的页面数据条数。设置为 All 或者 Unlimited，则显示所有记录。   每页条数
+                            // companyId:subcompany,
+                            // name:name
+                            date: selectTime,
+                            operation_mode: select_operation_mode,
+                            illegal_type: select_illegal_type,
+                            entity_type: select_entity_type,
+                            warn_distribute: select_warn_distribute
+                        };
+                },
+                // responseHandler:responseHandler,//请求数据成功后，渲染表格前的方法
+                columns: [
+                    {
+                        title: "监测对象",//标题
+                        field: "entity_name",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.entity_name==''||row.entity_name=='null'||row.entity_name=='unknown'||!row.entity_name){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_1(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\')" title="进入画像">'+row.entity_name+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "注册地",//标题
+                        field: "province",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            var registAddress;
+                            if(row.province == '北京' || row.province == '上海' || row.province == '天津' || row.province == '重庆'){
+                                registAddress= row.city+row.district;
+                            }else{
+                                registAddress= row.province+row.city+row.district;
+                            }
+                            if (registAddress.length == 0 || row.province==''||row.province=='null'||row.province=='unknown'||!row.province){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" title="注册地">'+registAddress+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "时间",//标题
+                        field: "date",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.date==''||row.date=='null'||row.date=='unknown'||!row.date){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" title="时间">'+row.date+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "预警理由",//标题
+                        field: "illegal_type",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            var warningReasons;
+                            if(row.illegal_type==1){
+                                warningReasons = '模型预警';
+                            }else if(row.illegal_type==2){
+                                warningReasons = '舆情预警';
+                            }else if(row.illegal_type==3){
+                                warningReasons = '指标预警';
+                            }
+                            if (row.illegal_type==''||row.illegal_type=='null'||row.illegal_type=='unknown'||!row.illegal_type){
+                                return '未知';
+                            }else{
+                                return '<span style="cursor:pointer;color:white;" title="预警理由">'+warningReasons+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "运营模式",//标题
+                        field: "e",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.operation_mode==''||row.operation_mode=='null'||row.operation_mode=='unknown'||!row.operation_mode){
+                                return '互联网金融';
+                            }else {
+                                // return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_1(\''+row.entity_name+'\')" title="进入画像">'+row.entity_name+'</span>';
+
+                                return '互联网金融'; // ====先写死====
+                            };
+                        }
+                    },
+                    {
+                        title: "监测详情",//标题
+                        field: "f",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_2(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\',\''+row.illegal_type+'\')" title="查看详情"><i class="icon icon-file-alt"></i></span>';
+                        }
+                    },
+                    {
+                        title: "一键取证",//标题
+                        field: "g",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            return '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="一键取证"><i class="icon icon-signin"></i></span>';
+                        }
+                    },
+                    {
+                        title: "预警结果审核",//标题
+                        field: "h",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',)" title="审核通过"><i class="icon icon-thumbs-up"></i>(0)</span>'+
+                                '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="审核失败"><i class="icon icon-thumbs-down"></i>(0)</span>';
+                            return str;
+                        }
+                    },
+                ],
+            });
+            $('#recordingTable p.load').hide();
+            $('.recordingTable .fixed-table-toolbar .search input').attr('placeholder','请输入查询内容');
+
+            // 点击搜索框 启用前端分页
+            $('.recordingTable .fixed-table-toolbar .search input').click(function(event) {
+                public_ajax.call_request('get',earlyWarning_url,earlyWarning);
+            });
         };
-        // $('#recordingTable').bootstrapTable('load', result);
-    };
+        // earlyWarning_ser()
+
+        //请求成功方法  （暂无用）
+        function responseHandler(result){
+            // var json = {};
+            // json.rows = result;
+            // console.log(result);
+            // var errcode = result.errcode;//在此做了错误代码的判断
+            // if(errcode != 0){
+            //     alert("错误代码" + errcode);
+            //     return;
+            // }
+            // //如果没有错误则返回数据，渲染表格
+            // return {
+            //     total : result.dataLength, //总页数,前面的key必须为"total"
+            //     data : result.rowDatas //行数据，前面的key要与之前设置的dataField的值一致.
+            // };
+
+            // console.log(json);
+            return {
+                total:total,
+                rows:result
+            };
+            // $('#recordingTable').bootstrapTable('load', result);
+        };
 
      */
 
@@ -460,38 +1287,44 @@
         // ===时间选项===
         $('#select-1').change(function(){
             var selectTime = $(this).children('option:selected').val();//这就是selected的值
-            // 运营模式
+            // （业态类型）运营模式
             var select_operation_mode = $(this).parents('.content').find('#select-2').val();
             // 预警类型
             var select_illegal_type = $(this).parents('.content').find('#select-3').val();
+            // 相关问题
+            var select_problem = $(this).parents('.content').find('#select-5').val();
             // 实体类型
             var select_entity_type = $(this).parents('.content').find('#select-4').val();
             // 预警分布
             var select_warn_distribute = $(this).parents('.content').find('#city34').val();
-            earlyWarning_url = '/detection/totalDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            // console.log(earlyWarning_url);
+            // 新增、全部
+            var select_newEntity = $(this).parents('.content').find('#select-6').val();
+            earlyWarning_url = '/detection/totalDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
             public_ajax.call_request('get',earlyWarning_url,earlyWarning);
             // 后台分页---
             // var detectionCount_url='/detection/detectionCount/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
             // public_ajax.call_request('get',detectionCount_url,earlyWarning_ser);//先请求到总页数
-        })
-        // ===运营模式选项===
+        });
+        // ===业态类型（运营模式）选项===
         $('#select-2').change(function(){
             var selectTime = $(this).parents('.content').find('#select-1').val();
             // 运营模式
             var select_operation_mode = $(this).val();
             // 预警类型
             var select_illegal_type = $(this).parents('.content').find('#select-3').val();
+            // 相关问题
+            var select_problem = $(this).parents('.content').find('#select-5').val();
             // 实体类型
             var select_entity_type = $(this).parents('.content').find('#select-4').val();
             // 预警分布
             var select_warn_distribute = $(this).parents('.content').find('#city34').val();
-            earlyWarning_url = '/detection/totalDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            // console.log(earlyWarning_url);
+            // 新增、全部
+            var select_newEntity = $(this).parents('.content').find('#select-6').val();
+            earlyWarning_url = '/detection/totalDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
             public_ajax.call_request('get',earlyWarning_url,earlyWarning);
             // detectionCount_url='/detection/detectionCount/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
             // public_ajax.call_request('get',detectionCount_url,earlyWarning_ser);//先请求到总页数
-        })
+        });
         // ===预警类型选项===
         $('#select-3').change(function(){
             var selectTime = $(this).parents('.content').find('#select-1').val();
@@ -499,16 +1332,37 @@
             var select_operation_mode = $(this).parents('.content').find('#select-2').val();
             // 预警类型
             var select_illegal_type = $(this).val();
+            // 相关问题
+            var select_problem = $(this).parents('.content').find('#select-5').val();
             // 实体类型
             var select_entity_type = $(this).parents('.content').find('#select-4').val();
             // 预警分布
             var select_warn_distribute = $(this).parents('.content').find('#city34').val();
-            earlyWarning_url = '/detection/totalDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            // console.log(earlyWarning_url);
+            // 新增、全部
+            var select_newEntity = $(this).parents('.content').find('#select-6').val();
+            earlyWarning_url = '/detection/totalDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
             public_ajax.call_request('get',earlyWarning_url,earlyWarning);
             // detectionCount_url='/detection/detectionCount/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
             // public_ajax.call_request('get',detectionCount_url,earlyWarning_ser);//先请求到总页数
-        })
+        });
+        // ===相关问题选项===
+        $('#select-5').change(function(){
+            var selectTime = $(this).parents('.content').find('#select-1').val();
+            // 运营模式
+            var select_operation_mode = $(this).parents('.content').find('#select-2').val();
+            // 预警类型
+            var select_illegal_type = $(this).parents('.content').find('#select-3').val();
+            // 相关问题
+            var select_problem = $(this).val();
+            // 实体类型
+            var select_entity_type = $(this).parents('.content').find('#select-4').val();
+            // 预警分布
+            var select_warn_distribute = $(this).parents('.content').find('#city34').val();
+            // 新增、全部
+            var select_newEntity = $(this).parents('.content').find('#select-6').val();
+            earlyWarning_url = '/detection/totalDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
+            public_ajax.call_request('get',earlyWarning_url,earlyWarning);
+        });
         // ===实体类型选项===
         $('#select-4').change(function(){
             var selectTime = $(this).parents('.content').find('#select-1').val();
@@ -516,16 +1370,19 @@
             var select_operation_mode = $(this).parents('.content').find('#select-2').val();
             // 预警类型
             var select_illegal_type = $(this).parents('.content').find('#select-3').val();
+            // 相关问题
+            var select_problem = $(this).parents('.content').find('#select-5').val();
             // 实体类型
             var select_entity_type = $(this).val();
             // 预警分布
             var select_warn_distribute = $(this).parents('.content').find('#city34').val();
-            earlyWarning_url = '/detection/totalDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            // console.log(earlyWarning_url);
+            // 新增、全部
+            var select_newEntity = $(this).parents('.content').find('#select-6').val();
+            earlyWarning_url = '/detection/totalDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
             public_ajax.call_request('get',earlyWarning_url,earlyWarning);
             // detectionCount_url='/detection/detectionCount/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
             // public_ajax.call_request('get',detectionCount_url,earlyWarning_ser);//先请求到总页数
-        })
+        });
         // ===预警分布选项===
         $('#city34').change(function(){
             var selectTime = $(this).parents('.content').find('#select-1').val();
@@ -533,70 +1390,1238 @@
             var select_operation_mode = $(this).parents('.content').find('#select-2').val();
             // 预警类型
             var select_illegal_type = $(this).parents('.content').find('#select-3').val();
+            // 相关问题
+            var select_problem = $(this).parents('.content').find('#select-5').val();
             // 实体类型
             var select_entity_type = $(this).parents('.content').find('#select-4').val();
             // 预警分布
             var select_warn_distribute = $(this).val();
-            earlyWarning_url = '/detection/totalDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            // console.log(earlyWarning_url);
+            // 新增、全部
+            var select_newEntity = $(this).parents('.content').find('#select-6').val();
+            earlyWarning_url = '/detection/totalDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
             public_ajax.call_request('get',earlyWarning_url,earlyWarning);
             // detectionCount_url='/detection/detectionCount/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
             // public_ajax.call_request('get',detectionCount_url,earlyWarning_ser);//先请求到总页数
-        })
+        });
+        // ===新增、全部 选项===
+        $('#select-6').change(function(){
+            var selectTime = $(this).parents('.content').find('#select-1').val();
+            // 运营模式
+            var select_operation_mode = $(this).parents('.content').find('#select-2').val();
+            // 预警类型
+            var select_illegal_type = $(this).parents('.content').find('#select-3').val();
+            // 相关问题
+            var select_problem = $(this).parents('.content').find('#select-5').val();
+            // 实体类型
+            var select_entity_type = $(this).parents('.content').find('#select-4').val();
+            // 预警分布
+            var select_warn_distribute = $(this).parents('.content').find('#city34').val();
+            // 新增、全部
+            var select_newEntity = $(this).val();
+            earlyWarning_url = '/detection/totalDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
+            public_ajax.call_request('get',earlyWarning_url,earlyWarning);
+            // detectionCount_url='/detection/detectionCount/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
+            // public_ajax.call_request('get',detectionCount_url,earlyWarning_ser);//先请求到总页数
+        });
 
-    function jumpFrame_1(name,type,id) {
-        var html='';
-        name=escape(name);
-        if (type=='1'||type=='2'){
-            html='/index/company/?name='+name+'&flag='+type+'&pid='+id;
-        }else {
-            html='/index/project/?name='+name+'&flag='+type+'&pid='+id;
+    // 进入画像
+        function jumpFrame_1(name,type,id) {
+            var html='';
+            name=escape(name);
+            if (type=='1'||type=='2'){
+                html='/index/company/?name='+name+'&flag='+type+'&pid='+id;
+            }else {
+                html='/index/project/?name='+name+'&flag='+type+'&pid='+id;
+            }
+            // window.location.href=html;
+            window.open(html);
         }
-        window.location.href=html;
-    }
+
     // 监测详情
-    function jumpFrame_2(name,type,id,illegal_type) {
-        // window.localStorage.setItem('monitorFlag',monitorFlag);
-        // window.location.href='../templates/monitorDetails.html';
-        var html = '';
-        name=escape(name);
-        if(illegal_type == 1){//模型预警 ----> 进入画像页(复制本)预警报告
-            // html='/index/company/?name='+name+'&flag='+type+'&pid='+id;
-            html='/index/company_monitor/?name='+name+'&flag='+type+'&pid='+id;
-        }else if(illegal_type == 2){//舆情预警 ----> 进入监测详情页
-            html='/index/monitor/?name='+name+'&flag='+type+'&pid='+id;
-        }else {
-            html='/index/company/?name='+name+'&flag='+type+'&pid='+id;
+        function jumpFrame_2(name,type,id,illegal_type) {
+            var html = '';
+            name=escape(name);
+            // if(illegal_type == 2 || illegal_type == 1 || illegal_type == [1,2]|| illegal_type == [2,1]){//模型预警 ----> 进入画像页(复制本)预警报告compan_monitor
+                // html='/index/company/?name='+name+'&flag='+type+'&pid='+id;
+                html='/index/company_monitor/?name='+name+'&flag='+type+'&pid='+id;
+            // }
+            // else if(illegal_type == 2){//舆情预警 ----> 进入监测详情页
+            //     html='/index/monitor/?name='+name+'&flag='+type+'&pid='+id;
+            // }
+            // else {
+            //     html='/index/company/?name='+name+'&flag='+type+'&pid='+id;
+            // }
+
+            // window.location.href=html;
+            window.open(html);//新窗口打开
         }
 
-        // window.location.href='/index/monitor/';
-        window.location.href=html;
-    }
     // 一键取证
-    function prove(flag) {
+        function prove(flag) {
 
-    }
-    // 预警结果审核
-        function resultCheck(date,id,type,illegal_type){
-            // console.log(type);
-            var detectionResultCheck_url = '/detection/detectionResultCheck/?date='+date+'&entity_id='+id+'&type='+type+'&illegal_type='+illegal_type;
-            public_ajax.call_request('get',detectionResultCheck_url,resultCheck_result);
         }
-        function resultCheck_result(data){
-            // console.log(data);
-            if(data.status == 'ok'){
-                $('#Success .modal-body').empty().append('<center>审核成功</center>');
-                $('#Success').modal('show');
+
+    // 预警结果审核
+
+        // 所属行业 值 渲染到 select
+            var selectIndustry_url = '/detection/IndustryBox/';
+            public_ajax.call_request('get',selectIndustry_url,selectIndustry);
+
+            var selectIndustrystr = '';
+            function selectIndustry(data){
+                if(data){
+                    selectIndustrystr = '';
+                    for(var i=0;i<data.length;i++){
+                        selectIndustrystr += '<option value="'+data[i].industry+'">'+data[i].industry+'</option>'
+                    }
+
+                    $("#select_industry").html('');
+                    $('#select_industry').append(selectIndustrystr);
+                    $('#select_industry').selectpicker('refresh');
+
+                }
+            }
+
+        // 集资模式 值 渲染到 select
+            var selectFundmode_url = '/detection/FundmodeBox/';
+            public_ajax.call_request('get',selectFundmode_url,selectFundmode);
+
+            var selectFundmodestr = '';
+            function selectFundmode(data){
+                if(data){
+                    selectFundmodestr = '';
+                    for(var i=0;i<data.length;i++){
+                        selectFundmodestr += '<option value="'+data[i].fund_mode+'">'+data[i].fund_mode+'</option>'
+                    }
+                    $("#select_fund_mode").html('');
+                    $('#select_fund_mode').append(selectFundmodestr);
+                    $('#select_fund_mode').selectpicker('refresh');
+
+                }
+            }
+
+
+        // 下拉框展开事件
+            // 问题平台
+            $("#select_Or_problem").on('shown.bs.select',function(e){
+
+                // 展开时显示默认的 选项
+                public_ajax.call_request('get',selectProblem_url,selectProblem);
+                // $("#select-problem").html("");
+                // $('#select-problem').append(selectProblemstr);
+                // $('#select-problem').selectpicker('refresh');
+
+                // 添加时去掉默认的选项
+                $('#select_Or_problem').siblings('.dropdown-menu').find(".bs-searchbox").find('input').attr('placeholder',"手动输入问题平台(下次可选)"); //为input增加id属性
+                $('#select_Or_problem').siblings('.dropdown-menu').find(".bs-searchbox").find('input').css({'background':'transparent','color':'#fff'});
+                $('#select_Or_problem').siblings('.dropdown-menu').find(".bs-searchbox").find('input').focus(function(){
+                    $(this).css({'background':'#f8f8f8','color':'#3c3c3c'})
+                })
+
+                $('#select_Or_problem').siblings('.dropdown-menu').find(".bs-searchbox").find('input').keyup(function(){
+                    $('#select_Or_problem').siblings('.dropdown-menu').find(".bs-searchbox").find('input').attr('id',"reason_deviceInput"); //为input增加id属性
+
+                    var deviceInput = $('#reason_deviceInput').val();
+                    var deviceStr="<option value='"+deviceInput+"'>"+deviceInput+"</option>" ;
+
+                    $("#select_Or_problem").html("");
+                    $('#select_Or_problem').append(deviceStr);
+                    $('#select_Or_problem').selectpicker('refresh');
+
+                    // 如果删除完 输入框 显示默认选项
+                    if($('#reason_deviceInput').val() == ''){
+
+                        $("#select_Or_problem").html("");
+                        $('#select_Or_problem').append(selectProblemstr);
+                        $('#select_Or_problem').selectpicker('refresh');
+                    }
+                })
+            });
+            //所属行业
+            $("#select_industry").on('shown.bs.select',function(e){
+
+                // 展开时显示默认的 选项
+                public_ajax.call_request('get',selectIndustry_url,selectIndustry);
+
+                // 添加时去掉默认的选项
+                $('#select_industry').siblings('.dropdown-menu').find(".bs-searchbox").find('input').attr('placeholder',"手动输入所属行业(下次可选)");
+                $('#select_industry').siblings('.dropdown-menu').find(".bs-searchbox").find('input').css({'background':'transparent','color':'#fff'});
+                $('#select_industry').siblings('.dropdown-menu').find(".bs-searchbox").find('input').focus(function(){
+                    $(this).css({'background':'#f8f8f8','color':'#3c3c3c'})
+                })
+
+                $('#select_industry').siblings('.dropdown-menu').find(".bs-searchbox").find('input').keyup(function(){
+                    $('#select_industry').siblings('.dropdown-menu').find(".bs-searchbox").find('input').attr('id',"industryInput"); //为input增加id属性
+
+                    var deviceInput = $('#industryInput').val();
+                    var deviceStr="<option value='"+deviceInput+"'>"+deviceInput+"</option>" ;
+
+                    $("#select_industry").html("");
+                    $('#select_industry').append(deviceStr);
+                    $('#select_industry').selectpicker('refresh');
+
+                    // 如果删除完 输入框 显示默认选项
+                    if($('#industryInput').val() == ''){
+
+                        $("#select_industry").html("");
+                        $('#select_industry').append(selectProblemstr);
+                        $('#select_industry').selectpicker('refresh');
+                    }
+                })
+            });
+            //集资模式
+            $("#select_fund_mode").on('shown.bs.select',function(e){
+
+                // 展开时显示默认的 选项
+                public_ajax.call_request('get',selectFundmode_url,selectFundmode);
+
+                // 添加时去掉默认的选项
+                $('#select_fund_mode').siblings('.dropdown-menu').find(".bs-searchbox").find('input').attr('placeholder',"手动输入集资模式(下次可选)");
+                $('#select_fund_mode').siblings('.dropdown-menu').find(".bs-searchbox").find('input').css({'background':'transparent','color':'#fff'});
+                $('#select_fund_mode').siblings('.dropdown-menu').find(".bs-searchbox").find('input').focus(function(){
+                    $(this).css({'background':'#f8f8f8','color':'#3c3c3c'})
+                })
+
+                $('#select_fund_mode').siblings('.dropdown-menu').find(".bs-searchbox").find('input').keyup(function(){
+                    $('#select_fund_mode').siblings('.dropdown-menu').find(".bs-searchbox").find('input').attr('id',"fund_modeInput"); //为input增加id属性
+
+                    var deviceInput = $('#fund_modeInput').val();
+                    var deviceStr="<option value='"+deviceInput+"'>"+deviceInput+"</option>" ;
+
+                    $("#select_fund_mode").html("");
+                    $('#select_fund_mode').append(deviceStr);
+                    $('#select_fund_mode').selectpicker('refresh');
+
+                    // 如果删除完 输入框 显示默认选项
+                    if($('#industryInput').val() == ''){
+
+                        $("#select_fund_mode").html("");
+                        $('#select_fund_mode').append(selectProblemstr);
+                        $('#select_fund_mode').selectpicker('refresh');
+                    }
+                })
+            });
+
+        // 显示审核理由模态框
+            function resultCheck(date,id,type,illegal_type,entity_name,num,oldProblem,screen,oldRisk_rank,oldIndustry,oldFund_mode){
+                // screen 参数 暂未用（本想区分一二屏的，现在是都用这一个函数）
+                // risk_rank ---   风险等级    industry ---   所属行业    fund_mode ---   集资模式
+
+                // 显示审核理由模态框
+                $('#reason').modal('show');
                 $('.modal-backdrop').css({position:'static'});
-                // 重新渲染表格
-                var earlyWarning_url='/detection/totalDetectData/?date=7&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all';
-                public_ajax.call_request('get',earlyWarning_url,earlyWarning);
+
+                $('#reason #reason_text').val('');  //清空审核理由框
+                $('#reason #problem_Or_reason_text').val('');   //清空信息来源
+                $('#reason .modal-body span.reason_title').hide();  //隐藏提示框
+
+                if (oldProblem==''||oldProblem=='null'|| oldProblem==null || oldProblem=='unknown'||!oldProblem){
+                    oldProblem = '无';
+                }
+                $('#select_Or_problem').selectpicker('val',oldProblem); //问题平台下拉框赋值
+
+                if (oldRisk_rank==''||oldRisk_rank=='null'|| oldRisk_rank==null || oldRisk_rank=='unknown'||!oldRisk_rank){
+                    oldRisk_rank = '无';
+                }
+                if (oldIndustry==''||oldIndustry=='null'|| oldIndustry==null || oldIndustry=='unknown'||!oldIndustry){
+                    oldIndustry = '无';
+                }
+                if (oldFund_mode==''||oldFund_mode=='null'|| oldFund_mode==null || oldFund_mode=='unknown'||!oldFund_mode){
+                    oldFund_mode = '无';
+                }
+                $('#select_risk_rank').val(oldRisk_rank);   //风险等级下拉框赋值
+                $('#select_industry').selectpicker('val',oldIndustry);  //所属行业下拉框赋值
+                $('#select_fund_mode').selectpicker('val',oldFund_mode);    //集资模式下拉框赋值
+
+                // 点击确定按钮
+                $('#sure').off('click');
+                var _selectPro_val, _problem_remark_text;
+                // var _selectPro_val_2;
+                // var _selectPro_val_3;
+                $('#sure').on('click',function(){
+
+                    // 审核理由
+                    var remark_text = $('#reason_text').val();
+                    if(remark_text == ''){    //输入 审核理由 不得为空
+                        $('#reason .modal-body span.reason_title').show();
+                        $('#reason #reason_text').focus(function(){
+                            $('#reason .modal-body span.reason_title').hide();
+                        })
+                        return false; // 问题平台也不可编辑
+                    }else {
+
+                        // 问题平台=============
+                            console.log($('#select_Or_problem').val());     //下拉框 取值
+                            console.log($('#reason_deviceInput').val());    //输入框  取值
+                            var selectPro_val = $('#select_Or_problem').val();
+                            _selectPro_val = $('#select_Or_problem').val();
+                            var inpPro_val = $('#reason_deviceInput').val();
+
+                            var problem_remark_text = $('#problem_Or_reason_text').val();
+                            _problem_remark_text = $('#problem_Or_reason_text').val();
+
+                            var problemEdit_url = '';
+                            if(selectPro_val == inpPro_val ){//手动输入 的（先添加 问题平台）
+                                // 添加问题平台
+                                // console.log("添加问题平台");
+                                problemEdit_url = '/index/addProblem?problem=' + selectPro_val+'&username='+username+'&uid='+uid;
+                                public_ajax.call_request('get',problemEdit_url,_addselectProblem);//同步的请求
+
+                            }else {
+                                // console.log("编辑平台问题");
+                                problemEdit_url = '/index/editProblem?newValue='+selectPro_val+'&entity_id='+id+'&uid='+uid+'&entity_name='+entity_name+'&remark='+problem_remark_text+'&oldValue='+oldProblem+'&date='+''+'&username='+username;
+                                public_ajax.call_request('get',problemEdit_url,_editselectProblem);//编辑平台问题
+                            }
+                        // 问题平台==================
+
+                        // 风险等级=============
+                        var risk_rank_val = $('#select_risk_rank').val();
+                        // 风险等级=============
+
+                        // 所属行业=============
+                            var selectPro_val_2 = $('#select_industry').val();// 下拉框值
+                            // _selectPro_val_2 = $('#select_industry').val();
+                            var inpPro_val_2 = $('#industryInput').val(); //输入框值
+
+
+                            var industryEdit_url = '';
+                            if(selectPro_val_2 == inpPro_val_2 ){//手动输入 的（先添加 所属行业）
+                                // 添加所属行业
+                                // console.log("添加所属行业");
+                                industryEdit_url = '/detection/addIndustry?industry=' + selectPro_val_2+'&username='+username+'&uid='+uid;
+                                public_ajax.call_request('get',industryEdit_url,addselectIndustry);//
+
+                            }else {
+                                // console.log("编辑所属行业");
+                                // industryEdit_url = '/index/editProblem?newValue='+selectPro_val+'&entity_id='+id+'&uid='+uid+'&entity_name='+entity_name+'&remark='+problem_remark_text+'&oldValue='+oldProblem+'&date='+''+'&username='+username;
+                                // public_ajax.call_request('get',industryEdit_url,_editselectProblem);
+                                // 没有编辑所属行业接口 在预警审核接口内
+                            }
+                        // 所属行业==================
+
+                        // 集资模式=============
+                            var selectPro_val_3 = $('#select_fund_mode').val();// 下拉框值
+                            // _selectPro_val_3 = $('#select_fund_mode').val();
+                            var inpPro_val_3 = $('#fund_modeInput').val(); //输入框值
+
+
+                            var fund_modeEdit_url = '';
+                            if(selectPro_val_3 == inpPro_val_3 ){//手动输入 的（先添加 集资模式）
+                                // 添加集资模式
+                                // console.log("添加集资模式");
+                                fund_modeEdit_url = '/detection/addFundmode?fund_mode=' + selectPro_val_3+'&username='+username+'&uid='+uid;
+                                public_ajax.call_request('get',fund_modeEdit_url,addselectFund_mode);//
+
+                            }else {
+                                // console.log("编辑集资模式");
+                                // industryEdit_url = '/index/editProblem?newValue='+selectPro_val+'&entity_id='+id+'&uid='+uid+'&entity_name='+entity_name+'&remark='+problem_remark_text+'&oldValue='+oldProblem+'&date='+''+'&username='+username;
+                                // public_ajax.call_request('get',industryEdit_url,_editselectProblem);
+                                // 没有编辑集资模式接口 在预警审核接口内
+                            }
+                        // 集资模式==================
+
+                        $('#reason .modal-body span.reason_title').hide();
+                        // console.log(type);
+                        var detectionResultCheck_url = '/detection/detectionResultCheck/?date='+date+'&entity_id='+id+'&type='+type+'&illegal_type='+illegal_type+'&entity_name='+entity_name+'&uid='+uid+'&remark=' + remark_text + '&oldValue=' + num+'&username='+username+'&risk_rank='+risk_rank_val+'&industry='+selectPro_val_2+'&fund_mode='+selectPro_val_3;  //预警结果审核
+                        public_ajax.call_request('get',detectionResultCheck_url,resultCheck_result);
+                    }
+                })
+
+                // 编辑问题平台 成功回调
+                function _editselectProblem(data){
+                    if(data.status == 'ok'){
+                        $('#Success .modal-body').empty().append('<center>问题平台保存成功</center>');
+                        $('#Success').modal('show');
+                        $('.modal-backdrop').css({position:'static'});
+
+                        // console.log(screen);//根据screen 判断是第一屏的表格 还是 一屏复制版表格
+                        // *** 两屏表格 都刷新  ***
+                        // if(screen == 'first'){
+                            // 重新渲染表格
+                            var earlyWarning_url='/detection/totalDetectData/?date=7&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all&problem=all&newEntity=0';
+                            public_ajax.call_request('get',earlyWarning_url,earlyWarning);
+                        // }else if(screen == '_first'){
+
+                            // console.log("一屏复制版表格");
+                            // 重新渲染表格
+                            var _earlyWarning_url='/detection/secondDetectData/?date=7&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all&problem=all&newEntity=0';
+                            public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);
+                        // }
+
+                    }else {
+                        console.log("编辑问题平台失败");
+                    }
+                }
+                // 添加问题平台
+                function _addselectProblem(data){
+                    console.log(data);
+                    if(data.status == 'ok'){
+                        // 添加成功后  编辑
+                        // console.log(_selectPro_val);
+                        problemEdit_url = '/index/editProblem?newValue='+_selectPro_val+'&entity_id='+id+'&uid='+uid+'&entity_name='+entity_name+'&remark='+_problem_remark_text+'&oldValue='+oldProblem+'&date='+''+'&username='+username;
+                        // console.log(problemEdit_url);
+                        // 编辑问题平台
+                        public_ajax.call_request('get',problemEdit_url,_editselectProblem);
+                    }else {
+                        console.log("添加问题平台后编辑问题平台失败");
+                    }
+                }
+
+                // 添加所属行业 成功
+                function addselectIndustry(data){
+                    if(data.status == 'ok'){
+                        console.log("添加  所属行业  成功。");
+                    }
+                }
+
+                // 添加集资模式 成功
+                function addselectFund_mode(data){
+                    if(data.status == 'ok'){
+                        console.log("添加  集资模式  成功。");
+                    }
+                }
+
+
+                // 审核成功回调
+                function resultCheck_result(data){
+                    // console.log(data);
+                    if(data.status == 'ok'){
+                        $('#Success .modal-body').empty().append('<center>审核成功</center>');
+                        $('#Success').modal('show');
+                        $('.modal-backdrop').css({position:'static'});
+
+                        // console.log(screen);//根据screen 判断是第一屏的表格 还是 一屏复制版表格
+                        // *** 两屏表格 都刷新  ***
+                        // if(screen == 'first'){
+                            // 重新渲染表格
+                            var earlyWarning_url='/detection/totalDetectData/?date=7&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all&problem=all&newEntity=0';
+                            public_ajax.call_request('get',earlyWarning_url,earlyWarning);
+                        // }else if(screen == '_first'){
+
+                            // console.log("一屏复制版表格");
+                            // 重新渲染表格
+                            var _earlyWarning_url='/detection/secondDetectData/?date=7&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all&problem=all&newEntity=0';
+                            public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);
+                        // }
+
+
+                    }else if(data.status == 'fail'){
+                        $('#Success .modal-body').empty().append('<center>审核失败</center>');
+                        $('#Success').modal('show');
+                        $('.modal-backdrop').css({position:'static'});
+                    }
+                }
+
+            }
+
+    // 查看预警审核详情（备注列）
+        function jumpFrame_3(id){
+            // console.log(id);
+            var result_url = '/detection/detectionResultRemark?entity_id=' + id;
+            public_ajax.call_request('get',result_url,resultRemark);
+        }
+        function resultRemark(data){
+            if(data.length!=0){
+                // var str = '';
+                // $('#result').modal('show');
+                // $('.modal-backdrop').css({position:'static'});
+                // for(var i=0;i<data.length;i++){
+                //     str += '<span style="display:inline-block;min-width:30px;text-align:center;background-color:#31708f;border:1px solid #fff;border-radius:5px;margin:10px;padding:5px;">' + data[i] + '</span>';
+                // }
+                // $('#result .modal-body').empty().append(str);
+
+                // $('#perceiveContent_in').empty();
+                $('#perceiveContent_in').bootstrapTable('load', data);
+                $('#perceiveContent_in').bootstrapTable({
+                    data:data,
+                    search: false,//是否搜索
+                    pagination: true,//是否分页
+                    pageSize: 5,//单页记录数
+                    // pageList: [15,20,25],//分页步进值
+                    sidePagination: "client",//服务端分页
+                    searchAlign: "left",
+                    searchOnEnterKey: false,//回车搜索
+                    showRefresh: false,//刷新按钮
+                    showColumns: false,//列选择按钮
+                    buttonsAlign: "right",//按钮对齐方式
+                    locale: "zh-CN",//中文支持
+                    detailView: false,
+                    showToggle:false,
+                    sortName:'bci',
+                    sortOrder:"desc",
+                    // sortStable:true,
+                    columns: [
+                        /*
+                        {
+                            title: "",//标题
+                            field: "",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+
+                                var username = '未知';
+                                if(row.username != ''){
+                                    username = row.username;
+                                }
+
+                                return '<div class="inforContent">'+
+                                    '            <div class="main">'+
+                                    '                <img src="/static/images/textIcon.png" class="textFlag" style="top: 8px;">'+
+                                    '                <p class="option clearfix">'+
+                                    '                    <span style="display:inline-block;width:100%;">用户：<b style="vertical-align:middle;color: #ff6d70;display:inline-block;width:50%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" >'+username+'</b>'+'</span>'+
+                                    '                    <span>审核理由：<b style="color: #ff6d70;">'+row.remark+'</b></span><br />'+
+                                    '                    <span>审核时间：<b style="color: #ff6d70;">'+row.datetime+'</b></span>'+
+                                    '                </p>'+
+                                    '            </div>'+
+                                    '        </div>';
+                            }
+                        },
+                         */
+                        {
+                            title: "用户",//标题
+                            field: "username",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                var username = '未知';
+                                if(row.username != ''){
+                                    username = row.username;
+                                }
+                                return username;
+                            }
+                        },
+                        {
+                            title: "审核理由",//标题
+                            field: "remark",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                var remark = '未知';
+                                if(row.remark != ''){
+                                    remark = row.remark;
+                                }
+                                return remark;
+                            }
+                        },
+                        {
+                            title: "审核时间",//标题
+                            field: "remark",//键名
+                            sortable: true,//是否可排序
+                            order: "desc",//默认排序方式
+                            align: "center",//水平
+                            valign: "middle",//垂直
+                            formatter: function (value, row, index) {
+                                var datetime = '未知';
+                                if(row.datetime != ''){
+                                    datetime = row.datetime;
+                                }
+                                return datetime;
+                            }
+                        },
+                    ],
+                });
+                $('#result').modal('show');
+                $('.modal-backdrop').css({position:'static'});
+
+            }else {
+                // $('#result').modal('show');
+                // $('.modal-backdrop').css({position:'static'});
+                // $('#result .modal-body').empty().append('<center>暂无结果</center>');
+                $('#perceiveContent_in').bootstrapTable('load', data);
+            }
+
+        }
+
+    // 操作列
+    // 停止监测
+        function jumpFrame_stop(status,entity_name,entity_id,date,screen){
+            $('#MonitorStatus_off .modal-body span.MonitorStatus_reason_tit').hide();
+
+            var MonitorStatus_off_url = '';
+            if(status == 1){//正在监测状态  停止监测
+                $('#MonitorStatus_off .modal-header h4').text('停止监测');
+                $('#MonitorStatus_off #MonitorStatus_reason_text').val('');
+                $('#MonitorStatus_off').modal('show');
+                $('.modal-backdrop').css({position:'static'});
+            }else if(status == 2){
+                $('#MonitorStatus_off .modal-header h4').text('恢复监测');
+                $('#MonitorStatus_off #MonitorStatus_reason_text').val('');
+                $('#MonitorStatus_off').modal('show');
+                $('.modal-backdrop').css({position:'static'});
+            }
+
+            $('#sure_4').one('click',function(){
+                var remark_text = $('#MonitorStatus_reason_text').val();
+                if(remark_text == ''){
+                    $('#MonitorStatus_off .modal-body span.MonitorStatus_reason_tit').show();
+                    $('#MonitorStatus_off #MonitorStatus_reason_text').focus(function(){
+                        $('#MonitorStatus_off .modal-body span.MonitorStatus_reason_tit').hide();
+                    })
+                    return false;
+                }else {
+                    $('#MonitorStatus_off .modal-body span.MonitorStatus_reason_tit').hide();
+                    if(status == 1){//正在监测状态 点击停止监测
+                        MonitorStatus_off_url = '/index/MonitorStatus/?entity_name='+entity_name+'&log_type=1&remark='+remark_text+'&uid='+uid+'&entity_id='+entity_id+'&date='+date+'&username='+username;
+                        public_ajax.call_request('get',MonitorStatus_off_url,MonitorStatusOff);
+                    }else if(status == 2){//(状态)已停止监测 点击恢复监测
+                        MonitorStatus_off_url = '/index/MonitorStatus/?entity_name='+entity_name+'&log_type=2&remark='+remark_text+'&uid='+uid+'&entity_id='+entity_id+'&date='+date+'&username='+username;
+                        public_ajax.call_request('get',MonitorStatus_off_url,MonitorStatusOff);
+                    }
+                }
+            })
+
+            function MonitorStatusOff(data){
+                if(data.status == 'ok'){
+                    // console.log("修改成功");
+                    $('#Success .modal-body').empty().append('<center>操作成功</center>');
+                    $('#Success').modal('show');
+                    $('.modal-backdrop').css({position:'static'});
+
+                    // console.log(screen);//根据screen 判断是第一屏的表格 还是 一屏复制版表格
+                    // *** 两屏表格 都刷新  ***
+                    // if(screen == 'first'){
+                        // 重新渲染表格
+                        var earlyWarning_url='/detection/totalDetectData/?date=7&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all&problem=all&newEntity=0';
+                        public_ajax.call_request('get',earlyWarning_url,earlyWarning);
+                    // }else if(screen == '_first'){
+
+                        console.log("一屏复制版表格");
+                        // 重新渲染表格
+                        var _earlyWarning_url='/detection/secondDetectData/?date=7&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all&problem=all&newEntity=0';
+                        public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);
+                    // }
+
+                }else {
+                    $('#Success .modal-body').empty().append('<center>操作失败</center>');
+                    $('#Success').modal('show');
+                    $('.modal-backdrop').css({position:'static'});
+                }
             }
         }
 
-//====预警趋势====
-//  detection/TimeDistribute
-    var timeDistribute_url='/detection/TimeDistribute/?date=30&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all';
+    // 编辑问题平台
+        // 值 渲染到 select
+            var selectProblem_url = '/detection/ProblemBox/';    //问题平台
+            public_ajax.call_request('get',selectProblem_url,selectProblem);
+
+            var selectProblemstr = '';
+            function selectProblem(data){
+                if(data){
+                    selectProblemstr = '';
+                    for(var i=0;i<data.length;i++){
+                        selectProblemstr += '<option value="'+data[i].problem+'">'+data[i].problem+'</option>'
+                    }
+                    // 操作列的 问题平台编辑
+                    $("#select-problem").html('');
+                    $('#select-problem').append(selectProblemstr);
+                    // console.log(selectProblemstr);
+                    $('#select-problem').selectpicker('refresh');
+
+                    // 预警结果 审核那 的问题平台编辑
+                    $("#select_Or_problem").html('');
+                    $('#select_Or_problem').append(selectProblemstr);
+                    $('#select_Or_problem').selectpicker('refresh');
+
+                }
+            }
+
+            // 下拉框展开事件
+            $("#select-problem").on('shown.bs.select',function(e){
+
+                // 展开时显示默认的 选项
+                public_ajax.call_request('get',selectProblem_url,selectProblem);//同步的请求
+                // $("#select-problem").html("");
+                // $('#select-problem').append(selectProblemstr);
+                // $('#select-problem').selectpicker('refresh');
+
+                // 添加时去掉默认的选项
+                $('#select-problem').siblings('.dropdown-menu').find(".bs-searchbox").find('input').attr('placeholder',"手动输入问题平台(下次可选)"); //为input增加id属性
+                $('#select-problem').siblings('.dropdown-menu').find(".bs-searchbox").find('input').css({'background':'transparent','color':'#fff'});
+                $('#select-problem').siblings('.dropdown-menu').find(".bs-searchbox").find('input').focus(function(){
+                    $(this).css({'background':'#f8f8f8','color':'#3c3c3c'})
+                })
+
+                $('#select-problem').siblings('.dropdown-menu').find(".bs-searchbox").find('input').keyup(function(){
+                    $('#select-problem').siblings('.dropdown-menu').find(".bs-searchbox").find('input').attr('id',"deviceInput"); //为input增加id属性
+
+                    var deviceInput = $('#deviceInput').val();
+                    var deviceStr="<option value='"+deviceInput+"'>"+deviceInput+"</option>" ;
+
+                    $("#select-problem").html("");
+                    $('#select-problem').append(deviceStr);
+                    $('#select-problem').selectpicker('refresh');
+
+                    // 如果删除完 输入框 显示默认选项
+                    if($('#deviceInput').val() == ''){
+
+                        $("#select-problem").html("");
+                        $('#select-problem').append(selectProblemstr);
+                        $('#select-problem').selectpicker('refresh');
+                    }
+                })
+            });
+
+        // 显示模态框
+        var _selectPro_val, _problem_remark_text;
+        function jumpFrame_edit(entity_id,entity_name,date,oldValue,screen){
+            $('#problemEdit #problem_reason_text').val('');
+            $('#problemEdit').modal('show');
+            $('.modal-backdrop').css({position:'static'});
+
+            if (oldValue==''||oldValue=='null'|| oldValue==null || oldValue=='unknown'||!oldValue){
+                oldValue = '无';
+            }
+            $('#select-problem').selectpicker('val',oldValue);//问题平台下拉框赋值
+
+
+            $('#sure_problemEdit').off('click');//防止触发多次
+            // 点击确定按钮
+            $('#sure_problemEdit').one('click',function(){
+                // console.log($('#select-problem').val()); //下拉框
+                // console.log($('#deviceInput').val());//输入框
+                var selectPro_val = $('#select-problem').val();
+                _selectPro_val = $('#select-problem').val();
+                var inpPro_val = $('#deviceInput').val();
+
+                var problem_remark_text = $('#problem_reason_text').val();
+                _problem_remark_text = $('#problem_reason_text').val();
+
+                var problemEdit_url = '';
+                if(selectPro_val == inpPro_val ){//手动输入 的
+                    // 添加问题平台
+                    // console.log("添加问题平台");
+                    problemEdit_url = '/index/addProblem?problem=' + selectPro_val+'&username='+username+'&uid='+uid;
+                    public_ajax.call_request_1('get',problemEdit_url,addselectProblem);//同步的请求
+
+                }else {
+                    // console.log("编辑平台问题");
+                    console.log(_selectPro_val);
+                    problemEdit_url = '/index/editProblem?newValue='+selectPro_val+'&entity_id='+entity_id+'&uid='+uid+'&entity_name='+entity_name+'&remark='+problem_remark_text+'&oldValue='+oldValue+'&date='+''+'&username='+username;
+                    public_ajax.call_request('get',problemEdit_url,editselectProblem);//编辑平台问题
+                }
+
+            })
+
+            // 编辑问题平台
+            function editselectProblem(data){
+                if(data.status == 'ok'){
+                    $('#Success .modal-body').empty().append('<center>保存成功</center>');
+                    $('#Success').modal('show');
+                    $('.modal-backdrop').css({position:'static'});
+
+                    // console.log(screen);//根据screen 判断是第一屏的表格 还是 一屏复制版表格
+                    // *** 两屏表格 都刷新  ***
+                    // if(screen == 'first'){
+                        // 重新渲染表格
+                        var earlyWarning_url='/detection/totalDetectData/?date=7&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all&problem=all&newEntity=0';
+                        public_ajax.call_request('get',earlyWarning_url,earlyWarning);
+                    // }else if(screen == '_first'){
+
+                        // console.log("一屏复制版表格");
+                        // 重新渲染表格
+                        var _earlyWarning_url='/detection/secondDetectData/?date=7&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all&problem=all&newEntity=0';
+                        public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);
+                    // }
+
+                }else {
+                    console.log("编辑问题平台失败");
+                }
+            }
+            // 添加问题平台
+            function addselectProblem(data){
+                console.log(data);
+                if(data.status == 'ok'){
+                    // 添加成功后  编辑
+                    // console.log(_selectPro_val);
+                    problemEdit_url = '/index/editProblem?newValue='+_selectPro_val+'&entity_id='+entity_id+'&uid='+uid+'&entity_name='+entity_name+'&remark='+_problem_remark_text+'&oldValue='+oldValue+'&date='+''+'&username='+username;
+                    // console.log(problemEdit_url);
+                    // ---> 编辑问题平台
+                    public_ajax.call_request('get',problemEdit_url,editselectProblem);
+                }else {
+                    console.log("添加问题平台后编辑问题平台失败");
+                }
+            }
+        }
+
+//====预警记录 【复制版】====  （【暂 弃用 】  在上面的判断登录状态那）
+    // 游客仅显示 这个复制版表格  （去掉 编辑 点赞功能）
+    //【第二屏的列表排序方式加一个根据点赞数大小desc排序，且只显示点赞数大于0的。】
+    var _earlyWarning_url='/detection/secondDetectData/?date=7&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all&problem=all&newEntity=0';
+    // public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);（暂 弃用   在上面的判断登录状态那）
+
+    function _earlyWarning(data) {
+        // console.log(data);
+        $('#_recordingTable p.load').show();
+        // 获取最早预警时间 加入数据中=========
+        var mindate_url = '/detection/minDate';
+        public_ajax.call_request('get',mindate_url,minDate);
+        var data_1 = [];
+        var data_2 = data;
+        function minDate(data){
+            data_1 = data;
+            // console.log(data_1);
+            // console.log(data_2);
+
+            // for(var i=0;i<data_2.length;i++){
+            //     for(var j=0;j<data_1.length;j++){
+            //         if(data_2[i].id === data_1[j].id){
+            //             data_2[i].minDate = data_1[j].minDate;
+            //             break;
+            //         }
+            //     }
+            // }
+
+            for(var i=0;i<data_2.length;i++){
+                data_2[i].minDate = data_1[data_2[i].id]
+            }
+
+            // console.log(data_2);
+            // 获取最早预警时间 加入数据中=========
+
+            // $('#recordingTable').bootstrapTable('destroy');
+            $('#_recordingTable').bootstrapTable('load', data_2);
+            $('#_recordingTable').bootstrapTable({
+                data:data_2,
+                search: true,//是否搜索
+                pagination: true,//是否分页
+                pageSize: pageData,//单页记录数
+                pageList: [15,20,25],//分页步进值
+                sidePagination: "client",//服务端分页
+                searchAlign: "left",
+                searchOnEnterKey: false,//回车搜索
+                showRefresh: false,//刷新按钮
+                showColumns: false,//列选择按钮
+                buttonsAlign: "right",//按钮对齐方式
+                locale: "zh-CN",//中文支持
+                detailView: false,
+                showToggle:false,
+                sortName:'bci',
+                sortOrder:"desc",
+                // sortStable:true,
+                columns: [
+                    {
+                        title: "监测对象",//标题
+                        field: "entity_name",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.entity_name==''||row.entity_name=='null'||row.entity_name=='unknown'||!row.entity_name){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_1(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\')" title="进入画像">'+row.entity_name+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "预警指数",//标题
+                        field: " ",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.illegal_score==''||row.illegal_score=='null'||row.illegal_score=='unknown'||!row.illegal_score){
+                                return '未知';
+                            }else {
+                                return row.illegal_score;
+                            };
+                        }
+                    },
+                    {
+                        title: "注册地",//标题
+                        field: "province",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            var registAddress;
+                            if(row.province == '北京' || row.province == '上海' || row.province == '天津' || row.province == '重庆'){
+                                registAddress= row.city+row.district;
+                            }else{
+                                registAddress= row.province+row.city+row.district;
+                            }
+                            if (registAddress.length == 0 || row.province==''||row.province=='null'||row.province=='unknown'||!row.province){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" title="注册地">'+registAddress+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "实体来源",//标题
+                        field: "entity_source ",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            var entitySource;
+                            if(row.entity_source == 1){
+                                entitySource = '网贷之家';
+                            }else if(row.entity_source == 2){
+                                entitySource = '人工导入';
+                            }else if( row.entity_source == 3){
+                                entitySource = '数据库';
+                            }else if(row.entity_source == 4 ){
+                                entitySource = '系统感知';
+                            }else if (row.entity_source==''||row.entity_source=='null'||row.entity_source=='unknown'||!row.entity_source){
+                                entitySource = '未知';
+                            }else {
+                                entitySource = entity_source;
+                            }
+                            return entitySource;
+                        }
+                    },
+                    {
+                        title: "此次预警时间",//标题
+                        field: "date",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.date==''||row.date=='null'||row.date=='unknown'||!row.date){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" title="此次预警时间">'+row.date+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "最早预警时间",//标题
+                        field: "minDate",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.minDate==''||row.minDate=='null'||row.minDate=='unknown'||!row.minDate){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" title="最早预警时间">'+row.minDate+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "预警理由",//标题
+                        field: "illegal_type",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            var warningReasons = '';
+
+                            // var illegal_type_str = row.illegal_type.toString();
+                            // if(row.illegal_type==1){
+                            //     warningReasons = '模型预警';
+                            // }else if(row.illegal_type==2){
+                            //     warningReasons = '舆情预警';
+                            // }else if(row.illegal_type==3){
+                            //     warningReasons = '指标预警';
+                            // }else if(illegal_type_str == "1,2" || illegal_type_str == "2,1"){
+                            //     warningReasons = '模型预警/舆情预警';
+                            // }else if(illegal_type_str == "1,3" || illegal_type_str == "3,1"){
+                            //     warningReasons = '模型预警/指标预警';
+                            // }else if(illegal_type_str == "2,3" || illegal_type_str == "3,2"){
+                            //     warningReasons = '舆情预警/指标预警';
+                            // }else if(illegal_type_str == "1,2,3" || illegal_type_str == "1,3,2" || illegal_type_str == "2,1,3" || illegal_type_str == "2,3,1" || illegal_type_str == "3,1,2" || illegal_type_str == "3,2,1"){
+                            //     warningReasons = '模型预警/舆情预警/指标预警';
+                            // }
+                            // if (row.illegal_type==''||row.illegal_type=='null'||row.illegal_type=='unknown'||!row.illegal_type){
+                            //     return '未知';
+                            // }else{
+                            //     return '<span style="cursor:pointer;color:white;" title="预警理由">'+warningReasons+'</span>';
+                            // };
+
+                            if(row.comment_rank > 75){
+                                warningReasons += '负面舆情多;<br>';
+                            }
+                            if(row.suit_rank > 75){
+                                warningReasons += '诉讼记录多;<br>';
+                            }
+
+                            if(row.ad_rank > 75){
+                                warningReasons += '煽动性广告多;<br>';
+                            }
+                            if(row.return_rank > 75){
+                                warningReasons += '收益率过高;<br>';
+                            }
+                            if(row.abnor_rank > 75){
+                                warningReasons += '经营异常多;<br>';
+                            }
+                            if(row.promise_type ==1 || row.promise_type ==2){
+                                warningReasons += '存在担保承诺;<br>';
+                            }
+                            if(!row.comment_rank && !row.suit_rank && !row.ad_rank && !row.return_rank && !row.abnor_rank && !row.promise_type){
+                                warningReasons = '暂无'
+                            }
+                            if(row.comment_rank <= 75 && row.suit_rank <= 75 && row.ad_rank <= 75  && row.return_rank <= 75 && row.abnor_rank <= 75 && row.promise_type != 1 && row.promise_type != 2){
+                                warningReasons = '暂无'
+                            }
+
+
+                            return '<span style="cursor:pointer;color:white;" title="预警理由">'+warningReasons+'</span>';
+                        }
+                    },
+                    {
+                        title: "业态类型",//标题
+                        field: "operation_mode",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.operation_mode==''||row.operation_mode=='null' || row.operation_mode==null ||row.operation_mode=='unknown'||!row.operation_mode){
+                                // return '互联网金融';
+                                return '未知';
+                            }else {
+
+                                // return '互联网金融'; // ====先写死====
+                                return row.operation_mode;
+                            };
+                        }
+                    },
+                    {
+                        title: "问题平台",//标题
+                        field: "problem",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.problem==''||row.problem=='null'|| row.problem==null || row.problem=='unknown'||!row.problem){
+                                return '无';
+                            }else {
+                                return row.problem;
+                            };
+                        }
+                    },
+                    {
+                        title: "监测详情",//标题
+                        field: "f",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_2(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\',\''+row.illegal_type+'\')" title="查看详情"><i class="icon icon-file-alt"></i></span>';
+                        }
+                    },
+                    // {
+                    //     title: "一键取证",//标题
+                    //     field: "",//键名
+                    //     sortable: true,//是否可排序
+                    //     order: "desc",//默认排序方式
+                    //     align: "center",//水平
+                    //     valign: "middle",//垂直
+                    //     formatter: function (value, row, index) {
+                    //         return '<span style="cursor:pointer;color:white;" onclick="prove(\''+row.a+'\')" title="一键取证"><i class="icon icon-signin"></i></span>';
+                    //     }
+                    // },
+                    // {
+                    //     title: "预警结果审核",//标题
+                    //     field: "support_num",//键名
+                    //     sortable: true,//是否可排序
+                    //     order: "desc",//默认排序方式
+                    //     align: "center",//水平
+                    //     valign: "middle",//垂直
+                    //     formatter: function (value, row, index) {
+                    //         var str = '<span style="cursor:pointer;color:white;margin-right:10px;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',1,\''+row.illegal_type+'\')" title="赞成预警"><i class="icon icon-thumbs-up"></i>('+row.support_num+')</span>'+
+                    //             '<span style="cursor:pointer;color:white;" onclick="resultCheck(\''+row.date+'\',\''+row.id+'\',0,\''+row.illegal_type+'\')" title="反对预警"><i class="icon icon-thumbs-down"></i>('+row.against_num+')</span>';
+                    //         return str;
+                    //     }
+                    // },
+                ],
+            });
+            $('#_recordingTable p.load').hide();
+            $('._firstScreen .recordingTable .fixed-table-toolbar .search input').attr('placeholder','请输入查询内容');
+        }
+    };
+
+    // 更新下拉框 （这个用了）
+        // ===时间选项===
+        $('#_select-1').change(function(){
+            var selectTime = $(this).children('option:selected').val();//这就是selected的值
+            // 运营模式
+            var select_operation_mode = $(this).parents('._content').find('#_select-2').val();
+            // 预警类型
+            var select_illegal_type = $(this).parents('._content').find('#_select-3').val();
+            // 相关问题
+            var select_problem = $(this).parents('._content').find('#_select-5').val();
+            // 实体类型
+            var select_entity_type = $(this).parents('._content').find('#_select-4').val();
+            // 预警分布
+            var select_warn_distribute = $(this).parents('._content').find('#_city34').val();
+            // 新增、全部
+            var select_newEntity = $(this).parents('._content').find('#_select-6').val();
+            _earlyWarning_url = '/detection/secondDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
+            // console.log(earlyWarning_url);
+            public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);
+        })
+        // ===业态类型（运营模式）选项===
+        $('#_select-2').change(function(){
+            var selectTime = $(this).parents('._content').find('#_select-1').val();
+            // 运营模式
+            var select_operation_mode = $(this).val();
+            // 预警类型
+            var select_illegal_type = $(this).parents('._content').find('#_select-3').val();
+            // 相关问题
+            var select_problem = $(this).parents('._content').find('#_select-5').val();
+            // 实体类型
+            var select_entity_type = $(this).parents('._content').find('#_select-4').val();
+            // 预警分布
+            var select_warn_distribute = $(this).parents('._content').find('#_city34').val();
+            // 新增、全部
+            var select_newEntity = $(this).parents('._content').find('#_select-6').val();
+            _earlyWarning_url = '/detection/secondDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
+            // console.log(earlyWarning_url);
+            public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);
+        })
+        // ===预警类型选项===
+        $('#_select-3').change(function(){
+            var selectTime = $(this).parents('._content').find('#_select-1').val();
+            // 运营模式
+            var select_operation_mode = $(this).parents('._content').find('#_select-2').val();
+            // 预警类型
+            var select_illegal_type = $(this).val();
+            // 相关问题
+            var select_problem = $(this).parents('._content').find('#_select-5').val();
+            // 实体类型
+            var select_entity_type = $(this).parents('._content').find('#_select-4').val();
+            // 预警分布
+            var select_warn_distribute = $(this).parents('._content').find('#_city34').val();
+            // 新增、全部
+            var select_newEntity = $(this).parents('._content').find('#_select-6').val();
+            _earlyWarning_url = '/detection/secondDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
+            // console.log(earlyWarning_url);
+            public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);
+        })
+        // ===相关问题选项===
+        $('#_select-5').change(function(){
+            var selectTime = $(this).parents('._content').find('#_select-1').val();
+            // 运营模式
+            var select_operation_mode = $(this).parents('._content').find('#_select-2').val();
+            // 预警类型
+            var select_illegal_type = $(this).parents('._content').find('#_select-3').val();
+            // 相关问题
+            var select_problem = $(this).val();
+            // 实体类型
+            var select_entity_type = $(this).parents('._content').find('#_select-4').val();
+            // 预警分布
+            var select_warn_distribute = $(this).parents('._content').find('#_city34').val();
+            // 新增、全部
+            var select_newEntity = $(this).parents('._content').find('#_select-6').val();
+            _earlyWarning_url = '/detection/secondDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
+            // console.log(earlyWarning_url);
+            public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);
+        })
+        // ===实体类型选项===
+        $('#_select-4').change(function(){
+            var selectTime = $(this).parents('._content').find('#_select-1').val();
+            // 运营模式
+            var select_operation_mode = $(this).parents('._content').find('#_select-2').val();
+            // 预警类型
+            var select_illegal_type = $(this).parents('._content').find('#_select-3').val();
+            // 相关问题
+            var select_problem = $(this).parents('._content').find('#_select-5').val();
+            // 实体类型
+            var select_entity_type = $(this).val();
+            // 预警分布
+            var select_warn_distribute = $(this).parents('._content').find('#_city34').val();
+            // 新增、全部
+            var select_newEntity = $(this).parents('._content').find('#_select-6').val();
+            _earlyWarning_url = '/detection/secondDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
+            // console.log(earlyWarning_url);
+            public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);
+        })
+        // ===预警分布选项===
+        $('#_city34').change(function(){
+            var selectTime = $(this).parents('._content').find('#_select-1').val();
+            // 运营模式
+            var select_operation_mode = $(this).parents('._content').find('#_select-2').val();
+            // 预警类型
+            var select_illegal_type = $(this).parents('._content').find('#_select-3').val();
+            // 相关问题
+            var select_problem = $(this).parents('._content').find('#_select-5').val();
+            // 实体类型
+            var select_entity_type = $(this).parents('._content').find('#_select-4').val();
+            // 预警分布
+            var select_warn_distribute = $(this).val();
+            // 新增、全部
+            var select_newEntity = $(this).parents('._content').find('#_select-6').val();
+            _earlyWarning_url = '/detection/secondDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
+            // console.log(earlyWarning_url);
+            public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);
+        })
+        // ===新增、全部 选项===
+        $('#_select-6').change(function(){
+            var selectTime = $(this).parents('._content').find('#_select-1').val();
+            // 运营模式
+            var select_operation_mode = $(this).parents('._content').find('#_select-2').val();
+            // 预警类型
+            var select_illegal_type = $(this).parents('._content').find('#_select-3').val();
+            // 相关问题
+            var select_problem = $(this).parents('._content').find('#_select-5').val();
+            // 实体类型
+            var select_entity_type = $(this).parents('._content').find('#_select-4').val();
+            // 预警分布
+            var select_warn_distribute = $(this).parents('._content').find('#_city34').val();
+            // 新增、全部
+            var select_newEntity = $(this).val();
+            _earlyWarning_url = '/detection/secondDetectData/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem+'&newEntity='+select_newEntity;
+            // console.log(earlyWarning_url);
+            public_ajax.call_request('get',_earlyWarning_url,_earlyWarning);
+        });
+
+    // 进入画像
+        function _jumpFrame_1(name,type,id) {
+            var html='';
+            name=escape(name);
+            if (type=='1'||type=='2'){
+                html='/index/company/?name='+name+'&flag='+type+'&pid='+id;
+            }else {
+                html='/index/project/?name='+name+'&flag='+type+'&pid='+id;
+            }
+            // window.location.href=html;
+            window.open(html);
+        }
+
+    // 监测详情
+        function _jumpFrame_2(name,type,id,illegal_type) {
+            var html = '';
+            name=escape(name);
+            if(illegal_type == 1){//模型预警 ----> 进入画像页(复制本)预警报告compan_monitor
+                // html='/index/company/?name='+name+'&flag='+type+'&pid='+id;
+                html='/index/company_monitor/?name='+name+'&flag='+type+'&pid='+id;
+            }else if(illegal_type == 2){//舆情预警 ----> 进入监测详情页
+                html='/index/monitor/?name='+name+'&flag='+type+'&pid='+id;
+            }else {
+                html='/index/company/?name='+name+'&flag='+type+'&pid='+id;
+            }
+
+            // window.location.href=html;
+            window.open(html);
+        }
+
+    // 一键取证
+        function _prove(flag) {
+
+        }
+
+
+//====预警态势====
+    // detection/TimeDistribute
+    var timeDistribute_url='/detection/TimeDistribute/?date=30&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all';
     public_ajax.call_request('get',timeDistribute_url,line_1_new);
     var option_1 = {
         backgroundColor:'transparent',
@@ -728,7 +2753,7 @@
             var select_warn_distribute = $(this).parents('.content-2').find('#second_city34').val();
             // timeDistribute_url = '/detection/TimeDistribute/?date='+selectTime;
             timeDistribute_url = '/detection/TimeDistribute/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            console.log(timeDistribute_url);
+            // console.log(timeDistribute_url);
             public_ajax.call_request('get',timeDistribute_url,line_1_new);
         })
         // ===运营模式选项===
@@ -744,7 +2769,7 @@
             var select_warn_distribute = $(this).parents('.content-2').find('#second_city34').val();
             // timeDistribute_url = '/detection/TimeDistribute/?date='+selectTime;
             timeDistribute_url = '/detection/TimeDistribute/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            console.log(timeDistribute_url);
+            // console.log(timeDistribute_url);
             public_ajax.call_request('get',timeDistribute_url,line_1_new);
         })
         // ===预警类型选项===
@@ -760,7 +2785,7 @@
             var select_warn_distribute = $(this).parents('.content-2').find('#second_city34').val();
             // timeDistribute_url = '/detection/TimeDistribute/?date='+selectTime;
             timeDistribute_url = '/detection/TimeDistribute/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            console.log(timeDistribute_url);
+            // console.log(timeDistribute_url);
             public_ajax.call_request('get',timeDistribute_url,line_1_new);
         })
         // ===实体类型选项===
@@ -776,7 +2801,7 @@
             var select_warn_distribute = $(this).parents('.content-2').find('#second_city34').val();
             // timeDistribute_url = '/detection/TimeDistribute/?date='+selectTime;
             timeDistribute_url = '/detection/TimeDistribute/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            console.log(timeDistribute_url);
+            // console.log(timeDistribute_url);
             public_ajax.call_request('get',timeDistribute_url,line_1_new);
         })
         // ===预警分布选项===
@@ -792,12 +2817,12 @@
             var select_warn_distribute = $(this).val();
             // timeDistribute_url = '/detection/TimeDistribute/?date='+selectTime;
             timeDistribute_url = '/detection/TimeDistribute/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            console.log(timeDistribute_url);
+            // console.log(timeDistribute_url);
             public_ajax.call_request('get',timeDistribute_url,line_1_new);
         })
 
     //====预警类型====
-    var warningType_url = '/detection/warnType/?date=7&operation_mode=0&illegal_type=0&entity_type=0&warn_distribute=all'
+    var warningType_url = '/detection/warnType/?date=7&operation_mode=all&illegal_type=0&entity_type=0&warn_distribute=all'
     public_ajax.call_request('get',warningType_url,pie_3);
     function pie_3(data) {
         var pie_3Data = [];
@@ -809,7 +2834,8 @@
                 }else if(data[i].illegal_type == 2){
                     name = '舆情预警';
                 }
-                pie_3Data.push({name:name,value:data[i].count})
+                // pie_3Data.push({name:name,value:data[i].count})
+                pie_3Data.push({name:name,value:data[i]['count(*)']})
             }
         }
         var myChart = echarts.init(document.getElementById('warningType'),'chalk');
@@ -875,7 +2901,7 @@
             var select_warn_distribute = $(this).parents('.content-2-2').find('#second_city34-2').val();
             // warningType_url = '/detection/warnType/?date='+selectTime;
             warningType_url = '/detection/warnType/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            console.log(warningType_url);
+            // console.log(warningType_url);
             public_ajax.call_request('get',warningType_url,pie_3);
         })
         // ===运营模式选项===
@@ -891,7 +2917,7 @@
             var select_warn_distribute = $(this).parents('.content-2-2').find('#second_city34-2').val();
             // warningType_url = '/detection/warnType/?date='+selectTime;
             warningType_url = '/detection/warnType/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            console.log(warningType_url);
+            // console.log(warningType_url);
             public_ajax.call_request('get',warningType_url,pie_3);
         })
         // ===预警类型选项===
@@ -907,7 +2933,7 @@
             var select_warn_distribute = $(this).parents('.content-2-2').find('#second_city34-2').val();
             // warningType_url = '/detection/warnType/?date='+selectTime;
             warningType_url = '/detection/warnType/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            console.log(warningType_url);
+            // console.log(warningType_url);
             public_ajax.call_request('get',warningType_url,pie_3);
         })
         // ===实体类型选项===
@@ -923,7 +2949,7 @@
             var select_warn_distribute = $(this).parents('.content-2-2').find('#second_city34-2').val();
             // warningType_url = '/detection/warnType/?date='+selectTime;
             warningType_url = '/detection/warnType/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            console.log(warningType_url);
+            // console.log(warningType_url);
             public_ajax.call_request('get',warningType_url,pie_3);
         })
         // ===预警分布选项===
@@ -939,7 +2965,7 @@
             var select_warn_distribute = $(this).val();
             // warningType_url = '/detection/warnType/?date='+selectTime;
             warningType_url = '/detection/warnType/?date='+selectTime+'&operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-            console.log(warningType_url);
+            // console.log(warningType_url);
             public_ajax.call_request('get',warningType_url,pie_3);
         })
 
@@ -1028,6 +3054,13 @@
                         order: "desc",//默认排序方式
                         align: "center",//水平
                         valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.count1==''||row.count1=='null'||row.count1=='unknown'||!row.count1){
+                                return '未知';
+                            }else {
+                                return row.count1;
+                            };
+                        }
                     },
                     {
                         title: "舆情预警",//标题
@@ -1036,6 +3069,13 @@
                         order: "desc",//默认排序方式
                         align: "center",//水平
                         valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.count2==''||row.count2=='null'||row.count2=='unknown'||!row.count2){
+                                return '未知';
+                            }else {
+                                return row.count2;
+                            };
+                        }
                     },
                     // 指标预警去掉
                     // {
@@ -1618,6 +3658,7 @@
                                     '临沧':[100.08,23.88],
                                     '楚雄彝族自治州':[101.55,25.03],
                                     '红河哈尼族彝族自治州':[103.4,23.37],
+                                    '红河':[103.4,23.37],
                                     '文山壮族苗族自治州':[104.25,23.37],
                                     '西双版纳傣族自治州':[100.8,22.02],
                                     '大理白族自治州':[100.23,25.6],
@@ -1765,6 +3806,7 @@
                                     // 贵州
                                     '黔南布依族苗族自治州':[107.0236160000,25.9995600000],
                                     '黔西南布依族苗族自治州':[105.4966400000,25.0354490000],
+                                    '黔西南':[105.4966400000,25.0354490000],
 
                                     // 河南
                                     '漯河':[114.0234210000,33.5877110000],
@@ -1924,7 +3966,7 @@
     $('._time').change(function(){
         var selectTime = $(this).children('option:selected').val();//这就是selected的值
         placeRank_url = '/detection/detectDistribute?date='+selectTime;
-        console.log(placeRank_url);
+        // console.log(placeRank_url);
         public_ajax.call_request('get',placeRank_url,placeRank);
     })
 
@@ -1934,7 +3976,7 @@
         var option = {
             backgroundColor:'transparent',
             title : {
-                text: '业务类别',
+                text: '业态类别',
                 subtext: '',
                 x:'center'
             },
@@ -2026,7 +4068,8 @@
             var entity_nameArr = [], rankingData = [];
             for(var i=0;i<data.length;i++){
                 entity_nameArr.push(data[i].entity_name);
-                rankingData.push(data[i].count)
+                // rankingData.push(data[i].count)
+                rankingData.push(data[i]['max(illegal_score)'])
             }
             var myChart = echarts.init(document.getElementById('warningNum'),'chalk');
             var option = {
@@ -2133,7 +4176,7 @@
         var select_entity_type  = $(this).children('option:selected').val();//这就是selected的值
         var selectTime = $(this).siblings('._time2').val();
         ranking_url = '/detection/detectRank?date='+selectTime+'&entity_type='+select_entity_type;
-        console.log(ranking_url);
+        // console.log(ranking_url);
         public_ajax.call_request('get',ranking_url,line_2);
     })
     // ===时间选项===
@@ -2141,6 +4184,6 @@
         var selectTime = $(this).children('option:selected').val();//这就是selected的值
         var select_entity_type = $(this).siblings('._time1').val();
         ranking_url = '/detection/detectRank?date='+selectTime+'&entity_type='+select_entity_type;
-        console.log(ranking_url);
+        // console.log(ranking_url);
         public_ajax.call_request('get',ranking_url,line_2);
     })

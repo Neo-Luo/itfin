@@ -1,6 +1,11 @@
 {% extends "publicNav.html" %}
 {% block title %}<title>公司画像</title>{% endblock %}
 {% block my_css %}
+<!-- 【【【bootCDN】】】 -->
+<link href="https://cdn.bootcss.com/bootstrap-select/1.13.0-beta/css/bootstrap-select.min.css" rel="stylesheet">
+
+<!-- 【【【bootCDN】】】 -->
+
 <link rel="stylesheet" href="/static/css/company.css">
 <style>
 	<!---->
@@ -12,18 +17,62 @@
 		transform: scale(1.3);
 	}
 	#nav .nav_middle .main_li:nth-of-type(3) a, #nav .nav_middle .main_li:nth-of-type(3) a i{
-		color: #08F !important;
+		color: #08F ;
 	}
 	#nav {background: #fff;box-shadow: 0 2px 5px rgba(41,46,51,0.15);color: #0e0e0e;}
-	#nav .nav_middle .main_li .li_a,#nav .nav_right span {color: #0e0e0e;}
+	#nav .nav_middle .main_li .li_a,#nav .nav_right span,#nav .nav_right span a {color: #0e0e0e;}
 	#nav .nav_middle .main_li .line {background-color: #08F;}
 	#nav .nav_right span {border: 1px solid #787878;}
 	#nav .nav_middle, #nav .nav_right {display: block;}
-	#nav .nav_right span:hover {
+	#nav .nav_right span:hover,
+	#nav .nav_right span:hover a {
 		background: #2ad1ff !important;
 		color: white!important;
 	}
 	.page-list {display: none;}
+
+	/* 风险评价异常指标： */
+	#container .riskValue .riskLeft .abnormalIndex b {
+	/* #container .riskValue .riskLeft .abnormalIndex span.quota { */
+		font-size:18px;
+		color: #ff9645;
+		display:none;
+		cursor:pointer;
+	}
+	#container .riskValue .riskLeft .abnormalIndex span.quota {
+		font-size:18px;
+		color: #ff9645;
+		display:none;
+		cursor:pointer;
+	}
+	#container .riskValue .riskLeft .abnormalIndex span.loading {
+		display:block;
+	}
+	/* 模块标注信息 */
+    #container .tagging {
+        padding-left:30px;
+        margin:5px 0;
+        display:none;
+    }
+    .tagging b {
+        color:#ff6d70;
+    }
+    /* 广告内容 下拉筛选 */
+	.billing .content .conLeft ,
+	.commentInfor .content .conLeft {
+		display:inline-block;
+		margin:5px 20px 0 0;
+	}
+	.billing .content select,
+	.commentInfor .content select{
+        /* width: 50px; */
+        background: transparent;
+        border: 1px solid silver;
+        border-radius: 5px;
+        padding: 3px 7px;
+        /* color: white; */
+        text-align: center;
+	}
 	<!---->
 
 </style>
@@ -48,20 +97,21 @@
 				<span class="status-1 status btn-primary"><i class="icon icon-retweet"></i>&nbsp;停止监测</span>
 				<span class="status-2 status btn-primary"><i class="icon icon-sitemap"></i>&nbsp;查看网络图</span>
 			</h3>
-			<p class="isPlatform inforLine" style="display: none;min-width:56%;">
+			<p class="isPlatform inforLine" style="min-width:56%;">
 				<span>工商注册公司名称：</span>&nbsp;<b class="isPlatformName"></b>
 			</p>
 			<p class="infor-3 inforLine">
 				<span>实体类型：</span>&nbsp;<b class="type-2"></b>
 			</p>
 
-			<p class="infor-2 inforLine">
-				<span>运营模式：</span>&nbsp;<b class="type-1"></b>
-			</p>
-
-			<p class="infor-4 inforLine" style="min-width:56%;">
+			<p class="infor-4 inforLine">
 				<span>成立时间：</span>&nbsp;<b class="type-3"></b>
 			</p>
+
+			<p class="infor-2 inforLine" style="min-width:56%;">
+				<span>业态类型：</span>&nbsp;<b class="type-1"></b>
+			</p>
+
 			<p class="infor-5 inforLine">
 				<span>法人代表：</span>&nbsp;<b class="type-4"></b>
 			</p>
@@ -83,9 +133,52 @@
 		<div class="riskLeft">
 			<p><span>是否疑似非法集资：</span>&nbsp;<b class="val-1" style="color: #ff9645;"></b></p>
 			<p><span>风险等级：</span>&nbsp;<b class="val-2" style="color: #ff9645;"></b></p>
-			<p><span>影响等级：</span>&nbsp;<b class="val-3" style="color: #ff9645;"></b></p>
-			<p><span>集资模式：</span>&nbsp;<b class="val-4" style="color: #ff9645;"></b></p>
-			<p><span>是否已判罚：</span>&nbsp;<b class="val-5" style="color: #ff9645;"></b></p>
+			<!-- <p><span>影响等级：</span>&nbsp;<b class="val-3" style="color: #ff9645;"></b></p> -->
+			<!-- <p><span>业态类型：</span>&nbsp;<b class="val-4" style="color: #ff9645;"></b></p> -->
+			<!-- <p><span>是否已判罚：</span>&nbsp;<b class="val-5" style="color: #ff9645;"></b></p> -->
+			<p><span>问题平台：</span>&nbsp;<b class="val-5" style="color: #ff9645;"></b><i class="icon icon-edit " id="problem-edit" title="编辑" style="margin-left:10px;"></i></p>
+			<!-- <p class="abnormalIndex" style="overflow: visible;">
+				<span>异常指标：</span>&nbsp;
+				<b class="nothing">暂无</b>
+				<span><b class="comment_rank" onclick="Lscroll('.commentInfor')">负面舆情多；</b></span>
+				<b class="suit_rank" onclick="Lscroll('.litigation')">诉讼记录多；</b>
+				<b class="ad_rank" onclick="Lscroll('.advertising')">煽动性广告多；</b>
+				<b class="return_rank" onclick="Lscroll('.income')">收益率过高；</b>
+				<b class="abnor_rank" onclick="Lscroll('.operating')">经营异常多。</b>
+				<b class="guarantee_rank" onclick="Lscroll('.promise')">存在担保承诺；</b>
+			</p> -->
+			<div class="abnormalIndex clearfix" style="">
+				<div class="pull-left" style="width:14%;">
+					<span>异常指标：</span>
+				</div>
+				<div class="pull-left" style="width:86%;">
+					<span class="quota loading">正在加载中...</span>
+					<span class="quota nothing">暂无</span>
+					<span class="quota comment_rank" onclick="Lscroll('.commentInfor')">
+						负面舆情多:<b style="color:#ff6d70;" id="comment_rank_num"></b>条，
+						高于<b style="color:#ff6d70;" id="_commentRank"></b>的监测对象。
+					</span>
+					<span class="quota suit_rank" onclick="Lscroll('.litigation')">
+						诉讼记录多:<b style="color:#ff6d70;" id="suit_rank_num"></b>条，
+						高于<b style="color:#ff6d70;" id="_suit_rank"></b>的监测对象。
+					</span>
+					<span class="quota ad_rank" onclick="Lscroll('.advertising')">
+						煽动性广告多:<b style="color:#ff6d70;" id="ad_rank_num"></b>条，
+						高于<b style="color:#ff6d70;" id="_ad_rank"></b>的监测对象。
+					</span>
+					<span class="quota return_rank" onclick="Lscroll('.income')">
+						产品收益率过高:<b style="color:#ff6d70;" id="return_rank_num"></b>，
+						处于所有监测对象收益率排序的前<b style="color:#ff6d70;" id="_return_rank"></b>。
+					</span>
+					<span class="quota abnor_rank" onclick="Lscroll('.operating')">
+						经营异常多:<b style="color:#ff6d70;" id="abnor_num"></b>条，
+						高于<b style="color:#ff6d70;" id="_abnor_rank"></b>的监测对象。
+					</span>
+					<span class="quota guarantee_rank" onclick="Lscroll('.promise')">
+						存在担保承诺:<b style="color:#ff6d70;" id="_guarantee_rank"></b>。
+					</span>
+				</div>
+			</div>
 		</div>
 		<div class="riskRight">
 			<span>时间：</span>
@@ -97,8 +190,8 @@
 				<option value="近一年">近一年</option>
 			</select>
 			<div class="monitor">
-				<span>模型预警：<b class="mon-2">0</b></span>
-				<span>舆情预警：<b class="mon-1">0</b></span>
+				<span>模型预警：<b class="mon-1">0</b></span>
+				<span>舆情预警：<b class="mon-2">0</b></span>
 				<!-- <span>舆情预警：<b class="mon-3">54</b></span> -->
 			</div>
 			<div class="riskValueTable" style="margin-top: 10px;">
@@ -140,6 +233,7 @@
 	<div class="operating">
 		<!-- <h3><i class="icon icon-warning-sign"></i>&nbsp;经营异常&nbsp;&nbsp;<i class="icon icon-edit operating-1" title="编辑"></i></h3> -->
 		<h3><i class="icon icon-warning-sign"></i>&nbsp;经营异常&nbsp;&nbsp;</h3>
+		<p class="tagging abnorRank">经营异常数量高于<b style="color:#ff6d70;" id="abnorRank"></b>的监测对象。</p>
 		<div class="business">
 			<p class="business_title">
 				<span>无法联系类异常数量：<b class="business_1"></b></span>
@@ -170,6 +264,7 @@
 	<div class="litigation">
 		<!-- <h3><i class="icon icon-file-alt"></i>&nbsp;诉讼记录&nbsp;&nbsp;<i class="icon icon-edit inter-1" title="编辑"></i></h3> -->
 		<h3><i class="icon icon-file-alt"></i>&nbsp;诉讼记录&nbsp;&nbsp;</h3>
+		<p class="tagging suitRank">诉讼记录数量高于<b style="color:#ff6d70;" id="suitRank"></b>的监测对象。</p>
 		<div class="lawsuit">
 			<p class="lawsuit_title">
 				<span>行政类诉讼数量：<b class="lawsuit_1"></b></span>
@@ -185,6 +280,12 @@
 
 	<div class="income">
 		<h3><i class="icon icon-credit-card"></i>&nbsp;收益率及其分布&nbsp;&nbsp;<i class="icon icon-edit inter-1" title="编辑" id="income-edit"></i></h3>
+		<p class="tagging returnRank">
+			<!-- <span>宣传收益率高于<b style="color:#ff6d70;" id="returnRank_1"></b>的监测对象。</span> -->
+			<!-- <span>披露收益率高于<b style="color:#ff6d70;" id="returnRank_2"></b>的监测对象。</span> -->
+
+			<span>产品收益率处于所有监测对象收益率排序的前<b style="color:#ff6d70;" id="returnRank"></b>（统计不包含无数据实体）</span>
+		</p>
 		<!--<div id="incomeTable" style="width: 100%;height: 450px;"></div>-->
 		<div class="incomeTable">
 			<div id="incomeTable">
@@ -204,12 +305,49 @@
 	<div class="advertising">
 		<!-- <h3><i class="icon icon-envelope-alt"></i>&nbsp;广告信息&nbsp;&nbsp;<i class="icon icon-edit advert-1" title="编辑"></i></h3> -->
 		<h3><i class="icon icon-envelope-alt"></i>&nbsp;广告信息&nbsp;&nbsp;</h3>
+		<p class="tagging adRank">近90天的煽动性广告数量高于<b style="color:#ff6d70;" id="adRank"></b>的监测对象。</p>
 		<div class="billing" style="margin-top:20px;">
             <h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;广告发布趋势</h5>
 			<div id="billing_diagram">
 				<center>暂无记录</center>
 			</div>
-            <h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;广告内容</h5>
+            <h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;广告内容
+            	<button style="display:none;" type="button" class="btn btn-primary btn-xs ad_moreSitu" title="显示更多筛选条件"><i class="icon icon-plus"></i></button>
+            </h5>
+			<div class="content" style="display:none;margin:10px 0;padding-left:30px;">
+				<div class="conLeft content-1">
+					<span class="ct-tit">时间：</span>
+	                <select id="select-1" class="selectLab">
+	                	<option value="0">全部</option>
+	                    <option value="1">近一天</option>
+	                    <option value="7">近一周</option>
+	                    <option value="30">近一个月</option>
+	                    <option value="90" selected>近三个月</option>
+	                    <option value="365">近一年</option>
+	                </select>
+				</div>
+				<div class="conLeft content-2">
+					<span class="ct-tit">煽动性：</span>
+	                <select id="select-2" class="selectLab">
+	                    <option value="0" selected>全部</option>
+	                    <!-- <option value="3" >强煽动性</option>
+	                    <option value="2">一般煽动性</option> -->
+	                    <option value="2">有煽动性</option> -->
+	                    <option value="1">无煽动性</option>
+	                </select>
+				</div>
+				<div class="conLeft content-3">
+					<span class="ct-tit">通道：</span>
+	                <select id="select-3" class="selectLab">
+	                    <option value="all" selected>全部</option>
+	                    <option value="wechat" >微信</option>
+	                    <option value="zhihu">知乎</option>
+	                    <option value="bbs">论坛</option>
+	                    <option value="webo">微博</option>
+	                    <option value="forum">贴吧</option>
+	                </select>
+				</div>
+			</div>
 			<div id="billing">
 				<p class="load">正在拼命加载中....</p>
 			</div>
@@ -234,6 +372,7 @@
 			<span style="display: inline-block;"><i class="icon icon-bar-chart"></i>&nbsp;舆情分析&nbsp;&nbsp;</span>
 			<button type="button" class="btn btn-info" style="position: relative;top: -3px;left: 20px;">存档取证</button>
 		</h3>
+		<p class="tagging commentRank">近90天的负面舆情数量高于<b style="color:#ff6d70;" id="commentRank"></b>的监测对象。</p>
 		<div style="margin-top: 20px;">
             <!-- <h4><i class="icon icon-signal"></i>&nbsp;趋势统计</h4> -->
 			<h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;舆情趋势</h5>
@@ -243,7 +382,41 @@
 		</div>
 		<div style="margin-top: 20px;">
             <!-- <h4><i class="icon icon-comment"></i>&nbsp;评论信息</h4> -->
-			<h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;舆情内容</h5>
+			<h5 class="twoLevel_headlines"><i class="icon icon-bookmark"></i>&nbsp;舆情内容
+				<button style="display:none;" type="button" class="btn btn-primary btn-xs comment_moreSitu" title="显示更多筛选条件"><i class="icon icon-plus"></i></button>
+			</h5>
+			<div class="content" style="display:none;margin:10px 0;padding-left:30px;">
+				<div class="conLeft content-1">
+					<span class="ct-tit">时间：</span>
+	                <select id="select-1-2" class="selectLab">
+	                	<option value="0">全部</option>
+	                    <option value="1">近一天</option>
+	                    <option value="7">近一周</option>
+	                    <option value="30">近一个月</option>
+	                    <option value="90" selected>近三个月</option>
+	                    <option value="365">近一年</option>
+	                </select>
+				</div>
+				<div class="conLeft content-2">
+					<span class="ct-tit">评论倾向：</span>
+	                <select id="select-2-2" class="selectLab">
+	                    <option value="100" selected>全部</option>
+	                    <option value="0" >一般</option>
+	                    <option value="1">严重</option>
+	                </select>
+				</div>
+				<div class="conLeft content-3">
+					<span class="ct-tit">通道：</span>
+	                <select id="select-3-2" class="selectLab">
+	                    <option value="all" selected>全部</option>
+	                    <option value="wechat" >微信</option>
+	                    <option value="zhihu">知乎</option>
+	                    <option value="bbs">论坛</option>
+	                    <option value="webo">微博</option>
+	                    <option value="forum">贴吧</option>
+	                </select>
+				</div>
+			</div>
 			<div class="commentinforContent">
 				<div id="commentinforContent">
 					<p class="load">正在拼命加载中....</p>
@@ -266,7 +439,7 @@
 
 </div>
 
-<!-- 模态框  收益率机器分布 查看全文-->
+<!-- 模态框  收益率及其分布 查看全文-->
 <div class="modal fade " id="moreInfo" tabindex="-1" role="dialog">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
@@ -277,7 +450,7 @@
 			<div class="modal-body">
 				<span class="titleName">渠道：</span><span id="channel"></span><br>
 				<span class="titleName">发布时间：</span><span id="Release_time"></span><br>
-				<span class="titleName">标题：</span><span id="Advertising_Headlines"></span><span id="url"><a href=""></a></span><br>
+				<span class="titleName">标题：</span><span id="Advertising_Headlines"></span><span style="margin-left:10px;" id="url"><a href=""></a></span><br>
 				<span class="titleName">作者：</span><span id="author"></span><br>
 				<span class="titleName">用户：</span><span id="usn"></span><br>
 				<span class="titleName">内容：</span>
@@ -292,6 +465,25 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<!-- 收益率及其分布 查看全文提示信息 -->
+<div class="modal fade " id="_moreInfo" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">提示信息</h4>
+			</div>
+			<div class="modal-body">
+				<center>暂无更多内容。</center>
+			</div>
+			<div class="modal-footer">
+				<!-- <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> -->
+				<button type="button" class="btn btn-primary" data-dismiss="modal" >确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <!-- 模态框  编辑基本信息 -->
 <div class="modal fade " id="editCard" tabindex="-1" role="dialog">
 	<div class="modal-dialog" role="document">
@@ -302,30 +494,27 @@
 			</div>
 			<div class="modal-body">
 				<div class="user-1 example">
-                    <span>运营模式:</span>
-                    <select class="u1_Val">
-                    	<option value="0" selected>全部</option>
-                        <!-- <option value="P2P理财">P2P理财</option>
-                        <option value="投资项目">投资项目</option>
-                        <option value="游戏">游戏</option>
-                        <option value="任务奖励">任务奖励</option>
-                        <option value="股权私募基金">股权私募基金</option> -->
+                    <span class="editTitle">业态类型:</span>
+                    <!-- <select class="u1_Val"> -->
+                    <select class="selectpicker" multiple><!-- 改为多选的 -->
+
+
                     </select>
                 </div>
                 <div class="user-2 example">
-                    <span>注册地:</span><input type="text" class="u2_Val">
+                    <span class="editTitle">注册地:</span><input type="text" class="u2_Val">
                 </div>
                 <div class="user-3 example">
-                    <span>成立时间:</span><input type="text" class="u3_Val">
+                    <span class="editTitle">成立时间:</span><input type="text" class="u3_Val">
                 </div>
                 <div class="user-4 example">
-                    <span>法人代表:</span><input type="text" class="u4_Val">
+                    <span class="editTitle">法人代表:</span><input type="text" class="u4_Val">
                 </div>
                 <div class="user-5 example">
-                    <span>注册资本:</span><input type="text" class="u5_Val"> 万元
+                    <span class="editTitle">注册资本:</span><input type="text" class="u5_Val"> 万元
                 </div>
                 <div class="user-6 example">
-                    <span>工商注册公司名称:</span><input type="text" class="u6_Val">
+                    <span class="editTitle">工商注册公司名称:</span><input type="text" class="u6_Val">
                 </div>
                 <!-- <div class="user-3 example">
                     <span>实体类别</span>
@@ -456,11 +645,125 @@
 	</div>
 </div>
 
+<!-- 编辑广告煽动性 -->
+<div class="modal fade " id="adEdit" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">编辑此广告的煽动性</h4>
+			</div>
+			<div class="modal-body">
+				<div class=" example">
+					<span>煽动性：</span>
+					<select id="select-ad" class="selectLab">
+	                	<option value="0" >非广告</option>
+	                    <!-- <option value="3">强煽动性</option>
+	                    <option value="2">一般煽动性</option> -->
+	                    <option value="2">有煽动性</option> -->
+	                    <option value="1">无煽动性</option>
+	                </select>
+				</div>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal" id="sure_adEdit">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 编辑 舆情 评论倾向 -->
+<div class="modal fade " id="commentEdit" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">编辑此舆情的评论倾向</h4>
+			</div>
+			<div class="modal-body">
+				<div class=" example">
+					<span>评论倾向：</span>
+					<select id="select-comment" class="selectLab">
+	                	<option value="0" >一般负面</option>
+	                    <option value="1">严重负面</option>
+	                    <option value="2">非负面</option>
+	                </select>
+				</div>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal" id="sure_commentEdit">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 编辑 问题平台 -->
+<div class="modal fade " id="problemEdit" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">编辑问题平台</h4>
+			</div>
+			<div class="modal-body">
+				<div class=" example">
+					<span class="editTitle">问题平台：</span>
+					<select id="select-problem" class="selectpicker" data-live-search="true">
+
+	                </select>
+
+				</div>
+				<div class="example clearfix">
+					<span class="editTitle pull-left" style="margin-top:4%;">信息来源：</span>
+					<textarea id="problem_reason_text" placeholder="可填 可不填" autofocus required></textarea>
+					<!-- <span style="color:red;">请输入修改理由</span> -->
+				</div>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal" id="sure_problemEdit">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 查看 诉讼记录  案件身份 全文 -->
+<div class="modal fade " id="allLawsuit" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">案件身份</h4>
+			</div>
+			<div class="modal-body">
+				<div id="allLawsuit-content"></div>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal" id="sure_problemEdit">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 
 {% endblock %}
 
 <!-- 自己的JS -->
 {% block my_js %}
+<!-- 【【【bootCDN】】】 可能没用 publicNav里有（暂注释）(树图报错) -->
+<!-- <script src="https://cdn.bootcss.com/echarts/3.7.2/echarts.js"></script> -->
+<script src="https://cdn.bootcss.com/bootstrap-select/1.13.0-beta/js/bootstrap-select.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-select/1.13.0-beta/js/i18n/defaults-zh_CN.js"></script>
+<!-- 【【【bootCDN】】】 -->
+
 <script src="/static/echarts/echarts-all-3.min.js"></script>
 <script src="/static/js/FileSaver.js"></script>
 <script src="/static/js/jquery.wordexport.js"></script>
@@ -471,13 +774,22 @@
 	var name='{{name}}';
 	var type='{{flag}}';
 	var pid='{{pid}}';
-	if (type=='1'){
-		$('.isPlatform').show();
-	}
+	// if (type=='1'){
+	// 	$('.isPlatform').show();
+	// }
 	$('#title-1').text(unescape(name));
 	$('.name').text(unescape(name));
 	$('#tableName').text(unescape(name));
 	// $('.isPlatformName').text(unescape(name));
+
+	// 风险评价异常指标跳转函数
+	function Lscroll(element){
+		var scroll_offset = $(element).offset();
+	    var scroll=scroll_offset.top - 100;//避免滚动后元素被nav遮挡
+	    $("body,html").animate({
+			scrollTop:scroll
+		},0);
+	}
 
 	//导出PDF
 	var downPdf = document.getElementById("LL-PDF");
@@ -554,6 +866,8 @@
 		}else {
 			$(this).css({color:'#000'});
 			$(this).find('i').css({color:'#000'});
+			$('#nav .nav_middle .main_li').eq(2).find('a').css({color:'#08F'});
+            $('#nav .nav_middle .main_li').eq(2).find('i').css({color:'#08F'});
 		}
 	});
 
@@ -567,6 +881,7 @@
 		$('#nav .nav_middle .main_li .li_a').css({color:'white'});
 		$('#nav .nav_middle .main_li .li_a i').css({color:'white'});
 		$('#nav .nav_right span').css({color:'#fff',background:'#35baee'});
+		$('#nav .nav_right span a').css({color:'#fff',background:'#35baee'});
         $('#nav .nav_middle .main_li').eq(2).find('a').css({color:'#ff9645'});
         $('#nav .nav_middle .main_li').eq(2).find('i').css({color:'#ff9645'});
 		if ($(document).scrollTop()==0){
@@ -577,10 +892,42 @@
 			$('#nav .nav_middle .main_li .li_a').css({color:'black'});
 			$('#nav .nav_middle .main_li .li_a i').css({color:'black'});
 			$('#nav .nav_right span').css({color:'#0e0e0e',background:'white'});
+			$('#nav .nav_right span a').css({color:'#0e0e0e',background:'white'});
             $('#nav .nav_middle .main_li').eq(2).find('a').css({color:'#08F'});
             $('#nav .nav_middle .main_li').eq(2).find('i').css({color:'#08F'});
 		}
 	};
+
+	// 广告内容 下拉筛选
+	var show = 0;
+	$('.ad_moreSitu').on('click',function(){
+		$(this).children('i').toggleClass('icon-minus');  //切换图标
+        $(this).children('i').toggleClass('icon-plus');  //切换图标
+        if (show==0){
+            $('.billing .content').slideDown(130);
+            $(this).attr('title','收起');
+            show=1;
+        }else {
+            $('.billing .content').slideUp(60);
+            $(this).attr('title','显示更多筛选条件');
+            show=0;
+        }
+	})
+	// 舆情内容 下拉筛选
+	var show_2 = 0;
+	$('.comment_moreSitu').on('click',function(){
+		$(this).children('i').toggleClass('icon-minus');  //切换图标
+        $(this).children('i').toggleClass('icon-plus');  //切换图标
+        if (show_2==0){
+            $('.commentInfor .content').slideDown(130);
+            $(this).attr('title','收起');
+            show_2=1;
+        }else {
+            $('.commentInfor .content').slideUp(60);
+            $(this).attr('title','显示更多筛选条件');
+            show_2=0;
+        }
+	})
 
 </script>
 <script src="/static/js/company.js"></script>

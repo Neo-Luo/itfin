@@ -145,21 +145,6 @@
 <script>
     $('#container').height($(window).height());
 
-    // 判断是否登录
-    var username = '{{username}}';
-    var _username = sessionStorage.getItem('username');
-    if(username){
-        // 如果已登录 显示用户
-        $('#nav .nav_right').empty().append('<span>'+username+'</span>'+'<span><a href="/userManagement/logout">退出登录</a>'+'</span>'+'<span class="registered"><a href="/userManagement/register">注册</a></span>');
-        sessionStorage.setItem('username', username);
-    }else if(_username){
-        $('#nav .nav_right').empty().append('<span>'+_username+'</span>'+'<span><a href="/userManagement/logout">退出登录</a>'+'</span>'+'<span class="registered"><a href="/userManagement/register">注册</a></span>');
-    }
-
-    console.log(username);
-    console.log(_username);
-
-
     $('#nav').hover(function () {
         $('#nav .nav_middle').slideDown(300);
         $('#nav .nav_right').slideDown(300);

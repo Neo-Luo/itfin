@@ -1,24 +1,36 @@
 #!/usr/bin/env python
 #encoding: utf-8
 
-from flask import Flask, render_template, request, jsonify, Blueprint, send_from_directory, url_for
+from flask import Flask, render_template, request, jsonify, Blueprint, send_from_directory, url_for, session
 from economy.db import *
 from . import perceived
 import json
 from economy.config import *
 from economy.es import *
 
-field = ['id','entity_type','entity_name','date','company','related_person','key_words','index_name','text_id','rec_type','status']
-warn_field = ['entity_type','count']
-
 @perceived.route('/perceive/')
 def perceive():
-    return render_template('perceived/perceived.html')
+	if session:
+		username = session['username']
+		role_id = session['role']
+		uid = session['uid']
+	else:
+		username = ""
+		role_id = ""
+		uid = ""
+	return render_template('perceived/perceived.html',username=username,role_id=role_id,uid=uid)
 
 @perceived.route('/perceiveData/')
 def perceive_data():
-	result = get_perceive_data(TABLE_SENSOR,field)
+	result = get_perceive_data(TABLE_SENSOR)
 	return json.dumps(result,ensure_ascii=False)
+
+
+@perceived.route('/secondPerceiveData/')
+def second_perceive_data():
+	result = get_second_perceive_data(TABLE_SENSOR)
+	return json.dumps(result,ensure_ascii=False)
+
 
 @perceived.route('/perceiveContent/')
 def perceive_content():
@@ -31,8 +43,15 @@ def perceive_content():
 
 @perceived.route('/warnCount/')
 def warn_count():
-	result = p_getWarnCount(TABLE_SENSOR,warn_field)
+	result = p_getWarnCount(TABLE_SENSOR)
 	return json.dumps(result,ensure_ascii=False)
+
+
+@perceived.route('/secondWarnCount/')
+def second_warn_count():
+	result = second_p_getWarnCount(TABLE_SENSOR)
+	return json.dumps(result,ensure_ascii=False)
+
 
 @perceived.route('/Edit/')
 def edit():
