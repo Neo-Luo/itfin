@@ -1,7 +1,11 @@
 {% extends "publicNav.html" %}
 {% block title %}<title>感知推荐</title>{% endblock %}
 {% block my_css %}
-    <link rel="stylesheet" href="/static/css/jquery.fullPage.css">
+    <!-- 【【【bootCDN】】】 -->
+    <link href="https://cdn.bootcss.com/fullPage.js/1.7/jquery.fullPage.min.css" rel="stylesheet">
+    <!-- 【【【bootCDN】】】 -->
+
+    <!-- <link rel="stylesheet" href="/static/css/jquery.fullPage.css"> -->
     <link rel="stylesheet" href="/static/css/modalANDtable.css">
     <link rel="stylesheet" href="/static/css/perceived.css">
     <style>
@@ -56,7 +60,8 @@
             margin-top:20px;
         }
         /* 感知推荐表格 */
-        #fellTable thead th{
+        #fellTable thead th,
+        #_fellTable thead th{
             border-top:none;
         }
         /* 查看全文 */
@@ -192,6 +197,42 @@
             </div>
         </div>
     </div>
+
+    <!-- 一屏表格复制版本,游客登录仅显示这一屏 -->
+    <div class="section _firstScreen">
+        <div>
+            <div class="title" style="text-align: center;color: white;">
+                <img src="/static/images/chart-2.png" style="width: 25px;height: 25px;">
+                <span style="font-size:20px;vertical-align: middle;">当天感知数</span>
+            </div>
+            <div class="_topTitle" style="margin: 0 auto;margin-top:15px;">
+                <dl>
+                    <dt>公司</dt>
+                    <dd class="_com-1">正在加载中</dd>
+                </dl>
+                <dl>
+                    <dt>平台</dt>
+                    <dd class="_com-2">正在加载中</dd>
+                </dl>
+                <dl>
+                    <dt>项目</dt>
+                    <dd class="_com-3">正在加载中</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="felling">
+            <h3 style="color: white;display: inline-block;">
+                <i class="icon icon-bar-chart"></i>&nbsp;感知推荐
+                <!-- <span id="_oneLibrary_1" class="oneLibrary btn btn-primary" disabled="disabled" title="请勾选后再添加入库" style="margin-left: 20px;vertical-align: middle;">一键入库</span> -->
+            </h3>
+            <div class="fellTable" style="margin-top: 20px;">
+                <div id="_fellTable">
+                    <p class="load">正在努力加载中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="section secondScreen">
         <h3 style="color: white;margin-top: 20px;">
             <i class="icon icon-cloud-upload"></i>&nbsp;添加入库
@@ -405,23 +446,40 @@
 {% endblock %}
 
 {% block my_js %}
-<!-- <script src="/static/js/pager.js"></script> -->
-<script src="/static/js/echarts-2/build/dist/echarts.js"></script>
-<script src="/static/js/chalk.js"></script>
-<script src="/static/js/jquery.fullPage.min.js"></script>
+<!-- 【【【bootCDN】】】 -->
+<script src="https://cdn.bootcss.com/fullPage.js/1.7/jquery.fullPage.min.js"></script>
+<!-- 【【【bootCDN】】】 -->
+
+<!-- <script src="/static/js/echarts-2/build/dist/echarts.js"></script> -->
+<!-- <script src="/static/js/chalk.js"></script> -->
+<!-- <script src="/static/js/jquery.fullPage.min.js"></script> -->
+
 <!-- 批量添加 读取excel -->
 <script src="/static/js/xlsx.full.min.js"></script>
 <script src="/static/js/perceived-1.js"></script>
 <script>
     <!---->
+    // $('.fullpage').fullpage({
+    //     'verticalCentered': false,
+    //     'css3': true,
+    //     'anchors': ['page1', 'page2'],
+    //     'navigation': 'true',
+    //     'loopBottom':'true',
+    //     'navigationPosition': 'right',
+    //     'navigationTooltips': ['预警记录','预警态势'],
+    //     'fixedElements':'#nav,#Sure_2box,#delSuccess,#importf_info',// 不跟随滚动的元素
+    //                                     //鼠标在此元素 不滚屏
+    //     'normalScrollElements':'#perceiveContent .modal-dialog'
+    // });
+
     $('.fullpage').fullpage({
         'verticalCentered': false,
         'css3': true,
-        'anchors': ['page1', 'page2'],
+        'anchors': ['page1', 'page2','page3'],
         'navigation': 'true',
         'loopBottom':'true',
         'navigationPosition': 'right',
-        'navigationTooltips': ['预警记录','预警态势'],
+        'navigationTooltips': ['预警记录','预警记录','预警态势'],
         'fixedElements':'#nav,#Sure_2box,#delSuccess,#importf_info',// 不跟随滚动的元素
                                         //鼠标在此元素 不滚屏
         'normalScrollElements':'#perceiveContent .modal-dialog'

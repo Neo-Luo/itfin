@@ -110,6 +110,9 @@ body {
     background: white;
     color: black;
 }
+#nav .nav_right span:hover a{
+    color: black;
+}
 
 /**/
 #fullPage-nav span, .fullPage-slidesNav span {

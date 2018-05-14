@@ -1,33 +1,4 @@
 
-/* 时间戳转换时间  放在publicNav 里去了
-    Date.prototype.Format = function (fmt) { //author: meizz
-        var o = {
-            "M+": this.getMonth() + 1, //月份
-            "d+": this.getDate(), //日
-            "H+": this.getHours(), //小时
-            "m+": this.getMinutes(), //分
-            "s+": this.getSeconds(), //秒
-            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-            "S": this.getMilliseconds() //毫秒
-        };
-        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-        for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-        return fmt;
-    }
-    //时间戳转时间【年月日】
-    function getLocalTime_1(nS) {
-        // return new Date(parseInt(nS) * 1000).toLocaleDateString().replace(/年|月/g, "-");
-        // return new Date(parseInt(nS) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
-        return new Date(parseInt(nS) * 1000).Format("yyyy-MM-dd");//年月日
-        // return new Date(parseInt(nS) * 1000).Format("yyyy-MM-dd HH:mm:ss");//年月日 时分秒
-    }
-    // 【年月日时分秒】
-    function getLocalTime_2(nS) {
-        return new Date(parseInt(nS) * 1000).Format("yyyy-MM-dd HH:mm:ss");//年月日 时分秒
-    }
- */
-
 var entity_name ,firm_name;
 
 // 备 编辑基本信息用
@@ -157,7 +128,7 @@ var monitor_status_1;
         // $('.val-4').text(operationMode); //集资模式
 
         // if (item.penalty_status==1){t6='是';} //是否已判罚
-        if (item.problem == null ){ //是否已判罚
+        if (item.problem == null || item.problem == '' || item.problem == 'None' || item.problem == 'null' || item.problem == 'unknown' || !item.problem){ //是否已判罚
             t6='暂无';
         }else {
             t6 = item.problem;

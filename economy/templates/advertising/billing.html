@@ -1,8 +1,12 @@
 {% extends "publicNav.html" %}
 {% block title %}<title>广告监测</title>{% endblock %}
 {% block my_css %}
+<!-- 【【【bootCDN】】】 -->
+<link href="https://cdn.bootcss.com/fullPage.js/1.7/jquery.fullPage.min.css" rel="stylesheet">
+<!-- 【【【bootCDN】】】 -->
+
 <link rel="stylesheet" href="/static/css/modalANDtable.css">
-<link rel="stylesheet" href="/static/css/jquery.fullPage.css">
+<!-- <link rel="stylesheet" href="/static/css/jquery.fullPage.css"> -->
 <link rel="stylesheet" href="/static/css/billing.css">
 <style>
     #nav {top:0;}
@@ -23,7 +27,7 @@
         border: 1px solid #fcf8e3;
     }
     #fullPage-nav li, .fullPage-slidesNav li {margin: 12px 7px;}
-    #nav {background: rgba(60, 118, 130, 0.52)}
+    #nav {background: rgba(60, 118, 130, 0.52);}
     #nav .nav_middle, #nav .nav_right {display: block;}
     /**/
     .timeDate {
@@ -39,7 +43,7 @@
         background:transparent;
         cursor: pointer;
     }
-    #sureTime:hover {background: rgba(8,23,44,0.65)}
+    #sureTime:hover {background: rgba(8,23,44,0.65);}
     .contentTable .fixed-table-toolbar,.contentTable .fixed-table-pagination .page-list {
         display: none;
     }
@@ -240,7 +244,11 @@
 {% endblock %}
 
 {% block my_js %}
-<script src="/static/js/jquery.fullPage.min.js"></script>
+<!-- 【【【bootCDN】】】 -->
+<script src="https://cdn.bootcss.com/fullPage.js/1.7/jquery.fullPage.min.js"></script>
+<!-- 【【【bootCDN】】】 -->
+
+<!-- <script src="/static/js/jquery.fullPage.min.js"></script> -->
 <script>
     $('.fullpage').fullpage({
         'verticalCentered': false,

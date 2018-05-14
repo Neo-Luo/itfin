@@ -9,19 +9,23 @@
     margin: 0 auto;
     padding-top: 100px;
 }
-#container .firstScreen .topTitle {
+#container .firstScreen .topTitle ,
+#container ._firstScreen ._topTitle {
     text-align: center;
 }
-#container .firstScreen .topTitle dl{
+#container .firstScreen .topTitle dl,
+#container ._firstScreen ._topTitle dl{
     display: inline-block;
     margin: 0 10px;
     font-size: 18px;
     color: white;
 }
-#container .firstScreen .topTitle dl dt{
+#container .firstScreen .topTitle dl dt,
+#container ._firstScreen ._topTitle dl dt{
     font-weight:700;
 }
-#container .firstScreen .topTitle dl dd {
+#container .firstScreen .topTitle dl dd ,
+#container ._firstScreen ._topTitle dl dd {
     font-size: 16px;
     color: #ff9645;
 }

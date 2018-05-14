@@ -1,7 +1,11 @@
 {% extends "publicNav.html" %}
 {% block title %}<title>监测预警</title>{% endblock %}
 {% block my_css %}
-    <link rel="stylesheet" href="/static/css/jquery.fullPage.css">
+    <!-- 【【【bootCDN】】】 -->
+    <link href="https://cdn.bootcss.com/fullPage.js/1.7/jquery.fullPage.min.css" rel="stylesheet">
+    <!-- 【【【bootCDN】】】 -->
+
+    <!-- <link rel="stylesheet" href="/static/css/jquery.fullPage.css"> -->
     <link rel="stylesheet" href="/static/css/modalANDtable.css">
     <link rel="stylesheet" href="/static/css/detection.css">
     <style>
@@ -50,8 +54,6 @@
         #nav {
             top:0;
         }
-
-
     </style>
 {% endblock %}
 
@@ -108,6 +110,16 @@
                     <span class="ct-tit">预警类型：</span>
                     <select id="select-3" class="selectLab">
                         <option value="0" selected>全部</option>
+                        <!-- <option value="舆情预警">舆情预警</option> -->
+                        <!-- 改为动态生成的 -->
+                        <!-- <option value="模型预警">模型预警</option>
+                        <option value="指标预警">指标预警</option> -->
+                    </select>
+                </div>
+                <div class="content-4 conLeft">
+                    <span class="ct-tit">相关问题：</span>
+                    <select id="select-5" class="selectLab">
+                        <option value="all" selected>全部</option>
                         <!-- <option value="舆情预警">舆情预警</option> -->
                         <!-- 改为动态生成的 -->
                         <!-- <option value="模型预警">模型预警</option>
@@ -190,7 +202,7 @@
         </div>
         <div style="position:relative;">
             <div style="color: white;font-weight:700;font-size: 24px;position: relative;">
-                <h3 style="color: white;display: inline-block;"><i class="icon icon-pencil"></i>&nbsp;预警记录</h3>
+                <h3 style="color: white;display: inline-block;"><i class="icon icon-pencil"></i>&nbsp;已审核预警记录</h3>
                 <span style="font-size:14px;">默认显示本周预警数，总监测实体数<i class="monitoring-all" style="color:#ff9645;margin:0 5px;"></i>家</span><!-- 表注 -->
                 <div class="search">
                     <!-- <input size="30" type="text" placeholder="请输入查询内容" class="searchWord"/> -->
@@ -533,9 +545,7 @@
             <p class="load">正在努力加载中...</p>
         </div>
     </div>
-
 </div>
-
 
 <!-- 删除 成功、 提示信息 -->
 <div class="modal fade" id="Success" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -563,22 +573,57 @@
 {% block my_js %}
 
 <script src="/static/js/chalk.js"></script>
-<script src="/static/js/echarts-2/build/dist/echarts.js"></script>
-<script src="/static/js/jquery.fullPage.min.js"></script>
-<!-- <script src="https://cdn.bootcss.com/fullPage.js/2.9.6/jquery.fullpage.min.js"></script> -->
+<!-- 【【【bootCDN】】】 -->
+<script src="https://cdn.bootcss.com/echarts/2.2.7/echarts.js"></script>
+<script src="https://cdn.bootcss.com/fullPage.js/1.7/jquery.fullPage.min.js"></script>
+<!-- 【【【bootCDN】】】 -->
+
+<!-- <script src="/static/js/echarts-2/build/dist/echarts.js"></script> -->
+<!-- <script src="/static/js/jquery.fullPage.min.js"></script> -->
 <script src="/static/js/detection-1.js"></script>
 <script>
+$(document).ready(function(){
+    // var username = '{{username}}';
+    var username = 2;
+    console.log(username);
+    if(username == 2){//未登录
+        // 只显示第二屏
+        // $('._firstScreen').hide();
+        $('.fullpage ._firstScreen').remove()
+        $('.fullpage').fullpage({
+            'verticalCentered': false,
+            'css3': true,
+            'anchors': ['page1', 'page2','page3','page4','page5',],
+            'navigation': 'true',
+            'loopBottom':'true',
+            'navigationPosition': 'right',
+            'navigationTooltips': ['预警记录','预警态势及类型','预警分布','运营模式','预警排名'],
+            'fixedElements':'#nav,#Success'
+        });
+    }else{
+        $('.fullpage').fullpage({
+            'verticalCentered': false,
+            'css3': true,
+            'anchors': ['page1', 'page2','page3','page4','page5','page6'],
+            'navigation': 'true',
+            'loopBottom':'true',
+            'navigationPosition': 'right',
+            'navigationTooltips': ['预警记录','预警记录','预警态势及类型','预警分布','运营模式','预警排名'],
+            'fixedElements':'#nav,#Success'
+        });
+    }
+
     <!---->
-    $('.fullpage').fullpage({
-        'verticalCentered': false,
-        'css3': true,
-        'anchors': ['page1', 'page2','page3','page4','page5','page6'],
-        'navigation': 'true',
-        'loopBottom':'true',
-        'navigationPosition': 'right',
-        'navigationTooltips': ['预警记录','预警记录','预警态势及类型','预警分布','运营模式','预警排名'],
-        'fixedElements':'#nav,#Success'
-    });
+    // $('.fullpage').fullpage({
+    //     'verticalCentered': false,
+    //     'css3': true,
+    //     'anchors': ['page1','page2','page3','page4','page5'],
+    //     'navigation': 'true',
+    //     'loopBottom':'true',
+    //     'navigationPosition': 'right',
+    //     'navigationTooltips': ['预警记录','预警态势及类型','预警分布','运营模式','预警排名'],
+    //     'fixedElements':'#nav,#Success'
+    // });
     var show=0,_show=0,show_2=0,show_2_2=0;
     $('.firstScreen .search .moreSitu').on('click',function () {
         $(this).children('i').toggleClass('icon-minus');  //切换图标
@@ -632,6 +677,10 @@
             show_2_2=0;
         }
     });
+})
+
+
+
 
 </script>
 {% endblock %}

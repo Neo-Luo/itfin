@@ -65,8 +65,9 @@
                 <div class="user-4 example">
                     <span>用户角色</span>
                     <select class="u4_Val">
-                        <option value="普通用户">普通用户</option>
-                        <option value="高级用户">高级用户</option>
+                        <!-- <option value="普通用户">普通用户</option> -->
+                        <!-- <option value="高级用户">高级用户</option> -->
+                        <option value="高级用户">业务员</option>
                         <option value="管理员">管理员</option>
                     </select>
                 </div>
@@ -93,6 +94,7 @@
             }, 0);
         });
     });
-    $('#container').height($(window).height()+100);
+    // $('#container').height($(window).height()+100);
+    $('#container').height($(window).height());
 </script>
 {% endblock %}

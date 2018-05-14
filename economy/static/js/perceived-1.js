@@ -1,32 +1,3 @@
-// 时间戳转时间 （已放至publicnav下）
-    /*
-    Date.prototype.Format = function (fmt) { //author: meizz
-        var o = {
-            "M+": this.getMonth() + 1, //月份
-            "d+": this.getDate(), //日
-            "H+": this.getHours(), //小时
-            "m+": this.getMinutes(), //分
-            "s+": this.getSeconds(), //秒
-            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-            "S": this.getMilliseconds() //毫秒
-        };
-        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-        for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-        return fmt;
-    }
-    //时间戳转时间【年月日】
-    function getLocalTime_1(nS) {
-        // return new Date(parseInt(nS) * 1000).toLocaleDateString().replace(/年|月/g, "-");
-        // return new Date(parseInt(nS) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
-        return new Date(parseInt(nS) * 1000).Format("yyyy-MM-dd");//年月日
-        // return new Date(parseInt(nS) * 1000).Format("yyyy-MM-dd HH:mm:ss");//年月日 时分秒
-    }
-    // 【年月日时分秒】
-    function getLocalTime_2(nS) {
-        return new Date(parseInt(nS) * 1000).Format("yyyy-MM-dd HH:mm:ss");//年月日 时分秒
-    }
-    */
 
 // ====当天感知数====
     var warnCount_url='/perceived/warnCount/';
@@ -98,16 +69,17 @@
                     },
                     {
                         title: "实体名称",//标题
-                        field: "entity_name",//键名
+                        field: "real_name",//键名
                         sortable: true,//是否可排序
                         order: "desc",//默认排序方式
                         align: "center",//水平
                         valign: "middle",//垂直
                         formatter: function (value, row, index) {
-                            if (row.entity_name==''||row.entity_name=='null'||row.entity_name=='unknown'||!row.entity_name){
+                            if (row.real_name==''||row.real_name=='null'||row.real_name=='unknown'||!row.real_name){
                                 return '未知';
                             }else {
-                                return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_1(\''+row.entity_name+'\',\''+row.entity_type+'\',\''+row.id+'\')" title="进入画像">'+row.entity_name+'</span>';
+                                // return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_1(\''+row.real_name+'\',\''+row.entity_type+'\',\''+row.id+'\')" title="进入画像">'+row.real_name+'</span>';
+                                return '<span style="cursor:pointer;color:white;"'+row.real_name+'</span>';
                             };
                         }
                     },
@@ -444,8 +416,11 @@
     }
 
 //====查看文本====
+    // 保存实体名称 备高亮显示用
+    var name;
     function lookThis(entity_name,index_name) {
         if(entity_name != '' && index_name != ''){
+            name = entity_name;
             var perceiveContent_url = '/perceived/perceiveContent/?entity_name='+entity_name+'&index_name='+index_name;
             public_ajax.call_request('get',perceiveContent_url,perceiveContent);
         }else{
@@ -524,6 +499,12 @@
                                 url = row.url;
                             }
 
+                            // 高亮显示实体名称
+                            // console.log(name);
+                            var s = name;
+                            var reg = new RegExp("(" + s + ")", "g");
+                            contentClip = contentClip.replace(reg, "<strong style='color:#ff6633;'>$1</strong>");
+
                             return '<div class="inforContent">'+
                                 '            <div class="main">'+
                                 '                <img src="/static/images/textIcon.png" class="textFlag" style="top: 8px;">'+
@@ -546,20 +527,240 @@
 
             $('#perceiveContent').modal('show');
             $('.modal-backdrop').css({position:'static'});
+
+            for(var i in articalList){
+                // 高亮显示实体名称
+                var s = name;
+                var reg = new RegExp("(" + s + ")", "g");
+                articalList[i] = articalList[i].replace(reg, "<strong style='color:#ff6633;'>$1</strong>");
+                articalList_part[i] = articalList_part[i].replace(reg, "<strong style='color:#ff6633;'>$1</strong>");
+            }
         }
     }
     // 切换全文和部分数据
     function getAllArtical (_id) {
         var nowText = $("button[artical = "+ _id +"]").text();
         // console.log(articalList[_id]);
-        $("button[artical = "+ _id +"]").parents('.main').find('.context').text(articalList[_id]);
+        $("button[artical = "+ _id +"]").parents('.main').find('.context').html(articalList[_id]);
         $("button[artical = "+ _id +"]").text('收起');
         if(nowText == '收起'){
-            $("button[artical = "+ _id +"]").parents('.main').find('.context').text(articalList_part[_id]);
+            $("button[artical = "+ _id +"]").parents('.main').find('.context').html(articalList_part[_id]);
             $("button[artical = "+ _id +"]").text('查看全文');
         }
     }
 
+// ===========一屏表格复制版，游客仅显示这一屏========
+// ====当天感知数复制版====
+    var _warnCount_url='/perceived/warnCount/';
+    // var _warnCount_url='/perceived/secondWarnCount/';
+    public_ajax.call_request('get',_warnCount_url,_warnCount);
+    function _warnCount (data){
+        if(data.length == 0){
+            $('#container ._topTitle ._com-1').text(0);
+            $('#container ._topTitle ._com-2').text(0);
+            $('#container ._topTitle ._com-3').text(0);
+        }else {
+            $('#container ._topTitle ._com-1').text(0);
+            $('#container ._topTitle ._com-2').text(0);
+            $('#container ._topTitle ._com-3').text(data[0].count);
+        }
+    }
+// ====一屏表格复制版====
+    var _fellTable_url='/perceived/perceiveData/';
+    // var _fellTable_url='/perceived/secondPerceiveData/';
+    public_ajax.call_request('get',_fellTable_url,_fellTable);
+
+    Array.prototype.removeByValue = function(val) {
+        for(var i=0; i<this.length; i++) {
+            if(this[i] == val) {
+                this.splice(i, 1);
+                break;
+            }
+        }
+    };
+
+    var _libaryList=[];
+    function _fellTable(data) {
+        if(data){
+            $('#_fellTable p.load').hide();
+            $('#_fellTable').bootstrapTable('load', data);
+            $('#_fellTable').bootstrapTable({
+                data:data,
+                search: true,//是否搜索
+                pagination: true,//是否分页
+                pageSize: pageData,//单页记录数
+                pageList: [15,20,25],//分页步进值
+                sidePagination: "client",//服务端分页
+                searchAlign: "left",
+                searchOnEnterKey: false,//回车搜索
+                showRefresh: false,//刷新按钮
+                showColumns: false,//列选择按钮
+                buttonsAlign: "right",//按钮对齐方式
+                locale: "zh-CN",//中文支持
+                detailView: false,
+                showToggle:false,
+                sortName:'bci',
+                sortOrder:"desc",
+                columns: [
+                    {
+                        title: "入库",//标题
+                        field: "select",
+                        checkbox: true,
+                        align: "center",//水平
+                        valign: "middle"//垂直
+                    },
+                    {
+                        title: "实体名称",//标题
+                        field: "real_name",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.real_name==''||row.real_name=='null'||row.real_name=='unknown'||!row.real_name){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" onclick="jumpFrame_1(\''+row.real_name+'\',\''+row.entity_type+'\',\''+row.id+'\')" title="进入画像">'+row.real_name+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "感知时间",//标题
+                        field: "date",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.date==''||row.date=='null'||row.date=='unknown'||!row.date){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" title="感知时间">'+row.date+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "推荐理由",//标题
+                        field: "rec_type",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.rec_type==''||row.rec_type=='null'||row.rec_type=='unknown'||!row.rec_type){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" title="推荐理由">'+row.rec_type+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "实体类别",//标题
+                        field: "entity_type",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            var entityType;
+                            if(row.entity_type==1){
+                                entityType = '平台'
+                            }else if(row.entity_type==2){
+                                entityType = '公司'
+                            }else if(row.entity_type==3){
+                                entityType = '项目'
+                            }
+                            if (row.entity_type==''||row.entity_type=='null'||row.entity_type=='unknown'||!row.entity_type){
+                                return '未知';
+                            }else  {
+                                return '<span style="cursor:pointer;color:white;" title="实体类型">'+entityType+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "注册公司",//标题
+                        field: "company",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.company==''||row.company=='null'||row.company=='unknown'||!row.company){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" title="注册公司">'+row.company+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "相关人物",//标题
+                        field: "related_person",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.related_person==''||row.related_person=='null'||row.related_person=='unknown'||!row.related_person){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" title="相关人物">'+row.related_person+'</span>';
+                            };
+                        }
+                    },
+                    {
+                        title: "其他关键词",//标题
+                        field: "key_words",//键名
+                        sortable: true,//是否可排序
+                        order: "desc",//默认排序方式
+                        align: "center",//水平
+                        valign: "middle",//垂直
+                        formatter: function (value, row, index) {
+                            if (row.key_words==''||row.key_words=='null'||row.key_words=='unknown'||!row.key_words){
+                                return '未知';
+                            }else {
+                                return '<span style="cursor:pointer;color:white;" title="其他关键词">'+row.key_words+'</span>';
+                            };
+                        }
+                    },
+                    // {
+                    //     游客登录没有操作列
+                    // },
+                ],
+                onCheck:function (row) {
+                    libaryList.push(row.id);
+                    testLib()
+                },
+                onUncheck:function (row) {
+                    libaryList.removeByValue(row.id);
+                    testLib()
+                },
+                onCheckAll:function (row) { //修改版 //☆☆☆☆☆☆☆☆全选 方法 需遍历row取值☆☆☆☆☆☆☆☆
+                    // console.log(row);
+                    // console.log(row.id);
+                    // libaryList.push(row.id);
+
+                    // 先清空再添加
+                    libaryList.length = 0;
+                    for(var i=0;i<row.length;i++){
+                        libaryList.push(row[i].id);
+                    }
+                    testLib()
+                },
+                onUncheckAll:function (row) {
+                    libaryList.length = 0;
+                    testLib()
+                },
+                onPageChange:function(){
+                    //翻页之后
+                    // libaryList.removeByValue(row.id);testLib()
+                    // console.log(libaryList);
+                    libaryList.length = 0;
+                    testLib()
+                    // console.log(libaryList);
+                }
+            });
+        }
+    };
 
 // ------二屏---------
 

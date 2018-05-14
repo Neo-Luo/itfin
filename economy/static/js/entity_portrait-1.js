@@ -33,6 +33,20 @@
         }
     }
 
+    // 相关问题下拉框
+    var select_url_3 = '/detection/ProblemBox/';    //相关问题
+    public_ajax.call_request('get',select_url_3,selectUrl_3);
+    function selectUrl_3(data){
+        // console.log(data);
+        if(data){
+            var str3 = '';
+            for(var i=0;i<data.length;i++){
+                str3 += '<option value="'+data[i].problem+'">'+data[i].problem+'</option>'
+            }
+            $('#select-5').append(str3);
+        }
+    }
+
 // 适配分辨率
     var pageData=6;
     if (screen.width <= 1440){
@@ -45,7 +59,7 @@
 
 // 一屏 表格
     // var peoPicture_url='/portraite/portrait/';
-    var peoPicture_url='/portraite/portrait/?operation_mode=0&illegal_type=10000&entity_type=0&warn_distribute=all';
+    var peoPicture_url='/portraite/portrait/?operation_mode=0&illegal_type=10000&entity_type=0&warn_distribute=all&problem=all';
     public_ajax.call_request('get',peoPicture_url,peoPicture);
 
     function peoPicture(data) {
@@ -283,13 +297,15 @@
         var select_operation_mode = $(this).val();
         // 预警类型
         var select_illegal_type = $(this).parents('.content').find('#select-3').val();
+        // 相关问题
+        var select_problem = $(this).parents('.content').find('#select-5').val();
         // 实体类型
         var select_entity_type = $(this).parents('.content').find('#select-4').val();
         // 预警分布
         var select_warn_distribute = $(this).parents('.content').find('#city34').val();
 
-        peoPicture_url = '/portraite/portrait/?operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-        console.log(peoPicture_url);
+        peoPicture_url = '/portraite/portrait/?operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem;
+        // console.log(peoPicture_url);
         public_ajax.call_request('get',peoPicture_url,peoPicture);
     })
     // ===预警类型选项===
@@ -299,13 +315,15 @@
         var select_operation_mode = $(this).parents('.content').find('#select-2').val();
         // 预警类型
         var select_illegal_type = $(this).val();
+        // 相关问题
+        var select_problem = $(this).parents('.content').find('#select-5').val();
         // 实体类型
         var select_entity_type = $(this).parents('.content').find('#select-4').val();
         // 预警分布
         var select_warn_distribute = $(this).parents('.content').find('#city34').val();
 
-        peoPicture_url = '/portraite/portrait/?operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-        console.log(peoPicture_url);
+        peoPicture_url = '/portraite/portrait/?operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem;
+        // console.log(peoPicture_url);
         public_ajax.call_request('get',peoPicture_url,peoPicture);
     })
     // ===实体类型选项===
@@ -315,13 +333,15 @@
         var select_operation_mode = $(this).parents('.content').find('#select-2').val();
         // 预警类型
         var select_illegal_type = $(this).parents('.content').find('#select-3').val();
+        // 相关问题
+        var select_problem = $(this).parents('.content').find('#select-5').val();
         // 实体类型
         var select_entity_type = $(this).val();
         // 预警分布
         var select_warn_distribute = $(this).parents('.content').find('#city34').val();
 
-        peoPicture_url = '/portraite/portrait/?operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-        console.log(peoPicture_url);
+        peoPicture_url = '/portraite/portrait/?operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem;
+        // console.log(peoPicture_url);
         public_ajax.call_request('get',peoPicture_url,peoPicture);
     })
     // ===预警分布选项===
@@ -331,13 +351,15 @@
         var select_operation_mode = $(this).parents('.content').find('#select-2').val();
         // 预警类型
         var select_illegal_type = $(this).parents('.content').find('#select-3').val();
+        // 相关问题
+        var select_problem = $(this).parents('.content').find('#select-5').val();
         // 实体类型
         var select_entity_type = $(this).parents('.content').find('#select-4').val();
         // 预警分布
         var select_warn_distribute = $(this).val();
 
-        peoPicture_url = '/portraite/portrait/?operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute;
-        console.log(peoPicture_url);
+        peoPicture_url = '/portraite/portrait/?operation_mode='+select_operation_mode+'&illegal_type='+select_illegal_type+'&entity_type='+select_entity_type+'&warn_distribute='+select_warn_distribute+'&problem='+select_problem;
+        // console.log(peoPicture_url);
         public_ajax.call_request('get',peoPicture_url,peoPicture);
     })
 
@@ -379,7 +401,7 @@
         }
         $(this).addClass('active').siblings().removeClass('active');
         var portrait_letter_url = '/portraite/portrait_letter/?letter='+letter;
-        console.log(portrait_letter_url);
+        // console.log(portrait_letter_url);
         public_ajax.call_request('get',portrait_letter_url,portrait_letter);
     })
     function portrait_letter (data) {

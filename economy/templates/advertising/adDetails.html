@@ -11,15 +11,16 @@
         -o-transform: scale(1.3);
         transform: scale(1.3);
     }
-    #nav .nav_middle .main_li:nth-of-type(5) a {
+    #nav .nav_middle .main_li:nth-of-type(5) a, #nav .nav_middle .main_li:nth-of-type(5) a i{
         color: #08F;
     }
     #nav {background: #fff;box-shadow: 0 2px 5px rgba(41,46,51,0.15);color: #0e0e0e;}
-    #nav .nav_middle .main_li .li_a,#nav .nav_right span {color: #0e0e0e;}
+    #nav .nav_middle .main_li .li_a,#nav .nav_right span,#nav .nav_right span a {color: #0e0e0e;}
     #nav .nav_middle .main_li .line {background-color: #08F;}
     #nav .nav_right span {border: 1px solid #787878;}
     #nav .nav_middle, #nav .nav_right {display: block;}
-    #nav .nav_right span:hover {
+    #nav .nav_right span:hover,
+    #nav .nav_right span:hover a {
         background: #2ad1ff !important;
         color: white!important;
     }
@@ -187,6 +188,8 @@
         }else {
             $(this).css({color:'#000'});
             $(this).find('i').css({color:'#000'});
+            $('#nav .nav_middle .main_li').eq(4).find('a').css({color:'#08F'});
+            $('#nav .nav_middle .main_li').eq(4).find('i').css({color:'#08F'});
         }
     });
 
@@ -200,6 +203,7 @@
         $('#nav .nav_middle .main_li .li_a').css({color:'white'});
         $('#nav .nav_middle .main_li .li_a i').css({color:'white'});
         $('#nav .nav_right span').css({color:'#fff',background:'#35baee'});
+        $('#nav .nav_right span a').css({color:'#fff',background:'#35baee'});
         $('#nav .nav_middle .main_li').eq(4).find('a').css({color:'#ff9645'});
         $('#nav .nav_middle .main_li').eq(4).find('i').css({color:'#ff9645'});
         if ($(document).scrollTop()==0){
@@ -210,6 +214,7 @@
             $('#nav .nav_middle .main_li .li_a').css({color:'black'});
             $('#nav .nav_middle .main_li .li_a i').css({color:'black'});
             $('#nav .nav_right span').css({color:'#0e0e0e',background:'white'});
+            $('#nav .nav_right span a').css({color:'#0e0e0e',background:'white'});
             $('#nav .nav_middle .main_li').eq(4).find('a').css({color:'#08F'});
             $('#nav .nav_middle .main_li').eq(4).find('i').css({color:'#08F'});
         }

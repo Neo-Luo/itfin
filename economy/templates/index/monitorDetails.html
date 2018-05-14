@@ -12,7 +12,7 @@
             transform: scale(1.3);
         }
         #nav .nav_middle .main_li:nth-of-type(2) a, #nav .nav_middle .main_li:nth-of-type(2) a i{
-            color: #08F !important;
+            color: #08F ;
         }
         #nav {background: #fff;box-shadow: 0 2px 5px rgba(41,46,51,0.15);color: #0e0e0e;}
         #nav .nav_middle .main_li .li_a,#nav .nav_right span,#nav .nav_right span a {color: #0e0e0e;}
@@ -312,31 +312,9 @@
 {% endblock %}
 
 {% block my_js %}->
-<script src="/static/js/echarts-2/build/dist/echarts.js"></script>
+<!-- <script src="/static/js/echarts-2/build/dist/echarts.js"></script> -->
 
 <script>
-    // var monitorType=window.localStorage.getItem('monitorFlag');
-    // if (monitorType=='舆情预警'){
-    //     $('.opinionWarning-2').hide();
-    //     $('.opinionWarning-3').hide();
-    //     $('.tit').text('湖北嘟嘟');
-    //     $('.name').text('湖北嘟嘟');
-    //     $('.type2').text('公司');
-    // }else if (monitorType=='指标预警'){
-    //     $('.opinionWarning-1').hide();
-    //     $('.opinionWarning-3').hide();
-    //     $('.tit').text('优易网');
-    //     $('.name').text('优易网');
-    //     $('.type2').text('平台');
-    //     line_1();
-    // }else if (monitorType=='模型预警'){
-    //     $('.opinionWarning-1').hide();
-    //     $('.opinionWarning-2').hide();
-    //     $('.tit').text('青云门');
-    //     $('.name').text('青云门');
-    //     $('.type2').text('项目');
-    //     line_2();
-    // }
 
     var name='{{name}}';
     var type='{{flag}}';
@@ -363,9 +341,13 @@
         if ($(document).scrollTop()!=0){
             $(this).css({color:'#fff'});
             $(this).find('i').css({color:'#fff'});
+            $('#nav .nav_middle .main_li').eq(1).find('a').css({color:'#ff9645'});
+            $('#nav .nav_middle .main_li').eq(1).find('i').css({color:'#ff9645'});
         }else {
             $(this).css({color:'#000'});
             $(this).find('i').css({color:'#000'});
+            $('#nav .nav_middle .main_li').eq(1).find('a').css({color:'#08F'});
+            $('#nav .nav_middle .main_li').eq(1).find('i').css({color:'#08F'});
         }
     });
     // =====添加=======

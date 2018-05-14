@@ -113,7 +113,12 @@ var monitor_status_1;
         $('.val-4').text(item.operation_mode||''); //集资模式
         // $('.val-4').text(operationMode); //集资模式
 
-        if (item.penalty_status==1){t6='是';} //是否已判罚
+        // if (item.penalty_status==1){t6='是';} //是否已判罚
+        if (item.problem == null || item.problem == '' || item.problem == 'None' || item.problem == 'null' || item.problem == 'unknown' || !item.problem){ //是否已判罚
+            t6='暂无';
+        }else {
+            t6 = item.problem;
+        }
         $('.val-5').text(t6);
 
         // 股东信息
